@@ -1,0 +1,23 @@
+{
+  "name": "vtcurse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Renpona/VTCurse.git"
+  },
+  "author": "Renpona",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Renpona/VTCurse/issues"
+  },
+  "homepage": "https://github.com/Renpona/VTCurse#readme",
+  "dependencies": {
+    "typescript": "^5.3.3",
+    "vtubestudio": "^3.4.0"
+  }
+}
