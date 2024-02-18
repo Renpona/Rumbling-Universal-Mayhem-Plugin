@@ -1,4 +1,5 @@
 import WebSocket from 'ws';
+import { sendParamValue } from './vtsConnector';
 
 const ws = new WebSocket('ws://127.0.0.1:54817');
 
@@ -24,12 +25,15 @@ ws.on('open', function open() {
 ws.on('message', function message(data) {
     let result = data.toString();
     console.log('received: %s', result);
-    console.log('parsed: %s', tcodeParse(result));
+    let linearValue = tcodeParse(result);
+    console.log('parsed: %s', linearValue);
+    sendParamValue("linear", linearValue);
 });
 
 const linearRegex = /L\d+/i;
 function tcodeParse(data: string) {
     let linearData = data.match(linearRegex);
-    let position: string = linearData[0].slice(2);
+    let rawPosition: string = linearData[0].slice(2);
+    let position: number = Number(rawPosition)/100;
     return position;
 }
