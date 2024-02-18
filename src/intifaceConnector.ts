@@ -22,6 +22,14 @@ ws.on('open', function open() {
 });
 
 ws.on('message', function message(data) {
-    let result = data;
-    console.log('received: %s', result);    
+    let result = data.toString();
+    console.log('received: %s', result);
+    console.log('parsed: %s', tcodeParse(result));
 });
+
+const linearRegex = /L\d+/i;
+function tcodeParse(data: string) {
+    let linearData = data.match(linearRegex);
+    let position: string = linearData[0].slice(2);
+    return position;
+}
