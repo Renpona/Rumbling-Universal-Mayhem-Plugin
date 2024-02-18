@@ -30,8 +30,4 @@ const options = {
     //url: "ws://localhost:${port}",
 };
 
-function connectToVts() {
-    const apiClient = new ApiClient(options);
-    return apiClient;
-}
-
+const apiClient = new ApiClient(options);
