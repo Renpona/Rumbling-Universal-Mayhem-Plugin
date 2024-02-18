@@ -31,3 +31,41 @@ const options = {
 };
 
 const apiClient = new ApiClient(options);
+addParam();
+
+function addParam() {
+    const linearParam = {
+        parameterName: "Linear",
+        description: "Linear actuator position",
+        defaultValue: 0,
+        min: 0,
+        max: 1
+    }
+    apiClient
+        .parameterCreation(linearParam)
+        .then((response) => {
+            console.log("Successfully added parameter:", response.parameterName);
+        })
+        .catch((e) => {
+            console.error("Failed to add parameter:", e.errorID, e.message);
+        });
+}
+
+function sendParamValue(param: string, value: number) {
+    let paramData = {
+        mode: "set",
+        "parameterValues": [
+            {
+                "id": "Linear",
+                "value": value,
+            }
+        ]
+    }
+    apiClient
+        .injectParameterData(paramData)
+        .catch((e) => {
+            console.error("Failed to send param data %s:", param, e.errorID, e.message);
+        });
+}
+
+export { sendParamValue }
