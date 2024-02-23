@@ -1,17 +1,48 @@
 {
     "version": {
-      "major": 1,
-      "minor": 0
+        "major": 2,
+        "minor": 0
     },
     "user-configs": {
-      "specifiers": {
-        "tcode-v03": {
-          "websocket": {
-            "names": ["VTubeStudio Cursed"]
-          }
-        }
-      }
+        "specifiers": {
+            "tcode-v03": {
+                "websocket": {
+                    "names": [
+                        "VTubeStudio Cursed"
+                    ]
+                },
+                "configurations": [
+                    {
+                        "identifier": [
+                          "V9T8S7"
+                        ],
+                        "name": "VTubeStudio Cursed"
+                      }
+                ]
+            }
+        },
+        "devices": [
+            {
+                "identifier": {
+                    "address": "V9T8S7",
+                    "protocol": "tcode-v03",
+                    "identifier": "VTubeStudio Cursed"
+                },
+                "config": {
+                    "index": 0,
+                    "messages": {
+                        "ScalarCmd": [
+                            {
+                                "StepRange": [
+                                    0,
+                                    100
+                                ],
+                            "ActuatorType": "Vibrate"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
     }
-  }
-  
-  
+}

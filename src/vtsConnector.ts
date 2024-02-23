@@ -40,9 +40,24 @@ function addParam() {
         defaultValue: 0,
         min: 0,
         max: 1
+    };
+    const vibrateParam = {
+        parameterName: "Vibrate",
+        description: "Vibration level",
+        defaultValue: 0,
+        min: 0,
+        max: 1
     }
     apiClient
         .parameterCreation(linearParam)
+        .then((response) => {
+            console.log("Successfully added parameter:", response.parameterName);
+        })
+        .catch((e) => {
+            console.error("Failed to add parameter:", e.errorID, e.message);
+        });
+    apiClient
+        .parameterCreation(vibrateParam)
         .then((response) => {
             console.log("Successfully added parameter:", response.parameterName);
         })
@@ -56,7 +71,7 @@ function sendParamValue(param: string, value: number) {
         mode: "set",
         "parameterValues": [
             {
-                "id": "Linear",
+                "id": param,
                 "value": value,
             }
         ]

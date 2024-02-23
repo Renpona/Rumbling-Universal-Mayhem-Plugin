@@ -14,26 +14,67 @@ ws.on('error', console.error);
 
 ws.on('close', function close(code, reason) {
     console.error(reason);
+    clearInterval(updateTimer);
+    updateTimer = null;
 });
 
 ws.on('open', function open() {
     let handshake = JSON.stringify(identifier);
-    console.log('sent: %s', handshake)
+    console.log('\n\nsent: %s', handshake)
     ws.send(handshake);
 });
 
 ws.on('message', function message(data) {
     let result = data.toString();
     console.log('received: %s', result);
-    let linearValue = tcodeParse(result);
-    console.log('parsed: %s', linearValue);
-    sendParamValue("linear", linearValue);
+    
+    let linearValue = linearParse(result);
+    console.log('linear: %s', linearValue);
+    state.linearValue = linearValue;
+    
+    let vibrateValue = vibrateParse(result);
+    console.log('vibrate: %s', vibrateValue);
+    state.vibrateValue = vibrateValue;
+
+    update();
+    
+    if (!updateTimer) {
+        updateTimer = setInterval(update, 600);
+    };
 });
 
 const linearRegex = /L\d+/i;
-function tcodeParse(data: string) {
+function linearParse(data: string) {
     let linearData = data.match(linearRegex);
-    let rawPosition: string = linearData[0].slice(2);
-    let position: number = Number(rawPosition)/100;
-    return position;
+    if (linearData != null) {
+        let rawPosition: string = linearData[0].slice(2); //remove identifier and channel
+        let position: number = Number(rawPosition)/100;
+        return position;
+    } else {
+        return null;
+    }
+}
+
+const vibrateRegex = /V\d+/i;
+function vibrateParse(data: string) {
+    let vibrateData = data.match(vibrateRegex);
+    if (vibrateData != null) {
+        let rawVibrate: string = vibrateData[0].slice(2); //remove identifier and channel
+        let vibrate: number = Number(rawVibrate)/100;
+        return vibrate;
+    } else {
+        return null;
+    }
+}
+
+var updateTimer: NodeJS.Timeout;
+var state = {
+    linearValue: 0,
+    vibrateValue: 0
+};
+
+// VTubeStudio needs param values to be resent every <1sec
+function update() {
+    if (state.linearValue != null) sendParamValue("Linear", state.linearValue);
+    if (state.vibrateValue != null) sendParamValue("Vibrate", state.vibrateValue);
 }
