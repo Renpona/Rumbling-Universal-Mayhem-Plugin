@@ -1,5 +1,6 @@
 const { default: nodeTest } = require('node:test');
 const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: './src/intifaceConnector.ts',
@@ -20,9 +21,17 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: {
-      dry: true,
-      keep: /configs\//
+      dry: false,
+      //keep: /configs\//
     },
   },
   target: "node",
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "config", to: "config" },
+        { from: "intiface", to: "intiface" },
+      ],
+    }),
+  ],
 };

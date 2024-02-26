@@ -4,5 +4,8 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
     },
+    "modules": {
+        "moduleResolution": "nodeNext"
+    },
     "include": [ "./src/**/*" ]
 }

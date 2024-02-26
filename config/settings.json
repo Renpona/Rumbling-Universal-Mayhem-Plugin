@@ -1,0 +1,13 @@
+{
+    "vtuber": {
+        "protocol": "vtubestudio",
+        "host": "localhost",
+        "port": 8001
+    },
+    "intiface": {
+        "use-local": true,
+        "host": "localhost",
+        "port": 12345,
+        "vibration_multiplier": 1
+    }
+}
