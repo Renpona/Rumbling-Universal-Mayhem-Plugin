@@ -6,8 +6,8 @@
     },
     "intiface": {
         "use-local": true,
-        "host": "localhost",
-        "port": 12345,
+        "host": "127.0.0.1",
+        "port": 54817,
         "vibration_multiplier": 1
     }
 }

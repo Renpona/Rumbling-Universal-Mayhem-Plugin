@@ -1,3 +1,5 @@
+import { pluginName } from "./utils";
+
 // CommonJS/Require
 const fs = require("node:fs");
 const ws = require("ws");
@@ -19,19 +21,22 @@ function getAuthToken() {
 const options = {
     authTokenGetter: getAuthToken,
     authTokenSetter: setAuthToken,
-    pluginName: "VTCursed",
+    pluginName: pluginName,
     pluginDeveloper: "Renpona",
     webSocketFactory: (url) => new ws(url),
 
-    // Optionally set the URL or port to connect to VTube Studio at; defaults are as below:
-
-    //TODO: add a way to take in host/port info. command line? config file? idk
-    //port: 8001,
-    //url: "ws://localhost:${port}",
+    // default URL, to be overwritten if new info provided
+    url: "ws://localhost:8001",
 };
 
-const apiClient = new ApiClient(options);
-addParam();
+var apiClient;
+
+function connectVTubeStudio(host, port) {
+    options.url = `ws://${host}:${port}`;
+    apiClient = new ApiClient(options);
+    addParam();
+    return apiClient;
+}
 
 function addParam() {
     const linearParam = {
@@ -83,4 +88,4 @@ function sendParamValue(param: string, value: number) {
         });
 }
 
-export { sendParamValue }
+export { connectVTubeStudio, sendParamValue }
