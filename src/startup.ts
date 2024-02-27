@@ -4,7 +4,11 @@ import { connectVTubeStudio } from "./vtsConnector";
 import { errorHalt, pluginName } from "./utils";
 import { WebSocket } from "ws";
 import { ApiClient } from "vtubestudio";
+import { intifaceEvent, startIntifaceEngine } from "./engineManager";
+import { ChildProcess } from "child_process";
+import { ExitCode } from "./errorCodes";
 
+var intifaceEngine: ChildProcess;
 var intifaceConnection: WebSocket;
 var vtsConnection: ApiClient;
 
@@ -20,15 +24,15 @@ function loadConfig() {
 }
 
 type Settings = {
-    "vtuber": Vtuber;
-    "intiface": Intiface;
+    "vtuber": VtuberSettings;
+    "intiface": IntifaceSettings;
 }
-type Vtuber = {
+type VtuberSettings = {
     "protocol": string;
     "host": string;
     "port": number;
 }
-type Intiface = {
+type IntifaceSettings = {
     "use-local": boolean;
     "host": string;
     "port": number;
@@ -47,9 +51,16 @@ parseSettings();
 function initIntiface() {
     let intiface = settings.intiface;
     if (intiface["use-local"]) {
-        //TODO: set up intiface engine before continuing
+        initIntifaceEngine(intiface);
+    } else {
+        intifaceConnection = connectIntiface(intiface.host, intiface.port);
     }
-    intifaceConnection = connectIntiface(intiface.host, intiface.port);
+}
+
+function initIntifaceEngine(intiface: IntifaceSettings) {
+    intifaceEvent.once("ready", () => connectIntiface(intiface.host, intiface.port));
+    console.log("Initializing Intiface Engine...");
+    intifaceEngine = startIntifaceEngine();
 }
 
 function initVtuber() {
@@ -58,7 +69,7 @@ function initVtuber() {
         vtsConnection = connectVTubeStudio(vtuber.host, vtuber.port);
     } else {
         //TODO: other vtuber software
-        errorHalt("Only VTubeStudio is currently supported", 3);
+        errorHalt("Only VTubeStudio is currently supported", ExitCode.IncorrectConfigValue);
     }
 }
 
