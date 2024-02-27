@@ -8,7 +8,7 @@
             "tcode-v03": {
                 "websocket": {
                     "names": [
-                        "VTubeStudio Cursed"
+                        "VTCursed"
                     ]
                 },
                 "configurations": [
@@ -16,7 +16,7 @@
                         "identifier": [
                           "V9T8S7"
                         ],
-                        "name": "VTubeStudio Cursed"
+                        "name": "VTCursed"
                       }
                 ]
             }
@@ -26,7 +26,7 @@
                 "identifier": {
                     "address": "V9T8S7",
                     "protocol": "tcode-v03",
-                    "identifier": "VTubeStudio Cursed"
+                    "identifier": "VTCursed"
                 },
                 "config": {
                     "index": 0,
