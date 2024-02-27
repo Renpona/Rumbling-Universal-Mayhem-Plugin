@@ -1,6 +1,7 @@
 import WebSocket from 'ws';
-import { pluginName } from './utils';
+import { errorHalt, pluginName } from './utils';
 import { sendParamValue } from './vtsConnector';
+import { ExitCode } from './errorCodes';
 
 //const ws = new WebSocket('ws://127.0.0.1:54817');
 
@@ -12,15 +13,18 @@ const identifier = {
 };
 
 function connectIntiface(host, port) {
+    console.log("Trying to connect to Intiface...");
     const ws = new WebSocket(`ws://${host}:${port}`);
 
     ws.on('error', console.error);
 
     ws.on('close', function close(code, reason) {
         console.log("Disconnected from Intiface!");
-        console.error(reason);
+        console.error(reason.toString());
         clearInterval(updateTimer);
         updateTimer = null;
+        // TODO: remove this once the ability to reconnect has been added
+        errorHalt("Intiface connection lost", ExitCode.Standard);
     });
 
     ws.on('open', function open() {

@@ -14,7 +14,7 @@ function loadConfig() {
     try {
         settings = fs.readFileSync(`./config/${fileName}`, "utf-8");
     } catch(e) {
-        errorHalt(`Reading config file ${fileName} failed.`, 2, e);
+        errorHalt(`Reading config file ${fileName} failed.`, ExitCode.ConfigReadFailed, e);
     }
     return JSON.parse(settings);
 }
