@@ -1,5 +1,6 @@
 import { ApiClient } from "vtubestudio";
-import { pluginName } from "./utils";
+import { ExitCode } from "./errorCodes";
+import { errorHalt, pluginName } from "./utils";
 
 // CommonJS/Require
 const fs = require("node:fs");
@@ -34,7 +35,10 @@ var apiClient: ApiClient;
 function connectVTubeStudio(host, port) {
     options.url = `ws://${host}:${port}`;
     apiClient = new ApiClient(options);
-    if (apiClient.isConnected) console.log()
+    apiClient.on("connect", () => console.log("Connected to VTubeStudio!"));
+    apiClient.on("error", (e: string) => {
+        errorHalt("VTubeStudio connection failed or dropped", ExitCode.VtuberConnectionFailed, new Error(e));
+    });
     addParam();
     return apiClient;
 }
