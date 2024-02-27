@@ -17,6 +17,7 @@ function connectIntiface(host, port) {
     ws.on('error', console.error);
 
     ws.on('close', function close(code, reason) {
+        console.log("Disconnected from Intiface!");
         console.error(reason);
         clearInterval(updateTimer);
         updateTimer = null;
@@ -24,7 +25,8 @@ function connectIntiface(host, port) {
 
     ws.on('open', function open() {
         let handshake = JSON.stringify(identifier);
-        console.log('\n\nsent: %s', handshake)
+        console.log("Connected to Intiface!");
+        console.log('\n\nsent: %s', handshake);
         ws.send(handshake);
     });
 

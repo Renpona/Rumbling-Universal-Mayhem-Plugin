@@ -1,16 +1,16 @@
+import { ApiClient } from "vtubestudio";
 import { pluginName } from "./utils";
 
 // CommonJS/Require
 const fs = require("node:fs");
 const ws = require("ws");
-const vts = require("vtubestudio");
-const ApiClient = vts.ApiClient;
 
 function setAuthToken(authenticationToken) {
     // store the authentication token somewhere
     fs.writeFileSync("./auth-token.txt", authenticationToken, {
         encoding: "utf-8",
-    });  
+    });
+    return Promise.resolve();
 }
 
 function getAuthToken() {
@@ -29,11 +29,12 @@ const options = {
     url: "ws://localhost:8001",
 };
 
-var apiClient;
+var apiClient: ApiClient;
 
 function connectVTubeStudio(host, port) {
     options.url = `ws://${host}:${port}`;
     apiClient = new ApiClient(options);
+    if (apiClient.isConnected) console.log()
     addParam();
     return apiClient;
 }
@@ -41,18 +42,19 @@ function connectVTubeStudio(host, port) {
 function addParam() {
     const linearParam = {
         parameterName: "Linear",
-        description: "Linear actuator position",
+        explanation: "Linear actuator position",
         defaultValue: 0,
         min: 0,
         max: 1
     };
     const vibrateParam = {
         parameterName: "Vibrate",
-        description: "Vibration level",
+        explanation: "Vibration level",
         defaultValue: 0,
         min: 0,
         max: 1
-    }
+    };
+    
     apiClient
         .parameterCreation(linearParam)
         .then((response) => {
@@ -73,7 +75,7 @@ function addParam() {
 
 function sendParamValue(param: string, value: number) {
     let paramData = {
-        mode: "set",
+        mode: "set" as "set",
         "parameterValues": [
             {
                 "id": param,
