@@ -31,6 +31,7 @@ module.exports = {
       patterns: [
         { from: "config", to: "config" },
         { from: "intiface", to: "intiface" },
+        { from: "README.md", to: "README.md" },
       ],
     }),
   ],
