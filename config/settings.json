@@ -1,13 +1,13 @@
 {
     "vtuber": {
-        "protocol": "vtubestudio", // placeholder
+        "protocol": "vtubestudio",
         "host": "localhost",
         "port": 8001
     },
     "intiface": {
-        "use-local": true, // set to false to use Intiface Central instead of the embedded Intiface Engine
+        "use-local": true,
         "host": "127.0.0.1",
         "port": 54817,
-        "vibration_multiplier": 1 // placeholder
+        "vibration_multiplier": 1
     }
 }
