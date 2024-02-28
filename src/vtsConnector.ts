@@ -35,11 +35,14 @@ var apiClient: ApiClient;
 function connectVTubeStudio(host, port) {
     options.url = `ws://${host}:${port}`;
     apiClient = new ApiClient(options);
-    apiClient.on("connect", () => console.log("Connected to VTubeStudio!"));
+    apiClient.on("connect", () => {
+        console.log("Connected to VTubeStudio!");
+        addParam();
+    });
     apiClient.on("error", (e: string) => {
         errorHalt("VTubeStudio connection failed or dropped", ExitCode.VtuberConnectionFailed, new Error(e));
     });
-    addParam();
+    
     return apiClient;
 }
 
