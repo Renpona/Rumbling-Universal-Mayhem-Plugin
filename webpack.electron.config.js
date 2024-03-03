@@ -32,6 +32,7 @@ module.exports = [
           { from: "intiface", to: "intiface" },
           { from: "README.md", to: "README.md" },
           { from: "src/electron/index.html", to: "index.html" },
+          { from: "src/electron/style.css", to: "style.css" },
         ],
       }),
     ],

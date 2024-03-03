@@ -1,6 +1,8 @@
-import { ApiClient } from "vtubestudio";
-import { ExitCode } from "./errorCodes";
+import { ApiClient, VTubeStudioError } from "vtubestudio";
+import { ConnectionStatus, ExitCode, FormType } from "./enums";
 import { errorHalt, pluginName } from "./utils";
+import { updateStatus } from "./electron/electronMain";
+import { cancelUpdate } from "./intifaceConnector";
 
 // CommonJS/Require
 const fs = require("node:fs");
@@ -37,10 +39,12 @@ function connectVTubeStudio(host, port) {
     apiClient = new ApiClient(options);
     apiClient.on("connect", () => {
         console.log("Connected to VTubeStudio!");
+        updateStatus(FormType.Vtuber, ConnectionStatus.Connected, "VTubeStudio connected!");
         addParam();
     });
     apiClient.on("error", (e: string) => {
-        errorHalt("VTubeStudio connection failed or dropped", ExitCode.VtuberConnectionFailed, new Error(e));
+        updateStatus(FormType.Vtuber, ConnectionStatus.Error, "VTubeStudio disconnected with error: \n" + e);
+        //errorHalt("VTubeStudio connection failed or dropped", ExitCode.VtuberConnectionFailed, new Error(e));
     });
     
     return apiClient;
@@ -92,8 +96,10 @@ function sendParamValue(param: string, value: number) {
     }
     apiClient
         .injectParameterData(paramData)
-        .catch((e) => {
-            console.error("Failed to send param data %s:", param, e.errorID, e.message);
+        .catch((e: VTubeStudioError) => {
+            console.error("Failed to send param data %s:", param, e.data.message);
+            updateStatus(FormType.Vtuber, ConnectionStatus.Error, "VTubeStudio connection error: Code " + e.data.errorID.toString() + "\n" + e.data.message);
+            cancelUpdate();
         });
 }
 

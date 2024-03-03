@@ -6,7 +6,7 @@ import { WebSocket } from "ws";
 import { ApiClient } from "vtubestudio";
 import { intifaceEvent, startIntifaceEngine } from "./engineManager";
 import { ChildProcess } from "child_process";
-import { ExitCode } from "./errorCodes";
+import { ExitCode } from "./enums";
 import { IntifaceSettings, Settings } from "./types";
 import { sendDefaultsToUi } from "./electron/electronMain";
 

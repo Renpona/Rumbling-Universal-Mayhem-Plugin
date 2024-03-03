@@ -3,6 +3,7 @@ import { Settings, VtuberSettings } from '../types';
 import { connectVTubeStudio } from '../vtsConnector';
 import path from 'node:path';
 import { parseSettings } from '../startup';
+import { ConnectionStatus, FormType } from '../enums';
 
 var mainWindow: BrowserWindow; 
 
@@ -43,4 +44,9 @@ function handleVtuberConnect(event, vtuberSettings: VtuberSettings) {
     connectVTubeStudio(vtuberSettings.host, vtuberSettings.port);
 }
 
-export { sendDefaultsToUi };
+function updateStatus(category: FormType, state: ConnectionStatus, message: string) {
+    console.log("sending status to renderer");
+    mainWindow.webContents.send("status", category, state, message);
+}
+
+export { sendDefaultsToUi, updateStatus };

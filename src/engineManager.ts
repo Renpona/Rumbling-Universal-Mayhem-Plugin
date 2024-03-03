@@ -20,10 +20,12 @@ function startIntifaceEngine() {
 }
 
 function detectIntifaceReady(data: string | Buffer) {
-    console.log(data);
+    // TODO: bring back intiface console logging of some kind once I've added a logging library, this is just way too verbose otherwise
+    //console.log(data);
     let message: string = data.toString();
     let regex = /:websocket_server_comm_manager.*Listening on:/;
     if (message.match(regex)) {
+        console.log("Intiface started!");
         intifaceEvent.emit("ready");
     } 
 }

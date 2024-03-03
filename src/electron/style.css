@@ -1,0 +1,11 @@
+.hidden {
+    display: none;
+}
+
+.connected {
+    color: rgb(33, 187, 33)
+}
+
+.error {
+    color: rgb(205, 33, 33)
+}
