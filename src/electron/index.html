@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
@@ -12,19 +13,21 @@
 
 <body>
     <div class="intiface">
-        <form id="intifaceForm">
+        <form id="intifaceForm" class="form disconnected">
             <input type="text" name="host" id="intifaceHost" class="hidden">
             <input type="text" name="port" id="intifacePort" class="hidden">
-            <input type="submit" value="Connect" id="intifaceConnect" class="hidden"><br/>
+            <input type="submit" value="Connect" class="connectButton" id="intifaceConnect" class="hidden"><br/>
+            <input type="submit" value="Disconnect" class="disconnectButton" id="intifaceConnect" class="hidden"><br/>
             <span class="status">Intiface not connected!</span>
         </form>
     </div>
     <p>&nbsp;</p>
     <div class="vtuber">
-        <form id="vtuberForm">
+        <form id="vtuberForm" class="form disconnected">
             <label>Host: </label><input type="text" name="host" id="vtuberHost">
             <label>Port: </label><input type="text" name="port" id="vtuberPort">
-            <input type="submit" value="Connect" id="vtuberConnect"><br/>
+            <input type="submit" value="Connect" class="connectButton" id="vtuberConnect"><br/>
+            <input type="submit" value="Disconnect" class="disconnectButton" id="vtuberConnect"><br/>
             <span class="status">Vtuber not connected!</span>
         </form>
     </div>

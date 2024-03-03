@@ -8,7 +8,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onUpdateStatus: (callback) => ipcRenderer.on('status', (_event, category, state, message) => callback(category, state, message)),
     
     // send data from renderer process to main
-    vtuberConnect: (vtuberSettings: VtuberSettings) => ipcRenderer.send('vtuberConnect', vtuberSettings)
+    vtuberConnect: (vtuberSettings: VtuberSettings) => ipcRenderer.send('vtuberConnect', vtuberSettings),
+    vtuberDisconnect: () => ipcRenderer.send('vtuberDisconnect')
 })
 
 console.log("preload loaded");

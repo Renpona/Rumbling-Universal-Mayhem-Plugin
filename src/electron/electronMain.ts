@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
 import { Settings, VtuberSettings } from '../types';
-import { connectVTubeStudio } from '../vtsConnector';
+import { connectVTubeStudio, disconnectVtubeStudio } from '../vtsConnector';
 import path from 'node:path';
 import { parseSettings } from '../startup';
 import { ConnectionStatus, FormType } from '../enums';
@@ -24,6 +24,7 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow();
     ipcMain.on('vtuberConnect', handleVtuberConnect);
+    ipcMain.on('vtuberDisconnect', handleVtuberDisconnect);
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -40,8 +41,12 @@ function sendDefaultsToUi(settings: Settings) {
     mainWindow.webContents.send('settings', settings);
 }
 
-function handleVtuberConnect(event, vtuberSettings: VtuberSettings) {
+function handleVtuberConnect(_event: IpcMainEvent, vtuberSettings: VtuberSettings) {
     connectVTubeStudio(vtuberSettings.host, vtuberSettings.port);
+}
+
+function handleVtuberDisconnect(_event: IpcMainEvent) {
+    disconnectVtubeStudio();
 }
 
 function updateStatus(category: FormType, state: ConnectionStatus, message: string) {

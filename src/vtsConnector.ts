@@ -46,8 +46,16 @@ function connectVTubeStudio(host, port) {
         updateStatus(FormType.Vtuber, ConnectionStatus.Error, "VTubeStudio disconnected with error: \n" + e);
         //errorHalt("VTubeStudio connection failed or dropped", ExitCode.VtuberConnectionFailed, new Error(e));
     });
+    apiClient.on("disconnect", () => {
+        updateStatus(FormType.Vtuber, ConnectionStatus.Disconnected, "Disconnected from VTubeStudio");
+        //errorHalt("VTubeStudio connection failed or dropped", ExitCode.VtuberConnectionFailed, new Error(e));
+    });
     
     return apiClient;
+}
+
+function disconnectVtubeStudio() {
+    apiClient.disconnect();
 }
 
 function addParam() {
@@ -103,4 +111,4 @@ function sendParamValue(param: string, value: number) {
         });
 }
 
-export { connectVTubeStudio, sendParamValue }
+export { connectVTubeStudio, disconnectVtubeStudio, sendParamValue }
