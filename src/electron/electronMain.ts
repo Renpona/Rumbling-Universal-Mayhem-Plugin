@@ -6,14 +6,6 @@ import { parseSettings } from '../startup';
 
 var mainWindow: BrowserWindow; 
 
-function sendDefaultsToUi(settings: Settings) {
-    mainWindow.webContents.send('settings', settings);
-}
-
-function handleVtuberConnect(event, vtuberSettings: VtuberSettings) {
-    connectVTubeStudio(vtuberSettings.host, vtuberSettings.port);
-}
-
 function createWindow() {
     const win = new BrowserWindow({
         width: 1280,
@@ -42,5 +34,13 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
+
+function sendDefaultsToUi(settings: Settings) {
+    mainWindow.webContents.send('settings', settings);
+}
+
+function handleVtuberConnect(event, vtuberSettings: VtuberSettings) {
+    connectVTubeStudio(vtuberSettings.host, vtuberSettings.port);
+}
 
 export { sendDefaultsToUi };
