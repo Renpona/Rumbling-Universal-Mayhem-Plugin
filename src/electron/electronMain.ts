@@ -6,7 +6,6 @@ import { parseSettings } from '../startup';
 
 var mainWindow: BrowserWindow; 
 
-
 function sendDefaultsToUi(settings: Settings) {
     mainWindow.webContents.send('settings', settings);
 }
@@ -24,9 +23,9 @@ function createWindow() {
         }
     });
 
-    win.loadFile(path.join(__dirname, "/index.html"));
+    win.loadFile(path.join(__dirname, "/index.html"))
+        .then(parseSettings);
     mainWindow = win;
-    parseSettings();
 }
 
 app.whenReady().then(() => {
