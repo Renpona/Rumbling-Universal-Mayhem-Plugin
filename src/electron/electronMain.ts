@@ -50,7 +50,7 @@ function handleVtuberDisconnect(_event: IpcMainEvent) {
 }
 
 function updateStatus(category: FormType, state: ConnectionStatus, message: string) {
-    console.log("sending status to renderer");
+    console.log("UpdateStatus target %s, state %s, message %s", category, state, message);
     mainWindow.webContents.send("status", category, state, message);
 }
 

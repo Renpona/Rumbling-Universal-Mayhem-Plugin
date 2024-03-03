@@ -14,6 +14,7 @@ enum FormType {
 
 enum ConnectionStatus {
     NotConnected = "Not Connected",
+    Connecting = "Connecting",
     Connected = "Connected",
     Disconnected = "Disconnected",
     Error = "Error"

@@ -56,7 +56,7 @@ var connectionState = {
 
 
 function displayStatus(category: FormType, state: ConnectionStatus, message: string) {
-    console.log("update %s connection status, state %s, message %s", category, state, message);
+    //console.log("update %s connection status, state %s, message %s", category, state, message);
     let targetForm: HTMLSpanElement = document.querySelector("#" + category + "Form");
     let targetElement: HTMLSpanElement = document.querySelector("#" + category + "Form > .status");
     targetElement.innerText = message;
@@ -64,9 +64,11 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
     targetElement.classList.remove("error");
     targetElement.classList.remove("disconnected");
     targetElement.classList.remove("connected");
+    targetElement.classList.remove("connecting");
     targetForm.classList.remove("error");
     targetForm.classList.remove("disconnected");
     targetForm.classList.remove("connected");
+    targetForm.classList.remove("connecting");
 
     switch (state) {
         case ConnectionStatus.Connected:
@@ -76,6 +78,10 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
         case ConnectionStatus.Error:
             targetElement.classList.add("error");
             targetForm.classList.add("error");
+            break;
+        case ConnectionStatus.Connecting:
+            targetElement.classList.add("connecting");
+            targetForm.classList.add("connecting");
             break;
         case ConnectionStatus.Disconnected:
         case ConnectionStatus.NotConnected:

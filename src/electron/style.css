@@ -1,8 +1,14 @@
+@import 'bulma.css';
+
 .hidden {
     display: none !important;
 }
 
 .form.connected > .connectButton {
+    display: none;
+}
+
+.form.connecting > .connectButton {
     display: none;
 }
 
@@ -16,6 +22,10 @@
 
 .form.connected > .disconnectButton {
     display: block;
+}
+
+.form.connecting > .disconnectButton {
+    display: none;
 }
 
 .form.disconnected > .disconnectButton {
