@@ -7,6 +7,8 @@ import { ApiClient } from "vtubestudio";
 import { intifaceEvent, startIntifaceEngine } from "./engineManager";
 import { ChildProcess } from "child_process";
 import { ExitCode } from "./errorCodes";
+import { IntifaceSettings, Settings } from "./types";
+import { sendDefaultsToUi } from "./electron/electronMain";
 
 var intifaceEngine: ChildProcess;
 var intifaceConnection: WebSocket;
@@ -23,34 +25,18 @@ function loadConfig() {
     return JSON.parse(settings);
 }
 
-type Settings = {
-    "vtuber": VtuberSettings;
-    "intiface": IntifaceSettings;
-}
-type VtuberSettings = {
-    "protocol": string;
-    "host": string;
-    "port": number;
-}
-type IntifaceSettings = {
-    "use-local": boolean;
-    "host": string;
-    "port": number;
-    "vibration_multiplier": number;
-}
-
 function parseSettings() {
     initIntiface();
-    initVtuber();
+    //initVtuber();
+    sendDefaultsToUi(settings);
 }
 
 const settings: Settings = loadConfig();
 console.log(settings);
-parseSettings();
 
 function initIntiface() {
     let intiface = settings.intiface;
-    if (intiface["use-local"]) {
+    if (intiface["useLocal"]) {
         initIntifaceEngine(intiface);
     } else {
         intifaceConnection = connectIntiface(intiface.host, intiface.port);
@@ -79,3 +65,5 @@ function shutdown() {
     vtsConnection.disconnect();
     process.exit(0);
 }
+
+export { parseSettings }

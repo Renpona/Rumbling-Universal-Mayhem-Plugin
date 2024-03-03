@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'" />
+    <script type="text/javascript" src="renderer.js"></script>
+    <title>VT Plug-in</title>
+</head>
+
+<body>
+    <div class="intiface" style="display:none">
+        <form id="intifaceForm">
+            <input type="text" name="ihost" id="intifaceHost">
+            <input type="text" name="iport" id="intifacePort">
+            <input type="submit" value="Connect" id="intifaceConnect">
+            <span class="status"></span>
+        </form>
+    </div>
+    <div class="vtuber">
+        <form id="vtuberForm">
+            <label>Host: </label><input type="text" name="vhost" id="vtuberHost">
+            <label>Port: </label><input type="text" name="vport" id="vtuberPort">
+            <input type="submit" value="Connect" id="vtuberConnect">
+            <span class="status"></span>
+        </form>
+    </div>
+</body>
+</html>
