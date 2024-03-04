@@ -6,6 +6,7 @@ module.exports = {
     asar: true,
     platform: 'win32',
     out: './out',
+    name: 'rump',
     overwrite: true,
     ignore: [ 
       '/auth-token',
@@ -16,6 +17,10 @@ module.exports = {
       '^/src',
       '^/config',
       '^/intiface'
+    ],
+    extraResource: [
+      "config",
+      "intiface"
     ]
   },
   rebuildConfig: {},

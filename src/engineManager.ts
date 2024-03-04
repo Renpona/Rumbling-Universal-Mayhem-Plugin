@@ -1,5 +1,6 @@
-import { ChildProcess, execFile } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import EventEmitter from 'node:events';
+import { resolveResource } from './utils';
 
 const intifaceEvent = new EventEmitter();
 const abortController = new AbortController();
@@ -9,12 +10,13 @@ const options = {
 const args = [
     '--server-name', 'RUMP', '--websocket-port', '12345', 
     '--use-device-websocket-server', '--use-bluetooth-le', 
-    '--user-device-config-file', 'config/vts-device-config.json', 
+    '--user-device-config-file', resolveResource('config/vts-device-config.json'), 
     '--log', 'debug'];
 
 function startIntifaceEngine() {
-    let engine = execFile('intiface/intiface-engine.exe', args, options, (error, stdout, stderr) => {
+    let engine = execFile(resolveResource('intiface/intiface-engine.exe'), args, options, (error, stdout, stderr) => {
         if (error) {
+            console.error(error);
             throw error;
         }
         console.log(stdout);

@@ -6,9 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.electron.config.js",
-    "preprocess": "npm run build",
-    "process": "electron-packager . RUMP --platform win32 --out ./out --overwrite",
-    "run": "out\\RUMP-win32-x64\\RUMP.exe",
+    "prepackage": "npm run build",
+    "run": "out\\rump-win32-x64\\rump.exe",
     "package": "electron-forge package",
     "start": "electron-forge start",
     "make": "electron-forge make"

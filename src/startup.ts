@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 import { connectIntiface } from "./intifaceConnector";
 import { connectVTubeStudio } from "./vtsConnector";
-import { errorHalt, pluginName } from "./utils";
+import { errorHalt, pluginName, resolveResource } from "./utils";
 import { WebSocket } from "ws";
 import { ApiClient } from "vtubestudio";
 import { intifaceEvent, startIntifaceEngine } from "./engineManager";
@@ -18,7 +18,7 @@ function loadConfig() {
     const fileName = "settings.json";
     let settings: string;
     try {
-        settings = fs.readFileSync(`./config/${fileName}`, "utf-8");
+        settings = fs.readFileSync(resolveResource(`config/${fileName}`), "utf-8");
     } catch(e) {
         errorHalt(`Reading config file ${fileName} failed.`, ExitCode.ConfigReadFailed, e);
     }
