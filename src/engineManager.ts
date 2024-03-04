@@ -6,7 +6,11 @@ const abortController = new AbortController();
 const options = {
     signal: abortController.signal
 }
-const args = ['--websocket-port', '12345', '--use-device-websocket-server','--user-device-config-file', 'config/vts-device-config.json','--log','debug'];
+const args = [
+    '--server-name', 'RUMP', '--websocket-port', '12345', 
+    '--use-device-websocket-server', '--use-bluetooth-le', 
+    '--user-device-config-file', 'config/vts-device-config.json', 
+    '--log', 'debug'];
 
 function startIntifaceEngine() {
     let engine = execFile('intiface/intiface-engine.exe', args, options, (error, stdout, stderr) => {
@@ -21,7 +25,7 @@ function startIntifaceEngine() {
 
 function detectIntifaceReady(data: string | Buffer) {
     // TODO: bring back intiface console logging of some kind once I've added a logging library, this is just way too verbose otherwise
-    //console.log(data);
+    console.log(data);
     let message: string = data.toString();
     let regex = /:websocket_server_comm_manager.*Listening on:/;
     if (message.match(regex)) {

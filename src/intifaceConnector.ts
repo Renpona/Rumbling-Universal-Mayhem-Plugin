@@ -13,7 +13,7 @@ const identifier = {
     "version": 0
 };
 
-function connectIntiface(host, port) {
+function connectIntiface(host: string, port: number) {
     console.log("Trying to connect to Intiface...");
     const ws = new WebSocket(`ws://${host}:${port}`);
 
