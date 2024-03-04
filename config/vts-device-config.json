@@ -8,7 +8,7 @@
             "tcode-v03": {
                 "websocket": {
                     "names": [
-                        "VTCursed"
+                        "Rumbling Universal Mayhem Plugin"
                     ]
                 },
                 "configurations": [
@@ -16,7 +16,7 @@
                         "identifier": [
                           "V9T8S7"
                         ],
-                        "name": "VTCursed"
+                        "name": "Rumbling Universal Mayhem Plugin"
                       }
                 ]
             }
@@ -26,7 +26,7 @@
                 "identifier": {
                     "address": "V9T8S7",
                     "protocol": "tcode-v03",
-                    "identifier": "VTCursed"
+                    "identifier": "Rumbling Universal Mayhem Plugin"
                 },
                 "config": {
                     "index": 0,

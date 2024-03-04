@@ -1,4 +1,4 @@
-const pluginName = "VTCursed";
+const pluginName = "Rumbling Universal Mayhem Plugin";
 
 function errorHalt(message: string, exitCode = 1, error?: Error) {
     console.error(message);
