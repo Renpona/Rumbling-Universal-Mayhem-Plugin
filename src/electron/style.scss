@@ -5,10 +5,15 @@
     margin-right: auto;
 }
 
+html {
+    overflow: auto;
+}
+
 body {
     width: 80%;
     min-width: 200px;
     @include center;
+    padding-top: 10px;
 }
 
 .hidden {

@@ -10,11 +10,12 @@ var mainWindow: BrowserWindow;
 function createWindow() {
     const win = new BrowserWindow({
         width: 800,
-        height: 600,
+        height: 610,
         webPreferences: {
             preload: path.join(__dirname, "/electronPreload.js")
         }
     });
+    if (app.isPackaged) win.removeMenu();
 
     win.loadFile(path.join(__dirname, "/index.html"))
         .then(parseSettings);
