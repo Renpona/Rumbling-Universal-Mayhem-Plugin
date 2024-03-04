@@ -1,7 +1,8 @@
 import WebSocket from 'ws';
 import { errorHalt, pluginName } from './utils';
 import { sendParamValue } from './vtsConnector';
-import { ExitCode } from './errorCodes';
+import { ConnectionStatus, ExitCode, FormType } from './enums';
+import { updateStatus } from './electron/electronMain';
 
 //const ws = new WebSocket('ws://127.0.0.1:54817');
 
@@ -12,7 +13,7 @@ const identifier = {
     "version": 0
 };
 
-function connectIntiface(host, port) {
+function connectIntiface(host: string, port: number) {
     console.log("Trying to connect to Intiface...");
     const ws = new WebSocket(`ws://${host}:${port}`);
 
@@ -21,8 +22,7 @@ function connectIntiface(host, port) {
     ws.on('close', function close(code, reason) {
         console.log("Disconnected from Intiface!");
         console.error(reason.toString());
-        clearInterval(updateTimer);
-        updateTimer = null;
+        cancelUpdate();
         // TODO: remove this once the ability to reconnect has been added
         errorHalt("Intiface connection lost", ExitCode.Standard);
     });
@@ -31,6 +31,7 @@ function connectIntiface(host, port) {
         let handshake = JSON.stringify(identifier);
         console.log("Connected to Intiface!");
         console.log('\n\nsent: %s', handshake);
+        updateStatus(FormType.Intiface, ConnectionStatus.Connected, "Intiface connected!");
         ws.send(handshake);
     });
 
@@ -92,4 +93,9 @@ function update() {
     if (state.vibrateValue != null) sendParamValue("Vibrate", state.vibrateValue);
 }
 
-export { connectIntiface };
+function cancelUpdate() {
+    clearInterval(updateTimer);
+    updateTimer = null;
+}
+
+export { connectIntiface, cancelUpdate };

@@ -5,7 +5,7 @@
         "port": 8001
     },
     "intiface": {
-        "use-local": true,
+        "useLocal": true,
         "host": "127.0.0.1",
         "port": 54817,
         "vibration_multiplier": 1

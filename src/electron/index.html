@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+    <script type="text/javascript" src="renderer.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <title>Rumbling Universal Mayhem Plugin</title>
+</head>
+
+<body>
+    <div class="intiface">
+        <h4 class="title is-4">Intiface Connection</h4>
+        <form id="intifaceForm" class="form disconnected container">
+            <input type="text" name="host" id="intifaceHost" class="hidden" required />
+            <input type="text" name="port" id="intifacePort" class="hidden" max="65535" required />
+            <div class="message">
+                <!--<div class="message-header">Intiface Status</div>-->
+                <div class="status message-body">Intiface not connected!</div>
+            </div>
+            <button type="submit" value="Connect" class="button connectButton hidden" id="intifaceConnect">Connect</button>
+            <button type="submit" value="Disconnect" class="button disconnectButton hidden" id="intifaceConnect">Disconnect</button><br/>
+        </form>
+    </div>
+    <br/>
+    <div class="vtuber">
+        <h4 class="title is-4">VTuber Software Connection</h4>
+        <form id="vtuberForm" class="form disconnected container">
+            <div class="field is-horizontal">
+                <div class="field">
+                    <label class="field-label">Host: </label>
+                    <div class="field-body">
+                        <div class="control">
+                            <input type="text" name="host" id="vtuberHost" class="input" value="localhost" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label">Port: </label>
+                    <div class="field-body">
+                        <div class="control">
+                            <input type="text" name="port" id="vtuberPort" class="input" value="8001" max="65535" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message">
+                <!--<div class="message-header">VTuber Connection Status</div>-->
+                <div class="status message-body">Vtuber not connected!</div>
+            </div>
+            <div class="field">
+                <button type="submit" value="Connect" class="button connectButton" id="vtuberConnect">Connect</button>
+                <button type="submit" value="Disconnect" class="button disconnectButton" id="vtuberConnect">Disconnect</button>
+            </div><br/>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+@import 'bulma/bulma';
+
+@mixin center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+html {
+    overflow: auto;
+}
+
+body {
+    width: 80%;
+    min-width: 200px;
+    @include center;
+    padding-top: 10px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+button.connectButton {
+    @extend .is-success;
+}
+
+button.disconnectButton {
+    @extend .is-danger;
+}
+
+.form.connected {
+    .connectButton {
+        display: none;
+    }
+    .disconnectButton {
+        display: block;
+    }
+}
+
+.form.connecting {
+    .connectButton {
+        display: block;
+        @extend %loader;
+    }
+    .disconnectButton {
+        display: none;
+    }
+}
+
+.form.disconnected {
+    .connectButton {
+        display: block;
+    }
+    .disconnectButton {
+        display: none;
+    }
+}
+
+.form.error {
+    .connectButton {
+        display: block;
+    }
+    .disconnectButton {
+        display: none;
+    }
+}
+
+.connected {
+    @extend .is-success;
+    //color: rgb(33, 187, 33)
+}
+
+.error {
+    @extend .is-danger;
+    //color: rgb(205, 33, 33)
+}
