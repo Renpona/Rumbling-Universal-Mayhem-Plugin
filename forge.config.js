@@ -8,11 +8,14 @@ module.exports = {
     out: './out',
     overwrite: true,
     ignore: [ 
-      '/^((?!(dist|package|LICENSE|README)).)*$',
       '/auth-token',
       'tsconfig',
       'webpack',
       'forge',
+      '.gitignore',
+      '^/src',
+      '^/config',
+      '^/intiface'
     ]
   },
   rebuildConfig: {},
