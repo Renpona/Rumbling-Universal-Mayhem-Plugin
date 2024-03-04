@@ -15,4 +15,4 @@ When the plugin is connected to VTubeStudio, it will add "Vibrate" and "Linear" 
 In VTubeStudio, create a new parameter mapping to connect these INPUT parameters to one of your avatar's Live2D OUTPUT parameters. (more info about parameter setup available in the [VTubeStudio Manual](https://github.com/DenchiSoft/VTubeStudio/wiki/VTS-Model-Settings#vts-parameter-setup)). The Intiface Game Haptics Router and most other game mods will only use the "Vibrate" parameter.
 
 ## Settings
-In the `config` folder, you will find a file `settings.json`. Here you can set the default hostname and port for your Vtuber software.
+In the `resources/config` folder, you will find a file `settings.json`. Here you can set the default hostname and port for your Vtuber software.
