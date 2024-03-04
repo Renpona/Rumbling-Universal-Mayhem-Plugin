@@ -9,8 +9,8 @@ var mainWindow: BrowserWindow;
 
 function createWindow() {
     const win = new BrowserWindow({
-        width: 1280,
-        height: 1024,
+        width: 800,
+        height: 600,
         webPreferences: {
             preload: path.join(__dirname, "/electronPreload.js")
         }

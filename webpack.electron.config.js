@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = [
   {
@@ -32,7 +33,6 @@ module.exports = [
           { from: "intiface", to: "intiface" },
           { from: "README.md", to: "README.md" },
           { from: "src/electron/index.html", to: "index.html" },
-          { from: "src/electron/style.css", to: "style.css" },
         ],
       }),
     ],
@@ -79,11 +79,32 @@ module.exports = [
           use: 'ts-loader',
           exclude: /node_modules/,
         },
+        {
+          test: /\.s[ac]ss$/i,
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: true,
+                // options...
+              }
+            }
+          ]
+        },
       ],
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
     },
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: 'style.css'
+      }),
+    ]
   },
   {
     output: {

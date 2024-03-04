@@ -1,5 +1,6 @@
 import { ConnectionStatus, FormType } from "../enums";
 import { Settings, VtuberSettings } from "../types";
+import "./style.scss";
 
 if (document.readyState === "loading") {
     // Loading hasn't finished yet
@@ -48,44 +49,31 @@ function populateDefaults(settings: Settings) {
     document.querySelector<HTMLInputElement>("#vtuberPort").value = settings.vtuber.port.toString();
 }
 
-var connectionState = {
-    intiface: false,
-    vtuber: false
-};
-
-
-
 function displayStatus(category: FormType, state: ConnectionStatus, message: string) {
     //console.log("update %s connection status, state %s, message %s", category, state, message);
-    let targetForm: HTMLSpanElement = document.querySelector("#" + category + "Form");
-    let targetElement: HTMLSpanElement = document.querySelector("#" + category + "Form > .status");
+    let targetForm: HTMLFormElement = document.querySelector("#" + category + "Form");
+    let targetElement: HTMLElement = document.querySelector("#" + category + "Form .status");
     targetElement.innerText = message;
 
-    targetElement.classList.remove("error");
-    targetElement.classList.remove("disconnected");
-    targetElement.classList.remove("connected");
-    targetElement.classList.remove("connecting");
-    targetForm.classList.remove("error");
-    targetForm.classList.remove("disconnected");
-    targetForm.classList.remove("connected");
-    targetForm.classList.remove("connecting");
+    targetForm.classList.remove("error", "disconnected", "connected", "connecting");
+    targetElement.parentElement.classList.remove("error", "disconnected", "connected", "connecting");
 
     switch (state) {
         case ConnectionStatus.Connected:
-            targetElement.classList.add("connected");
+            targetElement.parentElement.classList.add("connected");
             targetForm.classList.add("connected");
             break;
         case ConnectionStatus.Error:
-            targetElement.classList.add("error");
+            targetElement.parentElement.classList.add("error");
             targetForm.classList.add("error");
             break;
         case ConnectionStatus.Connecting:
-            targetElement.classList.add("connecting");
+            targetElement.parentElement.classList.add("connecting");
             targetForm.classList.add("connecting");
             break;
         case ConnectionStatus.Disconnected:
         case ConnectionStatus.NotConnected:
-            targetElement.classList.add("disconnected");
+            targetElement.parentElement.classList.add("disconnected");
             targetForm.classList.add("disconnected");
             break;
         default:
