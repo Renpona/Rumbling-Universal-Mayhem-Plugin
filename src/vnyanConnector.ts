@@ -2,7 +2,6 @@ import { WebSocket } from "ws";
 import { ConnectionStatus, FormType, Protocol } from "./enums";
 import { VtuberSoftware } from "./types";
 import { updateStatus } from "./electron/electronMain";
-import { cancelUpdate } from "./intifaceConnector";
 
 /*
 
@@ -45,14 +44,12 @@ class ConnectorVnyan implements VtuberSoftware {
             console.log(`Disconnected from ${connector.software} for reason ${reason}`);
             updateStatus(category, ConnectionStatus.Disconnected, `Disconnected from ${connector.software}`);
             connector.isConnected = false;
-            cancelUpdate();
         });
 
         this.ws.on("error", function error(error) {
             console.error(`Connection to ${connector.software} experienced error ${error}`);
             updateStatus(category, ConnectionStatus.Error, `${connector.software} disconnected with error: \n${error}`);
             connector.isConnected = false;
-            cancelUpdate();
         });
     }
 

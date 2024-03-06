@@ -2,7 +2,6 @@ import { ApiClient, VTubeStudioError } from "vtubestudio";
 import { ConnectionStatus, FormType, Protocol } from "./enums";
 import { pluginName } from "./utils";
 import { updateStatus } from "./electron/electronMain";
-import { cancelUpdate } from "./intifaceConnector";
 import ws from "ws";
 import { VtuberSoftware } from "./types";
 
@@ -54,19 +53,21 @@ class ConnectorVtubestudio implements VtuberSoftware {
         });
         this.apiClient.on("error", (e: string) => {
             updateStatus(category, ConnectionStatus.Error, `${name} disconnected with error: \n${e}`);
+            if (this.apiClient.isConnected) this.disconnect();
             this.isConnected = false;
+            this.endParamRefresher();
             clearTimeout(timer);
-            cancelUpdate();
         });
         this.apiClient.on("disconnect", () => {
             updateStatus(category, ConnectionStatus.Disconnected, `Disconnected from ${name}`);
             this.isConnected = false;
+            this.endParamRefresher();
             clearTimeout(timer);
-            cancelUpdate();
         });
     }
 
     public disconnect() {
+        this.endParamRefresher();
         this.apiClient.disconnect();
     }
 
@@ -79,15 +80,49 @@ class ConnectorVtubestudio implements VtuberSoftware {
                     "value": value,
                 }
             ]
-        }
+        };
         this.apiClient
             .injectParameterData(paramData)
             .catch((e: VTubeStudioError) => {
                 console.error("Failed to send param data %s:", param, e.data.message);
                 updateStatus(category, ConnectionStatus.Error, "VTubeStudio connection error: Code " + e.data.errorID.toString() + "\n" + e.data.message);
-                cancelUpdate();
-            });
+            })
+            .then(this.startParamRefresher());
+
+        this.paramState[param] = value;
     };
+
+    private updateTimer: NodeJS.Timeout;
+    private paramState = {
+        "Linear": null,
+        "Vibrate": null
+    }
+
+    /**
+     * Tracking data sent by VTS expires after 1 second, so these need to be resent frequently to maintain their state.
+     * So we keep resending the last received values, if any. If the last received value is 0, then we clear the state so we don't keep constantly resending 0.
+     */
+    private startParamRefresher() {
+        if (!this.updateTimer) {
+            this.updateTimer = setInterval(() => {
+                this.paramRefresh();
+            }, 600);
+        };
+        return null;
+    }
+
+    private paramRefresh() {
+        let state = this.paramState;
+        if (state.Linear != null) this.sendData("Linear", state.Linear);
+        if (state.Vibrate != null) this.sendData("Vibrate", state.Vibrate);
+        if (state.Linear == 0) this.paramState.Linear = null;
+        if (state.Vibrate == 0) this.paramState.Vibrate = null;
+    }
+
+    private endParamRefresher() {
+        clearInterval(this.updateTimer);
+        this.updateTimer = null;
+    }
 
     private setAuthToken(authenticationToken) {
         // store the authentication token somewhere
