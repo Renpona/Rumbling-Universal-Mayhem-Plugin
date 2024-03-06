@@ -12,6 +12,12 @@ enum FormType {
     Vtuber = "vtuber"
 }
 
+enum Protocol {
+    VtubeStudio = "VTubeStudio",
+    Vnyan = "VNyan",
+    Warudo = "Warudo"
+}
+
 enum ConnectionStatus {
     NotConnected = "Not Connected",
     Connecting = "Connecting",
@@ -20,4 +26,4 @@ enum ConnectionStatus {
     Error = "Error"
 }
 
-export { ExitCode, FormType, ConnectionStatus };
+export { ExitCode, FormType, Protocol, ConnectionStatus };

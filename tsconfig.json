@@ -2,14 +2,14 @@
     "compilerOptions": {
         "outDir": "./dist",
         "esModuleInterop": true,
+        "target": "ES2022",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "resolveJsonModule": true,
         "sourceMap": true,
     },
     "exclude": [
         "node_modules",
     ],
-    "modules": {
-        "moduleResolution": "nodeNext"
-    },
     "include": [ "./src/**/*", "./src/electron/**/*" ]
 }

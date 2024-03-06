@@ -27,9 +27,30 @@ function addEvents() {
         if (event.submitter.classList.contains("disconnectButton")) {
             submitVtuberDisconnect();
         } else {
+            let protocol = document.querySelector<HTMLSelectElement>("#vtuberProtocol").value;
             let host = document.querySelector<HTMLInputElement>("#vtuberHost").value;
             let port = document.querySelector<HTMLInputElement>("#vtuberPort").value;
-            submitVtuberConnection(host as string, parseInt(port as string));
+            submitVtuberConnection(protocol as string, host as string, parseInt(port as string));
+        }
+    });
+
+    document.querySelector("#vtuberProtocol").addEventListener("input", (event: InputEvent) => {
+        let element = event.target as HTMLSelectElement;
+        let protocol = element.value;
+        let portField = document.querySelector<HTMLInputElement>("#vtuberPort");
+        switch (protocol.toLowerCase()) {
+            case "vtubestudio":
+                portField.value = "8001";
+                break;
+            case "vnyan":
+                portField.value = "8000";
+                break;
+            case "warudo":
+                portField.value = "19190";
+                break;
+            default:
+                console.error("Unexpected vtuber protocol: %s", protocol);
+                break;
         }
     });
     
@@ -47,6 +68,7 @@ function populateDefaults(settings: Settings) {
     document.querySelector<HTMLInputElement>("#intifacePort").value = settings.intiface.port.toString();
     document.querySelector<HTMLInputElement>("#vtuberHost").value = settings.vtuber.host;
     document.querySelector<HTMLInputElement>("#vtuberPort").value = settings.vtuber.port.toString();
+    // TODO: add behavior for feeding in protocol selection here
 }
 
 function displayStatus(category: FormType, state: ConnectionStatus, message: string) {
@@ -91,7 +113,7 @@ function submitIntifaceConnection(host: string, port: number) {
     return null;
 }
 
-function submitVtuberConnection(host: string, port: number, protocol = "vtubestudio") {
+function submitVtuberConnection(protocol: string, host: string, port: number) {
     let settings: VtuberSettings = {
         protocol: protocol,
         host: host,

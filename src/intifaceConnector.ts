@@ -1,8 +1,8 @@
 import WebSocket from 'ws';
 import { errorHalt, pluginName } from './utils';
-import { sendParamValue } from './vtsConnector';
 import { ConnectionStatus, ExitCode, FormType } from './enums';
 import { updateStatus } from './electron/electronMain';
+import { sendVtuberParamData } from './startup';
 
 //const ws = new WebSocket('ws://127.0.0.1:54817');
 
@@ -22,7 +22,6 @@ function connectIntiface(host: string, port: number) {
     ws.on('close', function close(code, reason) {
         console.log("Disconnected from Intiface!");
         console.error(reason.toString());
-        cancelUpdate();
         // TODO: remove this once the ability to reconnect has been added
         errorHalt("Intiface connection lost", ExitCode.Standard);
     });
@@ -48,10 +47,6 @@ function connectIntiface(host: string, port: number) {
         state.vibrateValue = vibrateValue;
 
         update();
-
-        if (!updateTimer) {
-            updateTimer = setInterval(update, 600);
-        };
     });
 
     return ws;
@@ -87,15 +82,9 @@ var state = {
     vibrateValue: 0
 };
 
-// VTubeStudio needs param values to be resent every <1sec
 function update() {
-    if (state.linearValue != null) sendParamValue("Linear", state.linearValue);
-    if (state.vibrateValue != null) sendParamValue("Vibrate", state.vibrateValue);
+    if (state.linearValue != null) sendVtuberParamData("Linear", state.linearValue);
+    if (state.vibrateValue != null) sendVtuberParamData("Vibrate", state.vibrateValue);
 }
 
-function cancelUpdate() {
-    clearInterval(updateTimer);
-    updateTimer = null;
-}
-
-export { connectIntiface, cancelUpdate };
+export { connectIntiface };

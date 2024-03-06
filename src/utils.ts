@@ -1,5 +1,6 @@
 import { app } from "electron";
 import path from "path";
+import { Protocol } from "./enums";
 
 const pluginName = "Rumbling Universal Mayhem Plugin";
 
@@ -17,4 +18,23 @@ function resolveResource(target: string) {
     }
 }
 
-export { pluginName, errorHalt, resolveResource };
+function resolveProtocol(protocol: string): Protocol {
+    let result: Protocol;
+    switch (protocol.toLowerCase()) {
+        case "vtubestudio":
+            result = Protocol.VtubeStudio;
+            break;
+        case "vnyan":
+            result = Protocol.Vnyan;
+            break;
+        case "warudo":
+            result = Protocol.Warudo;
+            break;
+        default:
+            console.error("Called resolveProtocol on unknown protocol: %s", protocol);
+            break;
+    }
+    return result;
+}
+
+export { pluginName, errorHalt, resolveResource, resolveProtocol };
