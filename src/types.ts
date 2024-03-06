@@ -1,3 +1,5 @@
+import { Protocol } from "./enums";
+
 type Settings = {
     vtuber: VtuberSettings;
     intiface: IntifaceSettings;
@@ -14,4 +16,12 @@ type IntifaceSettings = {
     vibration_multiplier?: number;
 }
 
-export { Settings, VtuberSettings, IntifaceSettings }
+interface VtuberSoftware {
+    software: Protocol,
+    isConnected: boolean,
+    connect: (host: string, port: number) => void,
+    disconnect: () => void,
+    sendData: (param: string, value: number) => void,
+}
+
+export { Settings, VtuberSettings, IntifaceSettings, VtuberSoftware }

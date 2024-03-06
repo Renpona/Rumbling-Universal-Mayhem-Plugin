@@ -1,8 +1,8 @@
 import WebSocket from 'ws';
 import { errorHalt, pluginName } from './utils';
-import { sendParamValue } from './vtsConnector';
 import { ConnectionStatus, ExitCode, FormType } from './enums';
 import { updateStatus } from './electron/electronMain';
+import { sendVtuberParamData } from './startup';
 
 //const ws = new WebSocket('ws://127.0.0.1:54817');
 
@@ -89,8 +89,8 @@ var state = {
 
 // VTubeStudio needs param values to be resent every <1sec
 function update() {
-    if (state.linearValue != null) sendParamValue("Linear", state.linearValue);
-    if (state.vibrateValue != null) sendParamValue("Vibrate", state.vibrateValue);
+    if (state.linearValue != null) sendVtuberParamData("Linear", state.linearValue);
+    if (state.vibrateValue != null) sendVtuberParamData("Vibrate", state.vibrateValue);
 }
 
 function cancelUpdate() {

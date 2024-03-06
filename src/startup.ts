@@ -1,18 +1,21 @@
 const fs = require("node:fs");
 import { connectIntiface } from "./intifaceConnector";
-import { connectVTubeStudio } from "./vtsConnector";
 import { errorHalt, pluginName, resolveResource } from "./utils";
 import { WebSocket } from "ws";
 import { ApiClient } from "vtubestudio";
 import { intifaceEvent, startIntifaceEngine } from "./engineManager";
 import { ChildProcess } from "child_process";
-import { ExitCode } from "./enums";
-import { IntifaceSettings, Settings } from "./types";
-import { sendDefaultsToUi } from "./electron/electronMain";
+import { ConnectionStatus, ExitCode, FormType, Protocol } from "./enums";
+import { IntifaceSettings, Settings, VtuberSoftware } from "./types";
+import { sendDefaultsToUi, updateStatus } from "./electron/electronMain";
+import { ConnectorWarudo } from "./warudoConnector";
+import { ConnectorVnyan } from "./vnyanConnector";
+import { ConnectorVtubestudio } from "./vtsConnector";
 
 var intifaceEngine: ChildProcess;
 var intifaceConnection: WebSocket;
 var vtsConnection: ApiClient;
+var vtuberConnector: VtuberSoftware;
 
 function loadConfig() {
     const fileName = "settings.json";
@@ -27,7 +30,6 @@ function loadConfig() {
 
 function parseSettings() {
     initIntiface();
-    //initVtuber();
     sendDefaultsToUi(settings);
 }
 
@@ -49,14 +51,31 @@ function initIntifaceEngine(intiface: IntifaceSettings) {
     intifaceEngine = startIntifaceEngine();
 }
 
-function initVtuber() {
-    let vtuber = settings.vtuber;
-    if (vtuber.protocol == "vtubestudio") {
-        vtsConnection = connectVTubeStudio(vtuber.host, vtuber.port);
-    } else {
-        //TODO: other vtuber software
-        errorHalt("Only VTubeStudio is currently supported", ExitCode.IncorrectConfigValue);
+function connectVtuber(protocol: Protocol, host: string, port: number) {
+    switch (protocol) {
+        case Protocol.VtubeStudio:
+            vtuberConnector = new ConnectorVtubestudio();
+            break;
+        case Protocol.Vnyan:
+            vtuberConnector = new ConnectorVnyan();
+            break;
+        case Protocol.Warudo:
+            vtuberConnector = new ConnectorWarudo();
+            break;
+        default:
+            console.error("Unexpected vtuber protocol: %s", protocol);
+            updateStatus(FormType.Vtuber, ConnectionStatus.Error, `Invalid Vtuber software protocol ${protocol} selected.`);
+            break;
     }
+    vtuberConnector.connect(host, port);
+}
+
+function disconnectVtuber() {
+    vtuberConnector.disconnect();
+}
+
+function sendVtuberParamData(param: string, value: number) {
+    vtuberConnector.sendData(param, value);
 }
 
 function shutdown() {
@@ -66,4 +85,4 @@ function shutdown() {
     process.exit(0);
 }
 
-export { parseSettings }
+export { parseSettings, connectVtuber, disconnectVtuber, sendVtuberParamData }
