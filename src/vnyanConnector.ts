@@ -1,6 +1,8 @@
 import { WebSocket } from "ws";
-import { Protocol } from "./enums";
+import { ConnectionStatus, FormType, Protocol } from "./enums";
 import { VtuberSoftware } from "./types";
+import { updateStatus } from "./electron/electronMain";
+import { cancelUpdate } from "./intifaceConnector";
 
 /*
 
@@ -8,6 +10,8 @@ ws://localhost:8000/vnyan
 test 100
 
 */
+
+const category = FormType.Vtuber;
 
 class ConnectorVnyan implements VtuberSoftware {
     software: Protocol = Protocol.Vnyan;
@@ -20,31 +24,40 @@ class ConnectorVnyan implements VtuberSoftware {
     }
 
     public disconnect() {
-        this.ws.close(0, "Disconnect method called");
+        this.ws.close(1, "Disconnect method called");
     }
 
     public sendData(param: string, value: number) {
-        let packet = JSON.stringify(this.buildPacket(param, value));
+        let packet = this.buildPacket(param, (value * 100));
+        console.log("%s packet: %o", this.software, packet);
         this.ws.send(packet);
     }
 
     protected setWebsocketListeners() {
-        let name = this.software;
+        let connector = this;
         this.ws.on("open", function open() {
-            console.log(`Connected to ${name}`);
+            console.log(`Connected to ${connector.software}`);
+            updateStatus(category, ConnectionStatus.Connected, `${connector.software} connected!`);
+            connector.isConnected = true;
         });
 
         this.ws.on("close", function close(code, reason) {
-            console.log(`Disconnected from ${name} for reason ${reason}`);
+            console.log(`Disconnected from ${connector.software} for reason ${reason}`);
+            updateStatus(category, ConnectionStatus.Disconnected, `Disconnected from ${connector.software}`);
+            connector.isConnected = false;
+            cancelUpdate();
         });
 
         this.ws.on("error", function error(error) {
-            console.error(`Connection to ${name} experienced error ${error}`);
+            console.error(`Connection to ${connector.software} experienced error ${error}`);
+            updateStatus(category, ConnectionStatus.Error, `${connector.software} disconnected with error: \n${error}`);
+            connector.isConnected = false;
+            cancelUpdate();
         });
     }
 
     protected buildPacket(param: string, value: number) {
-        let packet = `${param} ${value}`;
+        let packet = param + " " + value.toString();
         return packet;
     }
 }
