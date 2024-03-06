@@ -68,6 +68,7 @@ function populateDefaults(settings: Settings) {
     document.querySelector<HTMLInputElement>("#intifacePort").value = settings.intiface.port.toString();
     document.querySelector<HTMLInputElement>("#vtuberHost").value = settings.vtuber.host;
     document.querySelector<HTMLInputElement>("#vtuberPort").value = settings.vtuber.port.toString();
+    // TODO: add behavior for feeding in protocol selection here
 }
 
 function displayStatus(category: FormType, state: ConnectionStatus, message: string) {
