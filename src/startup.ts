@@ -80,7 +80,7 @@ function sendVtuberParamData(param: string, value: number) {
 
 function shutdown() {
     //TODO: close intiface engine if started
-    intifaceConnection.close(0, `${pluginName} is shutting down.`);
+    intifaceConnection.close(1000, `${pluginName} is shutting down.`);
     vtsConnection.disconnect();
     process.exit(0);
 }

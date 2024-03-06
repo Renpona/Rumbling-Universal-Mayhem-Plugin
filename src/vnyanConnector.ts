@@ -24,7 +24,7 @@ class ConnectorVnyan implements VtuberSoftware {
     }
 
     public disconnect() {
-        this.ws.close(1, "Disconnect method called");
+        this.ws.close(1000, "Disconnect method called");
     }
 
     public sendData(param: string, value: number) {
