@@ -30,7 +30,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
     public connect(host: string, port: number) {
         this.options.url = `ws://${host}:${port}`;
         try {
-            updateStatus(category, ConnectionStatus.Connecting, "Attempting to connect to VTubeStudio...");
+            updateStatus(category, ConnectionStatus.Connecting, `Attempting to connect to ${this.software}...`);
             this.apiClient = new ApiClient(this.options);
         } catch(e) {
             console.error(e);
@@ -46,16 +46,19 @@ class ConnectorVtubestudio implements VtuberSoftware {
             }
         }, 5000);
         this.apiClient.on("connect", () => {
+            updateStatus(category, ConnectionStatus.Connected, `${this.software} connected!`);
             this.isConnected = true;
             this.addParam();
             clearTimeout(timer);
         });
         this.apiClient.on("error", (e: string) => {
+            updateStatus(category, ConnectionStatus.Error, `${this.software} disconnected with error: \n${e}`);
             this.isConnected = false;
             clearTimeout(timer);
             cancelUpdate();
         });
         this.apiClient.on("disconnect", () => {
+            updateStatus(category, ConnectionStatus.Disconnected, `Disconnected from ${this.software}`);
             this.isConnected = false;
             clearTimeout(timer);
             cancelUpdate();
