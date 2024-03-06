@@ -11,8 +11,8 @@ const fs = require("node:fs");
 const category = FormType.Vtuber;
 
 class ConnectorVtubestudio implements VtuberSoftware {
-    software: Protocol.VtubeStudio;
-    isConnected: boolean;
+    software: Protocol = Protocol.VtubeStudio;
+    isConnected: boolean = false;
 
     options = {
         authTokenGetter: this.getAuthToken,
@@ -28,6 +28,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
     apiClient: ApiClient;
 
     public connect(host: string, port: number) {
+        let name = this.software;
         this.options.url = `ws://${host}:${port}`;
         try {
             updateStatus(category, ConnectionStatus.Connecting, `Attempting to connect to ${this.software}...`);
@@ -46,19 +47,19 @@ class ConnectorVtubestudio implements VtuberSoftware {
             }
         }, 5000);
         this.apiClient.on("connect", () => {
-            updateStatus(category, ConnectionStatus.Connected, `${this.software} connected!`);
+            updateStatus(category, ConnectionStatus.Connected, `${name} connected!`);
             this.isConnected = true;
             this.addParam();
             clearTimeout(timer);
         });
         this.apiClient.on("error", (e: string) => {
-            updateStatus(category, ConnectionStatus.Error, `${this.software} disconnected with error: \n${e}`);
+            updateStatus(category, ConnectionStatus.Error, `${name} disconnected with error: \n${e}`);
             this.isConnected = false;
             clearTimeout(timer);
             cancelUpdate();
         });
         this.apiClient.on("disconnect", () => {
-            updateStatus(category, ConnectionStatus.Disconnected, `Disconnected from ${this.software}`);
+            updateStatus(category, ConnectionStatus.Disconnected, `Disconnected from ${name}`);
             this.isConnected = false;
             clearTimeout(timer);
             cancelUpdate();
