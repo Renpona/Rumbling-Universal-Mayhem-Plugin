@@ -46,22 +46,24 @@ class ConnectorVtubestudio implements VtuberSoftware {
             }
         }, 5000);
         this.apiClient.on("connect", () => {
-            updateStatus(category, ConnectionStatus.Connected, "VTubeStudio connected!");
+            this.isConnected = true;
             this.addParam();
             clearTimeout(timer);
         });
         this.apiClient.on("error", (e: string) => {
-            updateStatus(category, ConnectionStatus.Error, "VTubeStudio disconnected with error: \n" + e);
+            this.isConnected = false;
             clearTimeout(timer);
+            cancelUpdate();
         });
         this.apiClient.on("disconnect", () => {
-            updateStatus(category, ConnectionStatus.Disconnected, "Disconnected from VTubeStudio");
+            this.isConnected = false;
             clearTimeout(timer);
+            cancelUpdate();
         });
     }
 
     public disconnect() {
-        return null;
+        this.apiClient.disconnect();
     }
 
     public sendData(param: string, value: number) {
