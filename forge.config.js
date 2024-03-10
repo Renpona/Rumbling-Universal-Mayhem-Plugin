@@ -16,7 +16,8 @@ module.exports = {
       '.gitignore',
       '^/src',
       '^/config',
-      '^/intiface'
+      '^/intiface',
+      '/logs/*'
     ],
     extraResource: [
       "config",
