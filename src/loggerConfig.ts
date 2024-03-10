@@ -1,4 +1,5 @@
 import winston, { Logger, format } from "winston";
+import DailyRotateFile from 'winston-daily-rotate-file';
 import { resolveResource } from "./utils";
 
 var logger: Logger;
@@ -24,10 +25,13 @@ function initLogger() {
                 handleExceptions: true,
                 level: 'debug',
             }),
-            new winston.transports.File({ 
-                filename: resolveResource('./logs/rump.log'),
+            new DailyRotateFile({ 
+                filename: resolveResource('./logs/rump-%DATE%.log'),
                 handleExceptions: true,
                 level: 'info',
+                datePattern: 'YYYY-MM-DD',
+                maxSize: "10m",
+                maxFiles: 3
             })
         ],
     });
@@ -37,10 +41,13 @@ function initLogger() {
 
 function debugLogger() {
     logger.info("Adding debug logger...");
-    let debugTransport = new winston.transports.File({ 
-        filename: resolveResource('./logs/debug.log'),
+    let debugTransport = new DailyRotateFile({ 
+        filename: resolveResource('./logs/debug-%DATE%.log'),
         handleExceptions: true,
         level: 'debug',
+        datePattern: 'YYYY-MM-DD',
+        maxSize: "10m",
+        maxFiles: 3
     });
     getLogger().add(debugTransport);
 }
@@ -57,13 +64,16 @@ function initIntifaceLogger() {
             new winston.transports.Console({
                 handleExceptions: true
             }),
-            new winston.transports.File({ 
-                filename: resolveResource('./logs/intiface.log'),
+            new DailyRotateFile({ 
+                filename: resolveResource('./logs/intiface-%DATE%.log'),
                 handleExceptions: true,
                 format: format.combine(
                     formatConfig,
                     format.uncolorize()
                 ),
+                datePattern: 'YYYY-MM-DD',
+                maxSize: "10m",
+                maxFiles: 3
             })
         ],
     });
