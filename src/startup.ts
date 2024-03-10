@@ -11,43 +11,61 @@ import { sendDefaultsToUi, updateStatus } from "./electron/electronMain";
 import { ConnectorWarudo } from "./warudoConnector";
 import { ConnectorVnyan } from "./vnyanConnector";
 import { ConnectorVtubestudio } from "./vtsConnector";
+import { debugLogger, getLogger, initLogger } from "./loggerConfig";
+import { Logger } from "winston";
 
 var intifaceEngine: ChildProcess;
 var intifaceConnection: WebSocket;
 var vtsConnection: ApiClient;
 var vtuberConnector: VtuberSoftware;
 
+var logger: Logger;
+
 function loadConfig() {
-    const fileName = "settings.json";
+    let logger = getLogger();
     let settings: string;
+    const fileName = "settings.json";
+    const filePath = resolveResource(`config/${fileName}`);
+    
     try {
-        settings = fs.readFileSync(resolveResource(`config/${fileName}`), "utf-8");
+        logger.debug("Reading settings from %s...", filePath);
+        settings = fs.readFileSync(filePath, "utf-8");
     } catch(e) {
+        logger.error(e);
+        logger.error("Reading settings failed, exiting program...");
         errorHalt(`Reading config file ${fileName} failed.`, ExitCode.ConfigReadFailed, e);
     }
+
+    logger.info("Settings read successful.");
+    logger.debug(settings);
     return JSON.parse(settings);
 }
 
 function parseSettings() {
+    logger = initLogger();
+    if (settings.application && settings.application.debug) {
+        debugLogger();
+    }
     initIntiface();
     sendDefaultsToUi(settings);
 }
 
 const settings: Settings = loadConfig();
-console.log(settings);
 
 function initIntiface() {
     let intiface = settings.intiface;
     if (intiface["useLocal"]) {
+        logger.info("Configured to use local Intiface Engine.");
         initIntifaceEngine(intiface);
     } else {
+        logger.info("Configured to use Intiface Central.");
         intifaceConnection = connectIntiface(intiface.host, intiface.port);
     }
 }
 
 function initIntifaceEngine(intiface: IntifaceSettings) {
     intifaceEvent.once("ready", () => connectIntiface(intiface.host, intiface.port));
-    console.log("Initializing Intiface Engine...");
+    logger.info("Initializing Intiface Engine...");
     intifaceEngine = startIntifaceEngine();
 }
 
@@ -63,19 +81,29 @@ function connectVtuber(protocol: Protocol, host: string, port: number) {
             vtuberConnector = new ConnectorWarudo();
             break;
         default:
-            console.error("Unexpected vtuber protocol: %s", protocol);
+            logger.error("Unexpected vtuber protocol: %s", protocol);
             updateStatus(FormType.Vtuber, ConnectionStatus.Error, `Invalid Vtuber software protocol ${protocol} selected.`);
             break;
     }
+    logger.info("Connecting to VTuber software %s.", protocol);
+    logger.debug("Connection info: %s:%s", host, port);
     vtuberConnector.connect(host, port);
 }
 
 function disconnectVtuber() {
-    vtuberConnector.disconnect();
+    if (vtuberConnector) {
+        vtuberConnector.disconnect();
+    } else {
+        return;
+    }
 }
 
 function sendVtuberParamData(param: string, value: number) {
-    vtuberConnector.sendData(param, value);
+    if (vtuberConnector) {
+        vtuberConnector.sendData(param, value);
+    } else {
+        return;
+    }
 }
 
 function shutdown() {

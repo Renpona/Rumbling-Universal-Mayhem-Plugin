@@ -22,5 +22,10 @@ In both VNyan and Warudo, you can receive this data using Websocket nodes in the
 
 Your node command/title should be "Vibrate" and/or "Linear". The data will be provided in a range of 0-100, with 0 representing 0% vibration and 100 representing 100% vibration. Unlike VTubeStudio, there is no automatic resending; each individual value will only be sent once.
 
+## Logging
+When you run the application, log files will be produced in `resources/logs`. By default, two log files will be created - `rump.log`, which logs the application's events, and `intiface.log`, which contains Intiface Engine logging. If you set "debug" to `true` in `settings.json`, a third config file will be generated which contains more detailed logging, `debug.log`. 
+
+New log files will be started each day or when the log files hit 10MB in size. Three days worth of log files will be stored; any older ones will be deleted automatically.
+
 ## Settings
-In the `resources/config` folder, you will find a file `settings.json`. Here you can set the default hostname and port for your Vtuber software.
+In the `resources/config` folder, you will find a file `settings.json`. This file can be used to turn on debug logging. Don't touch the other options right now, they sit somewhere between "not working yet" and "probably going to be removed".

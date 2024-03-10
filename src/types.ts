@@ -1,8 +1,12 @@
 import { Protocol } from "./enums";
 
 type Settings = {
+    application: ApplicationSettings,
     vtuber: VtuberSettings;
     intiface: IntifaceSettings;
+}
+type ApplicationSettings = {
+    debug: boolean
 }
 type VtuberSettings = {
     protocol: string;
@@ -24,4 +28,4 @@ interface VtuberSoftware {
     sendData: (param: string, value: number) => void,
 }
 
-export { Settings, VtuberSettings, IntifaceSettings, VtuberSoftware }
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware }

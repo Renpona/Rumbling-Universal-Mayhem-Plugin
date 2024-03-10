@@ -3,6 +3,7 @@ import { errorHalt, pluginName } from './utils';
 import { ConnectionStatus, ExitCode, FormType } from './enums';
 import { updateStatus } from './electron/electronMain';
 import { sendVtuberParamData } from './startup';
+import { getLogger } from './loggerConfig';
 
 //const ws = new WebSocket('ws://127.0.0.1:54817');
 
@@ -14,36 +15,36 @@ const identifier = {
 };
 
 function connectIntiface(host: string, port: number) {
-    console.log("Trying to connect to Intiface...");
+    let logger = getLogger();
+    logger.info("Trying to connect to Intiface...");
     const ws = new WebSocket(`ws://${host}:${port}`);
 
-    ws.on('error', console.error);
+    ws.on('error', logger.error);
 
     ws.on('close', function close(code, reason) {
-        console.log("Disconnected from Intiface!");
-        console.error(reason.toString());
+        logger.error("Disconnected from Intiface Engine for reason: %s", reason.toString());
         // TODO: remove this once the ability to reconnect has been added
         errorHalt("Intiface connection lost", ExitCode.Standard);
     });
 
     ws.on('open', function open() {
         let handshake = JSON.stringify(identifier);
-        console.log("Connected to Intiface!");
-        console.log('\n\nsent: %s', handshake);
+        logger.info("Connected to Intiface Engine!");
+        logger.debug('sent: %s', handshake);
         updateStatus(FormType.Intiface, ConnectionStatus.Connected, "Intiface connected!");
         ws.send(handshake);
     });
 
     ws.on('message', function message(data) {
-        let result = data.toString();
-        console.log('received: %s', result);
+        let result = data.toString().trim();
+        logger.verbose('Received TCode data: %s', result);
         
         let linearValue = linearParse(result);
-        console.log('linear: %s', linearValue);
+        if (linearValue != null) logger.verbose('Linear: %s', linearValue);
         state.linearValue = linearValue;
         
         let vibrateValue = vibrateParse(result);
-        console.log('vibrate: %s', vibrateValue);
+        if (vibrateValue != null) logger.verbose('Vibrate: %s', vibrateValue);
         state.vibrateValue = vibrateValue;
 
         update();

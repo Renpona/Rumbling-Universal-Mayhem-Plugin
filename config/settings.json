@@ -1,4 +1,7 @@
 {
+    "application": {
+        "debug": false
+    },
     "vtuber": {
         "protocol": "vtubestudio",
         "host": "localhost",

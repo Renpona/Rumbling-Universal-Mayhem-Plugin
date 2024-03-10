@@ -4,6 +4,7 @@ import { pluginName } from "./utils";
 import { updateStatus } from "./electron/electronMain";
 import ws from "ws";
 import { VtuberSoftware } from "./types";
+import { getLogger } from "./loggerConfig";
 
 const fs = require("node:fs");
 
@@ -12,6 +13,7 @@ const category = FormType.Vtuber;
 class ConnectorVtubestudio implements VtuberSoftware {
     software: Protocol = Protocol.VtubeStudio;
     isConnected: boolean = false;
+    logger = getLogger();
 
     options = {
         authTokenGetter: this.getAuthToken,
@@ -28,12 +30,13 @@ class ConnectorVtubestudio implements VtuberSoftware {
 
     public connect(host: string, port: number) {
         let name = this.software;
+        let logger = this.logger;
         this.options.url = `ws://${host}:${port}`;
         try {
             updateStatus(category, ConnectionStatus.Connecting, `Attempting to connect to ${this.software}...`);
             this.apiClient = new ApiClient(this.options);
         } catch(e) {
-            console.error(e);
+            logger.error(e);
             updateStatus(category, ConnectionStatus.Error, e.toString());
             return;
         }
@@ -42,16 +45,19 @@ class ConnectorVtubestudio implements VtuberSoftware {
         // so wait a few seconds and check isConnecting and isConnected if no event has fired yet
         let timer = setTimeout(() => {
             if (!this.apiClient.isConnecting && !this.apiClient.isConnected) {
-                updateStatus(category, ConnectionStatus.NotConnected, "Failed to connect after 5 seconds");
+                logger.warn(`Failed to connect to ${name} after 5 seconds.`);
+                updateStatus(category, ConnectionStatus.NotConnected, `Failed to connect to ${name} after 5 seconds.`);
             }
         }, 5000);
         this.apiClient.on("connect", () => {
+            logger.info(`${name} connected!`);
             updateStatus(category, ConnectionStatus.Connected, `${name} connected!`);
             this.isConnected = true;
             this.addParam();
             clearTimeout(timer);
         });
         this.apiClient.on("error", (e: string) => {
+            logger.error(`${name} disconnected with error: \n${e}`);
             updateStatus(category, ConnectionStatus.Error, `${name} disconnected with error: \n${e}`);
             if (this.apiClient.isConnected) this.disconnect();
             this.isConnected = false;
@@ -59,6 +65,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
             clearTimeout(timer);
         });
         this.apiClient.on("disconnect", () => {
+            logger.info(`Disconnected from ${name}`);
             updateStatus(category, ConnectionStatus.Disconnected, `Disconnected from ${name}`);
             this.isConnected = false;
             this.endParamRefresher();
@@ -81,10 +88,11 @@ class ConnectorVtubestudio implements VtuberSoftware {
                 }
             ]
         };
+        //this.logger.debug("Param data: %o", paramData);
         this.apiClient
             .injectParameterData(paramData)
             .catch((e: VTubeStudioError) => {
-                console.error("Failed to send param data %s:", param, e.data.message);
+                this.logger.error("Failed to send param data %s: %s", param, e.data.message);
                 updateStatus(category, ConnectionStatus.Error, "VTubeStudio connection error: Code " + e.data.errorID.toString() + "\n" + e.data.message);
             })
             .then(this.startParamRefresher());
@@ -104,6 +112,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
      */
     private startParamRefresher() {
         if (!this.updateTimer) {
+            this.logger.debug("Starting VTubeStudio param refresh timer.");
             this.updateTimer = setInterval(() => {
                 this.paramRefresh();
             }, 600);
@@ -120,6 +129,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
     }
 
     private endParamRefresher() {
+        this.logger.debug("Terminating VTubeStudio param refresh timer.");
         clearInterval(this.updateTimer);
         this.updateTimer = null;
     }
@@ -138,6 +148,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
     }
 
     private addParam() {
+        let logger = this.logger;
         const linearParam = {
             parameterName: "Linear",
             explanation: "Linear actuator position",
@@ -156,18 +167,18 @@ class ConnectorVtubestudio implements VtuberSoftware {
         this.apiClient
             .parameterCreation(linearParam)
             .then((response) => {
-                console.log("Successfully added parameter:", response.parameterName);
+                logger.info("Successfully added parameter: %s", response.parameterName);
             })
             .catch((e) => {
-                console.error("Failed to add parameter:", e.errorID, e.message);
+                logger.error(`Failed to add parameter: ${e.errorID} ${e.message}`);
             });
         this.apiClient
             .parameterCreation(vibrateParam)
             .then((response) => {
-                console.log("Successfully added parameter:", response.parameterName);
+                logger.info("Successfully added parameter: %s", response.parameterName);
             })
             .catch((e) => {
-                console.error("Failed to add parameter:", e.errorID, e.message);
+                logger.error(`Failed to add parameter: ${e.errorID} ${e.message}`);
             });
     }
 }

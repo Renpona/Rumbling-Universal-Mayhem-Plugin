@@ -4,6 +4,7 @@ import path from 'node:path';
 import { connectVtuber, disconnectVtuber, parseSettings } from '../startup';
 import { ConnectionStatus, FormType } from '../enums';
 import { resolveProtocol } from '../utils';
+import { getLogger } from '../loggerConfig';
 
 var mainWindow: BrowserWindow; 
 
@@ -51,7 +52,7 @@ function handleVtuberDisconnect(_event: IpcMainEvent) {
 }
 
 function updateStatus(category: FormType, state: ConnectionStatus, message: string) {
-    console.log("UpdateStatus target %s, state %s, message %s", category, state, message);
+    getLogger().verbose("UpdateStatus target %s, state %s, message %s", category, state, message);
     mainWindow.webContents.send("status", category, state, message);
 }
 
