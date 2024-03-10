@@ -1,6 +1,7 @@
 import { execFile } from 'node:child_process';
 import EventEmitter from 'node:events';
 import { resolveResource } from './utils';
+import { getIntifaceLogger, getLogger } from './loggerConfig';
 
 const intifaceEvent = new EventEmitter();
 const abortController = new AbortController();
@@ -14,24 +15,25 @@ const args = [
     '--log', 'debug'];
 
 function startIntifaceEngine() {
+    let logger = getLogger();
+    logger.debug("Executing %s with command-line args %s", resolveResource('intiface/intiface-engine.exe'), args);
     let engine = execFile(resolveResource('intiface/intiface-engine.exe'), args, options, (error, stdout, stderr) => {
         if (error) {
-            console.error(error);
+            logger.error(error);
             throw error;
         }
-        console.log(stdout);
+        getIntifaceLogger().info(stdout);
     });
     engine.stdout.on("data", detectIntifaceReady);
     return engine;
 }
 
 function detectIntifaceReady(data: string | Buffer) {
-    // TODO: bring back intiface console logging of some kind once I've added a logging library, this is just way too verbose otherwise
-    console.log(data);
+    getIntifaceLogger().info(data);
     let message: string = data.toString();
     let regex = /:websocket_server_comm_manager.*Listening on:/;
     if (message.match(regex)) {
-        console.log("Intiface started!");
+        getLogger().info("Intiface Engine started!");
         intifaceEvent.emit("ready");
     } 
 }

@@ -12,4 +12,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
     vtuberDisconnect: () => ipcRenderer.send('vtuberDisconnect')
 })
 
-console.log("preload loaded");
+console.log("Electron preload scripts loaded.");

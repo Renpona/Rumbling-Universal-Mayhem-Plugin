@@ -1,12 +1,14 @@
 import { app } from "electron";
 import path from "path";
 import { Protocol } from "./enums";
+import { getLogger } from "./loggerConfig";
 
 const pluginName = "Rumbling Universal Mayhem Plugin";
 
 function errorHalt(message: string, exitCode = 1, error?: Error) {
-    console.error(message);
-    if (error) console.error(error);
+    let logger = getLogger();
+    logger.error(message);
+    if (error) logger.error(error);
     process.exit(exitCode);
 }
 
@@ -20,6 +22,7 @@ function resolveResource(target: string) {
 
 function resolveProtocol(protocol: string): Protocol {
     let result: Protocol;
+    let logger = getLogger();
     switch (protocol.toLowerCase()) {
         case "vtubestudio":
             result = Protocol.VtubeStudio;
@@ -31,7 +34,7 @@ function resolveProtocol(protocol: string): Protocol {
             result = Protocol.Warudo;
             break;
         default:
-            console.error("Called resolveProtocol on unknown protocol: %s", protocol);
+            logger.error("Called resolveProtocol on unknown protocol: %s", protocol);
             break;
     }
     return result;
