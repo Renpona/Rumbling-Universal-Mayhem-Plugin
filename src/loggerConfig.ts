@@ -17,6 +17,17 @@ var formatConfig = format.combine(
 
 function initLogger() {
     let level = 'debug';
+
+    const fileRotator = new DailyRotateFile({ 
+        filename: resolveResource('./logs/rump-%DATE%.log'),
+        handleExceptions: true,
+        level: 'info',
+        datePattern: 'YYYY-MM-DD',
+        maxSize: "10m",
+        maxFiles: 3
+    });
+    fileRotator.on('error', handleRotatorError);
+    
     logger = winston.createLogger({
         level: level,
         format: formatConfig,
@@ -25,14 +36,7 @@ function initLogger() {
                 handleExceptions: true,
                 level: 'debug',
             }),
-            new DailyRotateFile({ 
-                filename: resolveResource('./logs/rump-%DATE%.log'),
-                handleExceptions: true,
-                level: 'info',
-                datePattern: 'YYYY-MM-DD',
-                maxSize: "10m",
-                maxFiles: 3
-            })
+            fileRotator
         ],
     });
     initIntifaceLogger();
@@ -49,6 +53,7 @@ function debugLogger() {
         maxSize: "10m",
         maxFiles: 3
     });
+    debugTransport.on('error', handleRotatorError);
     getLogger().add(debugTransport);
 }
 
@@ -57,6 +62,20 @@ function initIntifaceLogger() {
     let formatConfig = format.printf((info) => {
         return info.message.toWellFormed();
     });
+
+    const fileRotator = new DailyRotateFile({ 
+        filename: resolveResource('./logs/intiface-%DATE%.log'),
+        handleExceptions: true,
+        format: format.combine(
+            formatConfig,
+            format.uncolorize()
+        ),
+        datePattern: 'YYYY-MM-DD',
+        maxSize: "10m",
+        maxFiles: 3
+    });
+    fileRotator.on('error', handleRotatorError);
+
     intifaceLogger = winston.createLogger({
         level: 'verbose',
         format: formatConfig,
@@ -64,19 +83,13 @@ function initIntifaceLogger() {
             new winston.transports.Console({
                 handleExceptions: true
             }),
-            new DailyRotateFile({ 
-                filename: resolveResource('./logs/intiface-%DATE%.log'),
-                handleExceptions: true,
-                format: format.combine(
-                    formatConfig,
-                    format.uncolorize()
-                ),
-                datePattern: 'YYYY-MM-DD',
-                maxSize: "10m",
-                maxFiles: 3
-            })
+            fileRotator
         ],
     });
+}
+
+function handleRotatorError(error) {
+    logger.error(error);
 }
 
 function getLogger() {
