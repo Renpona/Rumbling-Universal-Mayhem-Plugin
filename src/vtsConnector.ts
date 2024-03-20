@@ -1,9 +1,9 @@
-import { ApiClient, VTubeStudioError } from "vtubestudio";
+import { ApiClient, HotkeyType, VTubeStudioError } from "vtubestudio";
 import { ConnectionStatus, FormType, Protocol } from "./enums";
 import { pluginName } from "./utils";
-import { updateStatus } from "./electron/electronMain";
+import { updateHotkeyList, updateStatus } from "./electron/electronMain";
 import ws from "ws";
-import { VtuberSoftware } from "./types";
+import { ActionHotkey, HotkeyData, VtsAction, VtuberSoftware } from "./types";
 import { getLogger } from "./loggerConfig";
 
 const fs = require("node:fs");
@@ -14,6 +14,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
     software: Protocol = Protocol.VtubeStudio;
     isConnected: boolean = false;
     logger = getLogger();
+    action: VtsAction = null;
 
     options = {
         authTokenGetter: this.getAuthToken,
@@ -54,6 +55,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
             updateStatus(category, ConnectionStatus.Connected, `${name} connected!`);
             this.isConnected = true;
             this.addParam();
+            this.getHotkeysList();
             clearTimeout(timer);
         });
         this.apiClient.on("error", (e: string) => {
@@ -96,6 +98,8 @@ class ConnectorVtubestudio implements VtuberSoftware {
                 updateStatus(category, ConnectionStatus.Error, "VTubeStudio connection error: Code " + e.data.errorID.toString() + "\n" + e.data.message);
             })
             .then(this.startParamRefresher());
+
+        if (this.action) this.runVtsActions(value);
 
         this.paramState[param] = value;
     };
@@ -180,6 +184,81 @@ class ConnectorVtubestudio implements VtuberSoftware {
             .catch((e) => {
                 logger.error(`Failed to add parameter: ${e.errorID} ${e.message}`);
             });
+    }
+
+    public getHotkeysList() {
+        this.logger.verbose("Attempting to fetch VTS hotkey list.");
+        this.apiClient.hotkeysInCurrentModel().then((response) => {
+            this.logger.debug(response);
+            updateHotkeyList(response.availableHotkeys);
+        });
+    }
+    
+    public registerActions(action: VtsAction) {
+        this.logger.verbose("Saving VTS action: %o", action);
+        this.action = action;
+        return;
+    }
+
+    private runVtsActions(vibrateValue: number) {
+        const action = this.action;
+
+        if (this.compareVibrateValue(vibrateValue)) {
+            this.executeAction(action.actionType, action.actionData);
+        }
+    }
+
+    private compareVibrateValue(vibrateValue: number) {
+        const vibrateRange = this.action.vibrateRange;
+        let pastValue: number;
+        let currentValue: number = vibrateValue * 100;
+        let currentTrigger: boolean;
+        let previousTrigger: boolean;
+
+        if (this.paramState && this.paramState.Vibrate) {
+            pastValue = this.paramState.Vibrate * 100;
+        } else {
+            return false;
+        }
+        this.logger.debug(`Comparing current vibrate value ${currentValue} and past value ${pastValue} against action range ${vibrateRange.min} - ${vibrateRange.max}`);
+
+        if (currentValue >= vibrateRange.min && currentValue <= vibrateRange.max) {
+            currentTrigger = true;
+        } else {
+            currentTrigger = false;
+        }
+        
+        if (pastValue >= vibrateRange.min && pastValue <= vibrateRange.max) {
+            previousTrigger = true;
+        } else {
+            previousTrigger = false;
+        }
+
+        console.debug(`prev match is ${previousTrigger}, curr match is ${currentTrigger}`);
+        if (previousTrigger != currentTrigger) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    private executeAction(type: VtsAction["actionType"], data: VtsAction["actionData"]) {
+        this.logger.verbose(`Executing action ${type}`);
+        this.logger.debug(`with data ${data}`);
+        switch (type) {
+            case "hotkeyTrigger":
+                this.sendHotkeyAction(data);
+                break;
+        
+            default:
+                this.logger.warn("Tried to execute VtsAction with unknown type");
+                break;
+        }
+    }
+
+    private sendHotkeyAction(data: ActionHotkey) {
+        this.apiClient.hotkeyTrigger(data).catch((error) => this.logger.error(`Sending hotkey data failed with error ${error}`));
     }
 }
 

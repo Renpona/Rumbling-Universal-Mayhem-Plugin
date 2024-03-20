@@ -1,5 +1,5 @@
 import { ConnectionStatus, FormType } from "../enums";
-import { Settings, VtuberSettings } from "../types";
+import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
 
 if (document.readyState === "loading") {
@@ -53,6 +53,25 @@ function addEvents() {
                 break;
         }
     });
+
+    document.querySelector("#vtsActionForm").addEventListener("submit", (event: SubmitEvent) => {
+        event.preventDefault();
+        
+        let minElement = document.querySelector(".rangeMin") as HTMLInputElement;
+        let maxElement = document.querySelector(".rangeMax") as HTMLInputElement;
+        let dataElement = document.querySelector("#hotkeyList") as HTMLSelectElement;
+
+        let action: VtsAction = {
+            actionType: "hotkeyTrigger",
+            actionData: { hotkeyID: dataElement.value },
+            vibrateRange: {
+                min: parseInt(minElement.value),
+                max: parseInt(maxElement.value)
+            }
+        }
+
+        window.electronAPI.vtsActionSubmit(action);
+    });
     
     window.electronAPI.onUpdateSettings((data: Settings) => {
         populateDefaults(data);
@@ -60,6 +79,19 @@ function addEvents() {
 
     window.electronAPI.onUpdateStatus((category: FormType, state: ConnectionStatus, message: string) => {
         displayStatus(category, state, message);
+    });
+
+    window.electronAPI.onUpdateHotkeyList((data: HotkeyData[]) => {
+        let selectElement = document.createElement("select");
+        selectElement.id = "hotkeyList";
+        data.forEach(hotkey => {
+            let hotkeyOption: HTMLOptionElement = document.createElement("option");
+            hotkeyOption.appendChild(document.createTextNode(`${hotkey.type}: ${hotkey.name}`));
+            hotkeyOption.value = hotkey.hotkeyID;
+            selectElement.appendChild(hotkeyOption);
+        });
+        //document.getElementsByClassName("vtuber")[0].appendChild(selectElement);
+        document.getElementById("vtsActionForm").appendChild(selectElement);
     });
 }
 

@@ -1,3 +1,4 @@
+import { HotkeyType } from "vtubestudio";
 import { Protocol } from "./enums";
 
 type Settings = {
@@ -26,6 +27,26 @@ interface VtuberSoftware {
     connect: (host: string, port: number) => void,
     disconnect: () => void,
     sendData: (param: string, value: number) => void,
+    registerActions: (action: VtsAction | any) => void
 }
 
-export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware }
+type HotkeyData = {
+    name: string,
+    type: string,
+    hotkeyID: string
+}
+
+type VtsAction = {
+    actionType: "hotkeyTrigger",
+    actionData: ActionHotkey,
+    vibrateRange: {
+        min: number,
+        max: number
+    }
+}
+
+type ActionHotkey = {
+    hotkeyID: string
+}
+
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware, HotkeyData, VtsAction, ActionHotkey }

@@ -106,6 +106,12 @@ function sendVtuberParamData(param: string, value: number) {
     }
 }
 
+function registerActions(actions) {
+    if (vtuberConnector.software == Protocol.VtubeStudio) {
+        vtuberConnector.registerActions(actions);
+    }
+}
+
 function shutdown() {
     //TODO: close intiface engine if started
     intifaceConnection.close(1000, `${pluginName} is shutting down.`);
@@ -113,4 +119,4 @@ function shutdown() {
     process.exit(0);
 }
 
-export { parseSettings, connectVtuber, disconnectVtuber, sendVtuberParamData }
+export { parseSettings, connectVtuber, disconnectVtuber, sendVtuberParamData, registerActions }
