@@ -4,9 +4,6 @@ function addActionEvents() {
     document.querySelector("#actionForm").addEventListener("submit", saveActions);
     
     document.querySelector("#addActionButton").addEventListener("click", createActionElement);
-
-    let actionTemplate = document.querySelector("#actionTemplate") as HTMLTemplateElement;
-    actionTemplate.content.querySelector(".delete").addEventListener("click", deleteAction);
 }
 
 function saveActions(event: SubmitEvent) {
@@ -64,8 +61,10 @@ function createActionElement(event) {
     event.preventDefault();
     let actionForm = document.querySelector("#actionForm") as HTMLFormElement;
     let actionTemplate = document.querySelector("#actionTemplate") as HTMLTemplateElement;
+    let actionNode = actionTemplate.content.cloneNode(true) as HTMLElement;
+    actionNode.children[0].querySelector(".delete").addEventListener("click", deleteAction);
 
-    actionForm.appendChild(actionTemplate.content.cloneNode(true));
+    actionForm.appendChild(actionNode);
 }
 
 function createHotkeyList(data: HotkeyData[]) {
@@ -91,6 +90,7 @@ function createHotkeyList(data: HotkeyData[]) {
 }
 
 function deleteAction(event: PointerEvent) {
+    event.preventDefault();
     let deleteButton = event.target as HTMLButtonElement;
     deleteButton.parentElement.remove();
 }
