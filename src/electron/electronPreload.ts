@@ -11,7 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // send data from renderer process to main
     vtuberConnect: (vtuberSettings: VtuberSettings) => ipcRenderer.send('vtuberConnect', vtuberSettings),
     vtuberDisconnect: () => ipcRenderer.send('vtuberDisconnect'),
-    vtsActionSubmit: (action: VtsAction) => ipcRenderer.send('vtsActionSubmit', action)
+    vtsActionSubmit: (actionList: VtsAction[]) => ipcRenderer.send('vtsActionSubmit', actionList)
 })
 
 console.log("Electron preload scripts loaded.");

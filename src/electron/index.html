@@ -68,12 +68,35 @@
             </div>
         </form>
         <div id="testArea" class="vtsAction">
-            <form id="vtsActionForm">
-                <label for="">Min Rumble:</label><input type="number" name="" id="" value="50" class="rangeMin">
-                <label for="">Max Rumble:</label><input type="number" name="" id="" value="100" class="rangeMax">
-                <button type="submit">Save</button>
+            <form id="actionForm">
+                <button class="button" id="addActionButton">
+                    <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                    <span>Add New Action</span>
+                </button>
+                <button type="submit" class="button" id="saveActionsButton">Apply Actions</button>
             </form>
         </div>
     </div>
+    <template id="actionTemplate">
+        <div class="action">
+            <button class="delete is-medium"></button>
+            <div class="field is-horizontal actionItem">
+                <label class="field-label" for="">Min Rumble:</label><div class="field-body"><input type="number" required min=0 max=100 value="50" class="rangeMin"></div>
+                <label class="field-label" for="">Max Rumble:</label><div class="field-body"><input type="number" required min=0 max=100 value="100" class="rangeMax"></div>
+            </div>
+            <div class="control is-expanded hotkeyContainer">
+            
+            </div>
+        </div>
+    </template>
+    <template id="hotkeyTemplate">
+        <div class="select">
+            <select class="hotkeyList">
+                <option value="none" selected>None</option>
+            </select>
+        </div>
+    </template>
+    
+    
 </body>
 </html>

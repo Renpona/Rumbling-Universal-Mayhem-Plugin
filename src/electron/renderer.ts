@@ -1,12 +1,17 @@
+import { addActionEvents, createActionElement, createHotkeyList } from "../actions";
 import { ConnectionStatus, FormType } from "../enums";
 import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
 
 if (document.readyState === "loading") {
     // Loading hasn't finished yet
-    document.addEventListener("DOMContentLoaded", addEvents);
+    document.addEventListener("DOMContentLoaded", initFrontend);
 } else {
     // `DOMContentLoaded` has already fired
+    initFrontend();
+}
+
+function initFrontend() {
     addEvents();
 }
 
@@ -54,24 +59,7 @@ function addEvents() {
         }
     });
 
-    document.querySelector("#vtsActionForm").addEventListener("submit", (event: SubmitEvent) => {
-        event.preventDefault();
-        
-        let minElement = document.querySelector(".rangeMin") as HTMLInputElement;
-        let maxElement = document.querySelector(".rangeMax") as HTMLInputElement;
-        let dataElement = document.querySelector("#hotkeyList") as HTMLSelectElement;
-
-        let action: VtsAction = {
-            actionType: "hotkeyTrigger",
-            actionData: { hotkeyID: dataElement.value },
-            vibrateRange: {
-                min: parseInt(minElement.value),
-                max: parseInt(maxElement.value)
-            }
-        }
-
-        window.electronAPI.vtsActionSubmit(action);
-    });
+    addActionEvents();
     
     window.electronAPI.onUpdateSettings((data: Settings) => {
         populateDefaults(data);
@@ -81,18 +69,7 @@ function addEvents() {
         displayStatus(category, state, message);
     });
 
-    window.electronAPI.onUpdateHotkeyList((data: HotkeyData[]) => {
-        let selectElement = document.createElement("select");
-        selectElement.id = "hotkeyList";
-        data.forEach(hotkey => {
-            let hotkeyOption: HTMLOptionElement = document.createElement("option");
-            hotkeyOption.appendChild(document.createTextNode(`${hotkey.type}: ${hotkey.name}`));
-            hotkeyOption.value = hotkey.hotkeyID;
-            selectElement.appendChild(hotkeyOption);
-        });
-        //document.getElementsByClassName("vtuber")[0].appendChild(selectElement);
-        document.getElementById("vtsActionForm").appendChild(selectElement);
-    });
+    window.electronAPI.onUpdateHotkeyList(createHotkeyList);
 }
 
 function populateDefaults(settings: Settings) {

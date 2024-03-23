@@ -14,7 +14,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
     software: Protocol = Protocol.VtubeStudio;
     isConnected: boolean = false;
     logger = getLogger();
-    action: VtsAction = null;
+    actionList: VtsAction[] = [];
 
     options = {
         authTokenGetter: this.getAuthToken,
@@ -99,7 +99,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
             })
             .then(this.startParamRefresher());
 
-        if (this.action) this.runVtsActions(value);
+        if (this.actionList) this.runVtsActions(value);
 
         this.paramState[param] = value;
     };
@@ -189,27 +189,31 @@ class ConnectorVtubestudio implements VtuberSoftware {
     public getHotkeysList() {
         this.logger.verbose("Attempting to fetch VTS hotkey list.");
         this.apiClient.hotkeysInCurrentModel().then((response) => {
-            this.logger.debug(response);
+            this.logger.debug("%o", response);
             updateHotkeyList(response.availableHotkeys);
         });
     }
     
-    public registerActions(action: VtsAction) {
-        this.logger.verbose("Saving VTS action: %o", action);
-        this.action = action;
+    public registerActions(actionList: VtsAction[]) {
+        this.logger.verbose(`Saving VTS Action List with ${actionList.length} elements`);
+        this.logger.debug("%o", actionList);
+        this.actionList = actionList;
         return;
     }
 
     private runVtsActions(vibrateValue: number) {
-        const action = this.action;
+        const actionList = this.actionList;
 
-        if (this.compareVibrateValue(vibrateValue)) {
-            this.executeAction(action.actionType, action.actionData);
-        }
+        actionList.forEach(action => {
+            this.logger.debug("Checking VTS action %o", action);
+            if (this.compareVibrateValue(action, vibrateValue)) {
+                this.executeAction(action.actionType, action.actionData);
+            }
+        });
     }
 
-    private compareVibrateValue(vibrateValue: number) {
-        const vibrateRange = this.action.vibrateRange;
+    private compareVibrateValue(action: VtsAction, vibrateValue: number) {
+        const vibrateRange = action.vibrateRange;
         let pastValue: number;
         let currentValue: number = vibrateValue * 100;
         let currentTrigger: boolean;

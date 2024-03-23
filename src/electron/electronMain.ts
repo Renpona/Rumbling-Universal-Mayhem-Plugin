@@ -52,8 +52,8 @@ function handleVtuberDisconnect(_event: IpcMainEvent) {
     disconnectVtuber();
 }
 
-function handleVtsActionSubmit(_event: IpcMainEvent, action: VtsAction) {
-    registerActions(action);
+function handleVtsActionSubmit(_event: IpcMainEvent, actionList: VtsAction[]) {
+    registerActions(actionList);
 }
 
 function updateStatus(category: FormType, state: ConnectionStatus, message: string) {

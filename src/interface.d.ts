@@ -7,7 +7,7 @@ export interface IElectronAPI {
     
     vtuberConnect: (settings: VtuberSettings) => void,
     vtuberDisconnect: () => void,
-    vtsActionSubmit: (action: VtsAction) => void
+    vtsActionSubmit: (actionList: VtsAction[]) => void
 }
 
 declare global {
