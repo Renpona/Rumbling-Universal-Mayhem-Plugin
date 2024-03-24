@@ -203,27 +203,29 @@ class ConnectorVtubestudio implements VtuberSoftware {
 
     private runVtsActions(vibrateValue: number) {
         const actionList = this.actionList;
+        let pastValue: number | null;
+        
+        if (this.paramState && this.paramState.Vibrate) {
+            pastValue = this.paramState.Vibrate * 100;
+        } else {
+            pastValue = 0;
+        }
 
+        this.logger.debug("Checking VTS actions against vibrate value %s", vibrateValue);
         actionList.forEach(action => {
             this.logger.debug("Checking VTS action %o", action);
-            if (this.compareVibrateValue(action, vibrateValue)) {
+            if (this.compareVibrateValue(action, vibrateValue, pastValue)) {
                 this.executeAction(action.actionType, action.actionData);
             }
         });
     }
 
-    private compareVibrateValue(action: VtsAction, vibrateValue: number) {
+    private compareVibrateValue(action: VtsAction, vibrateValue: number, pastValue: number) {
         const vibrateRange = action.vibrateRange;
-        let pastValue: number;
         let currentValue: number = vibrateValue * 100;
         let currentTrigger: boolean;
         let previousTrigger: boolean;
 
-        if (this.paramState && this.paramState.Vibrate) {
-            pastValue = this.paramState.Vibrate * 100;
-        } else {
-            return false;
-        }
         this.logger.debug(`Comparing current vibrate value ${currentValue} and past value ${pastValue} against action range ${vibrateRange.min} - ${vibrateRange.max}`);
 
         if (currentValue >= vibrateRange.min && currentValue <= vibrateRange.max) {
@@ -238,7 +240,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
             previousTrigger = false;
         }
 
-        console.debug(`prev match is ${previousTrigger}, curr match is ${currentTrigger}`);
+        this.logger.debug(`prev match is ${previousTrigger}, curr match is ${currentTrigger}`);
         if (previousTrigger != currentTrigger) {
             return true;
         } else {
@@ -249,7 +251,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
 
     private executeAction(type: VtsAction["actionType"], data: VtsAction["actionData"]) {
         this.logger.verbose(`Executing action ${type}`);
-        this.logger.debug(`with data ${data}`);
+        this.logger.debug("with data %o", data);
         switch (type) {
             case "hotkeyTrigger":
                 this.sendHotkeyAction(data);
