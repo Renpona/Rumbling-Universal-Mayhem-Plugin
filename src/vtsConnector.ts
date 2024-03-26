@@ -270,12 +270,12 @@ class ConnectorVtubestudio implements VtuberSoftware {
     }
 
 
-    private executeAction(type: VtsAction["actionType"], data: VtsAction["actionData"]) {
-        this.logger.verbose(`Executing action ${type}`);
-        this.logger.debug("with data %o", data);
-        switch (type) {
+    private executeAction(action: VtsAction) {
+        this.logger.verbose(`Executing action ${action.actionName}`);
+        this.logger.debug("with data %o", action.actionData);
+        switch (action.actionType) {
             case "hotkeyTrigger":
-                this.sendHotkeyAction(data);
+                this.sendHotkeyAction(action.actionData);
                 break;
         
             default:

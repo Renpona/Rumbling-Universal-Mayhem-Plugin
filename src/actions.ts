@@ -37,6 +37,7 @@ function saveActions(event: SubmitEvent) {
 
         if (validationSuccess) {
             let action: VtsAction = {
+                actionName: dataElement.selectedOptions[0].textContent,
                 actionType: "hotkeyTrigger",
                 actionData: { hotkeyID: dataElement.value },
                 vibrateRange: {

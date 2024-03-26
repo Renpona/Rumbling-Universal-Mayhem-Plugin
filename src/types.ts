@@ -37,6 +37,7 @@ type HotkeyData = {
 }
 
 type VtsAction = {
+    actionName?: string,
     actionType: "hotkeyTrigger",
     actionData: ActionHotkey,
     vibrateRange: {
