@@ -81,6 +81,20 @@ class ConnectorVtubestudio implements VtuberSoftware {
     }
 
     public sendData(param: string, value: number) {
+        this.sendParamDataToVts(param, value);
+
+        if (this.actionList) this.runVtsActions(value);
+
+        this.paramState[param] = value;
+    };
+
+    private updateTimer: NodeJS.Timeout;
+    private paramState = {
+        "Linear": null,
+        "Vibrate": null
+    }
+
+    private sendParamDataToVts(param: string, value: number) {
         let paramData = {
             mode: "set" as "set",
             "parameterValues": [
@@ -98,16 +112,6 @@ class ConnectorVtubestudio implements VtuberSoftware {
                 updateStatus(category, ConnectionStatus.Error, "VTubeStudio connection error: Code " + e.data.errorID.toString() + "\n" + e.data.message);
             })
             .then(this.startParamRefresher());
-
-        if (this.actionList) this.runVtsActions(value);
-
-        this.paramState[param] = value;
-    };
-
-    private updateTimer: NodeJS.Timeout;
-    private paramState = {
-        "Linear": null,
-        "Vibrate": null
     }
 
     /**
@@ -126,8 +130,8 @@ class ConnectorVtubestudio implements VtuberSoftware {
 
     private paramRefresh() {
         let state = this.paramState;
-        if (state.Linear != null) this.sendData("Linear", state.Linear);
-        if (state.Vibrate != null) this.sendData("Vibrate", state.Vibrate);
+        if (state.Linear != null) this.sendParamDataToVts("Linear", state.Linear);
+        if (state.Vibrate != null) this.sendParamDataToVts("Vibrate", state.Vibrate);
         if (state.Linear == 0) this.paramState.Linear = null;
         if (state.Vibrate == 0) this.paramState.Vibrate = null;
     }
