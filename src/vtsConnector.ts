@@ -1,5 +1,5 @@
 import { ApiClient, HotkeyType, VTubeStudioError } from "vtubestudio";
-import { ConnectionStatus, FormType, Protocol } from "./enums";
+import { ActionCheck, ConnectionStatus, FormType, Protocol } from "./enums";
 import { pluginName } from "./utils";
 import { updateHotkeyList, updateStatus } from "./electron/electronMain";
 import ws from "ws";
@@ -204,7 +204,9 @@ class ConnectorVtubestudio implements VtuberSoftware {
     private runVtsActions(vibrateValue: number) {
         const actionList = this.actionList;
         let pastValue: number | null;
-        
+        let exitActions = [];
+        let entryActions = [];
+                
         if (this.paramState && this.paramState.Vibrate) {
             pastValue = this.paramState.Vibrate * 100;
         } else {
@@ -213,11 +215,27 @@ class ConnectorVtubestudio implements VtuberSoftware {
 
         this.logger.debug("Checking VTS actions against vibrate value %s", vibrateValue);
         actionList.forEach(action => {
-            this.logger.debug("Checking VTS action %o", action);
-            if (this.compareVibrateValue(action, vibrateValue, pastValue)) {
-                this.executeAction(action.actionType, action.actionData);
+            //this.logger.debug("Checking VTS action %o", action);
+            switch (this.compareVibrateValue(action, vibrateValue, pastValue)) {
+                case ActionCheck.Exit:
+                    exitActions.push(action);
+                    break;
+                case ActionCheck.Entry:
+                    entryActions.push(action);
+                    break;
+                default:
+                    break;
             }
         });
+
+        // Entry actions are when rumble enters a condition's range
+        // Exit actions are when rumble exits it
+        exitActions.forEach(action => {
+            this.executeAction(action);
+        });
+        entryActions.forEach(action => {
+            this.executeAction(action);
+        })
     }
 
     private compareVibrateValue(action: VtsAction, vibrateValue: number, pastValue: number) {
@@ -241,10 +259,13 @@ class ConnectorVtubestudio implements VtuberSoftware {
         }
 
         this.logger.debug(`prev match is ${previousTrigger}, curr match is ${currentTrigger}`);
-        if (previousTrigger != currentTrigger) {
-            return true;
+        //if (previousTrigger != currentTrigger) {
+        if (previousTrigger && !currentTrigger) {
+            return ActionCheck.Exit;
+        } else if (!previousTrigger && currentTrigger) {
+            return ActionCheck.Entry;
         } else {
-            return false;
+            return ActionCheck.None;
         }
     }
 
