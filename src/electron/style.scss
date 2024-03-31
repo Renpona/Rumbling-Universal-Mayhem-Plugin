@@ -1,4 +1,6 @@
-@import 'bulma/bulma';
+@use './fontawesome/scss/fontawesome.scss';
+@use './fontawesome/scss/solid.scss';
+
 
 @mixin center {
     margin-left: auto;
