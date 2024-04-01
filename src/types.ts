@@ -1,5 +1,6 @@
 import { HotkeyType } from "vtubestudio";
 import { Protocol } from "./enums";
+import { openDB, DBSchema } from 'idb';
 
 type Settings = {
     application: ApplicationSettings,
@@ -46,8 +47,22 @@ type VtsAction = {
     }
 }
 
+type VtsActionRecord = {
+    actionSetName: string,
+    modelId: string,
+    actionList: VtsAction[]
+}
+
 type ActionHotkey = {
     hotkeyID: string
 }
 
-export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware, HotkeyData, VtsAction, ActionHotkey }
+interface Database extends DBSchema {
+    "savedActions": {
+        key: string,
+        value: VtsActionRecord,
+        indexes: { modelId: string }
+    }
+}
+
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware, HotkeyData, VtsAction, VtsActionRecord, ActionHotkey, Database }

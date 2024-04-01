@@ -32,4 +32,8 @@ enum ActionCheck {
     Entry = 2
 }
 
-export { ExitCode, FormType, Protocol, ConnectionStatus, ActionCheck };
+enum DbStores {
+    SavedActions = "savedActions"
+}
+
+export { ExitCode, FormType, Protocol, ConnectionStatus, ActionCheck, DbStores };

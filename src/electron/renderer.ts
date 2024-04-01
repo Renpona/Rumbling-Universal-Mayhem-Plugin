@@ -2,6 +2,7 @@ import { addActionEvents, createActionElement, createHotkeyList } from "../actio
 import { ConnectionStatus, FormType } from "../enums";
 import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
+import { closeModal } from "./utils-frontend";
 
 if (document.readyState === "loading") {
     // Loading hasn't finished yet
@@ -16,6 +17,7 @@ function initFrontend() {
 }
 
 function addEvents() {
+    document.querySelector(".modal-close").addEventListener("click", (event: PointerEvent) => closeModal(event));
     document.querySelector("#intifaceForm").addEventListener("submit", (event: SubmitEvent) => {
         event.preventDefault();
         if (event.submitter.classList.contains("disconnectButton")) {
@@ -26,7 +28,7 @@ function addEvents() {
             submitIntifaceConnection(host as string, parseInt(port as string));
         }
     });
-    
+
     document.querySelector("#vtuberForm").addEventListener("submit", (event: SubmitEvent) => {
         event.preventDefault();
         if (event.submitter.classList.contains("disconnectButton")) {
@@ -60,7 +62,7 @@ function addEvents() {
     });
 
     addActionEvents();
-    
+
     window.electronAPI.onUpdateSettings((data: Settings) => {
         populateDefaults(data);
     });

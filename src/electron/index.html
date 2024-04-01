@@ -73,19 +73,35 @@
                     <span class="icon"><i class="fa-solid fa-plus"></i></span>
                     <span>Add New Action</span>
                 </button>
-                <button type="submit" class="button" id="saveActionsButton">Apply Actions</button>
+                <button type="submit" class="button" id="sendActionsButton">Apply Actions</button>
+                <button class="button" type="button" id="saveActionSetButton">
+                    <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+                    <span>Save Actions</span>
+                </button>
+                <button class="button" type="button" id="loadActionSetButton">
+                    <span class="icon"><i class="fa-solid fa-upload"></i></span>
+                    <span>Load Actions</span>
+                </button>
             </form>
         </div>
     </div>
+    <div class="modal" id="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
     <template id="actionTemplate">
-        <div class="action">
+        <div class="action notification is-info is-light">
             <button type="button" class="delete is-medium"></button>
             <div class="field is-horizontal actionItem">
-                <label class="field-label" for="">Min Rumble:</label><div class="field-body"><input type="number" required min=0 max=100 value="50" class="rangeMin"></div>
-                <label class="field-label" for="">Max Rumble:</label><div class="field-body"><input type="number" required min=0 max=100 value="100" class="rangeMax"></div>
+                <label class="field-label is-small" for="">Min Rumble:</label>
+                <div class="field-body"><input type="number" required min=0 max=100 value="50" class="rangeMin"></div>
+                <label class="field-label is-small" for="">Max Rumble:</label>
+                <div class="field-body"><input type="number" required min=0 max=100 value="100" class="rangeMax"></div>
             </div>
             <div class="control is-expanded hotkeyContainer">
-            
+
             </div>
         </div>
     </template>
@@ -96,7 +112,24 @@
             </select>
         </div>
     </template>
-    
-    
+    <template id="saveActionTemplate">
+        <div class="box">
+            <form>
+                <div class="field">
+                    <label class="label" for="">Action Set Name:</label>
+                    <input type="text" class="input savedActionNameEntry">
+                    <button type="button" class="button saveActionSubmit">Save Action Set</button>
+                </div>
+            </form>
+        </div>
+    </template>
+    <template id="loadActionTemplate">
+        <div class="box">
+            <span>Load Action Set:</span>
+            <div class="actionSetList">
+                <span>Loading...</span><span class="bulma-loader-mixin"></span>
+            </div>
+        </div>
+    </template>
 </body>
 </html>
