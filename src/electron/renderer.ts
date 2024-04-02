@@ -1,4 +1,4 @@
-import { addActionEvents, createActionElement, createHotkeyList } from "../actions";
+import { addActionEvents, createHotkeyList, updateModelInfo } from "../actions";
 import { ConnectionStatus, FormType } from "../enums";
 import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
@@ -72,6 +72,7 @@ function addEvents() {
     });
 
     window.electronAPI.onUpdateHotkeyList(createHotkeyList);
+    window.electronAPI.onChangeModelVts(updateModelInfo);
 }
 
 function populateDefaults(settings: Settings) {

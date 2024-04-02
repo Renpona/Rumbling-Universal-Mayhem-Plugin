@@ -1,10 +1,9 @@
 import { closeModal, createModal, setModalContent } from "./electron/utils-frontend";
 import { DbStores } from "./enums";
-import { Database, HotkeyData, VtsAction, VtsActionRecord } from "./types";
+import { Database, HotkeyData, ModelUpdateEvent, VtsAction, VtsActionRecord } from "./types";
 import { openDB } from "idb";
 
-//TODO: yeah you know we're replacing this with the real stuff later
-let modelId = "testModel";
+var modelId: string | null;
 
 function addActionEvents() {
     document.querySelector("#actionForm").addEventListener("submit", sendActions);
@@ -14,12 +13,23 @@ function addActionEvents() {
         document.querySelector(".saveActionSubmit").addEventListener("click", () => {
             let actionSetName = (document.querySelector(".savedActionNameEntry") as HTMLInputElement).value;
             saveActions(actionSetName);
+            closeModal();
         });
     });
     document.querySelector("#loadActionSetButton").addEventListener("click", () => {
         createModal(document.querySelector("#loadActionTemplate"));
         loadActionSetList(modelId).then(setModalContent);
     });
+}
+
+function updateModelInfo(modelEvent: ModelUpdateEvent) {
+    console.log(modelEvent);
+    closeModal();
+    if (modelEvent.modelLoaded) {
+        modelId = modelEvent.modelID;
+    } else {
+        modelId = null;
+    }
 }
 
 function readActions() {
@@ -118,8 +128,9 @@ function createHotkeyList(data: HotkeyData[]) {
 
     if (selectElement.options.length > 1) {
         // we want to leave the original "none" element, so start from index 1 rather than 0
-        for (let index = 1; index < selectElement.options.length; index++) {
-            selectElement.options.remove(index);
+        let length = selectElement.options.length;
+        for (let index = 1; index < length; index++) {
+            selectElement.options.remove(1);
         }
     }
 
@@ -131,7 +142,17 @@ function createHotkeyList(data: HotkeyData[]) {
     });
 
     let actionTemplate = document.querySelector("#actionTemplate") as HTMLTemplateElement;
+    actionTemplate.content.querySelector(".hotkeyContainer").firstChild.remove();
     actionTemplate.content.querySelector(".hotkeyContainer").appendChild(selectTemplate.content.cloneNode(true));
+
+    // also update the hotkey lists in existing actions
+    let selectElementList = document.querySelectorAll(".hotkeyList") as NodeListOf<HTMLSelectElement>;
+    selectElementList.forEach((listElement) => {
+        let savedValue = listElement.value;
+        let parent = listElement.parentElement;
+        listElement.replaceWith(selectTemplate.content.cloneNode(true));
+        (parent.querySelector(".hotkeyList") as HTMLSelectElement).value = savedValue;
+    });
 }
 
 function deleteAction(event: PointerEvent) {
@@ -142,9 +163,9 @@ function deleteAction(event: PointerEvent) {
 }
 
 async function saveActions(actionSetName: string) {
-    // TODO: need to watch for model changes and feed an event to the frontend, since hotkeys are model specific
-    //const modelId: string = await getModelId();
-    const modelId = "testModel";
+    if (!modelId) {
+        return;
+    }
 
     let actionList = readActions();
     let savedActionData = {
@@ -158,6 +179,14 @@ async function saveActions(actionSetName: string) {
 }
 
 async function loadActionSetList(modelId: string) {
+    if (!modelId) {
+        let container = document.createElement("div");
+        container.classList.add("box");
+        let content = document.createElement("span");
+        content.textContent = "A model must be currently loaded in VTubeStudio!";
+        container.appendChild(content);
+        return container;
+    }
     let db = await createDb(DbStores.SavedActions, "actionSetName");
     let query = IDBKeyRange.only(modelId);
     let cursor = await db.transaction(DbStores.SavedActions, "readonly").store.index("modelId").openCursor(query);
@@ -169,10 +198,13 @@ async function loadActionSetList(modelId: string) {
         cursor = await cursor.continue();
     }
 
-    if (!actionSetList) {
+    if (actionSetList.length <= 0) {
+        let container = document.createElement("div");
+        container.classList.add("box");
         let content = document.createElement("span");
-        content.textContent = "No saved action sets found!";
-        return content;
+        content.textContent = "No saved action sets found for this avatar!";
+        container.appendChild(content);
+        return container;
     } else {
         return actionSetHtml;
     }
@@ -189,7 +221,6 @@ function loadActionState(record: VtsActionRecord) {
         createActionElementFromData(actionItem);
     });
     sendActions();
-    closeModal();
 }
 
 function createActionSetElement(name: string) {
@@ -200,7 +231,10 @@ function createActionSetElement(name: string) {
     title.textContent = name;
 
     container.appendChild(title);
-    container.addEventListener("click", () => loadSingleActionSet(name).then(loadActionState));
+    container.addEventListener("click", () => {
+        loadSingleActionSet(name).then(loadActionState);
+        closeModal();
+    });
     return container;
 }
 
@@ -232,4 +266,4 @@ async function createDb(store: DbStores, keyPath: string) {
     return db;
 }
 
-export { addActionEvents, createActionElement, createHotkeyList }
+export { addActionEvents, createActionElement, createHotkeyList, updateModelInfo }

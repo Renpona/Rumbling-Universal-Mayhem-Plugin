@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
-import { HotkeyData, Settings, VtsAction, VtuberSettings } from '../types';
+import { HotkeyData, ModelUpdateEvent, Settings, VtsAction, VtuberSettings } from '../types';
 import path from 'node:path';
 import { connectVtuber, disconnectVtuber, parseSettings, registerActions } from '../startup';
 import { ConnectionStatus, FormType } from '../enums';
@@ -61,8 +61,12 @@ function updateStatus(category: FormType, state: ConnectionStatus, message: stri
     mainWindow.webContents.send("status", category, state, message);
 }
 
+function changeModelVts(modelEvent: ModelUpdateEvent) {
+    mainWindow.webContents.send("modelChangeVts", modelEvent);
+}
+
 function updateHotkeyList(hotkeyList: HotkeyData[]) {
     mainWindow.webContents.send("hotkeyList", hotkeyList);
 }
 
-export { sendDefaultsToUi, updateStatus, updateHotkeyList };
+export { sendDefaultsToUi, updateStatus, changeModelVts, updateHotkeyList };

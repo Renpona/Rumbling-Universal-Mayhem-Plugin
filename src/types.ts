@@ -31,6 +31,12 @@ interface VtuberSoftware {
     registerActions: (action: VtsAction | any) => void
 }
 
+type ModelUpdateEvent = {
+    modelLoaded: boolean,
+    modelName: string,
+    modelID: string
+}
+
 type HotkeyData = {
     name: string,
     type: string,
@@ -65,4 +71,4 @@ interface Database extends DBSchema {
     }
 }
 
-export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware, HotkeyData, VtsAction, VtsActionRecord, ActionHotkey, Database }
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware, ModelUpdateEvent, HotkeyData, VtsAction, VtsActionRecord, ActionHotkey, Database }

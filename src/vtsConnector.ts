@@ -1,9 +1,9 @@
 import { ApiClient, HotkeyType, VTubeStudioError } from "vtubestudio";
 import { ActionCheck, ConnectionStatus, FormType, Protocol } from "./enums";
 import { pluginName } from "./utils";
-import { updateHotkeyList, updateStatus } from "./electron/electronMain";
+import { changeModelVts, updateHotkeyList, updateStatus } from "./electron/electronMain";
 import ws from "ws";
-import { ActionHotkey, HotkeyData, VtsAction, VtuberSoftware } from "./types";
+import { ActionHotkey, ModelUpdateEvent, VtsAction, VtuberSoftware } from "./types";
 import { getLogger } from "./loggerConfig";
 
 const fs = require("node:fs");
@@ -55,7 +55,13 @@ class ConnectorVtubestudio implements VtuberSoftware {
             updateStatus(category, ConnectionStatus.Connected, `${name} connected!`);
             this.isConnected = true;
             this.addParam();
+            this.apiClient.currentModel().then((data) => {
+                logger.debug(data);
+                let modelInfo: ModelUpdateEvent = data;
+                this.updateModel(modelInfo);
+            });
             this.getHotkeysList();
+            this.subscribeToEvents();
             clearTimeout(timer);
         });
         this.apiClient.on("error", (e: string) => {
@@ -155,6 +161,20 @@ class ConnectorVtubestudio implements VtuberSoftware {
         return fs.readFileSync("./auth-token.txt", "utf-8");
     }
 
+    private subscribeToEvents() {
+        this.apiClient.events.modelLoaded.subscribe((data) => {
+            this.logger.debug("Model change event: %o", data);
+            this.updateModel(data);
+            this.getHotkeysList();
+        });
+        this.apiClient.events.modelConfigChanged.subscribe((data) => {
+            if (data.hotkeyConfigChanged) {
+                this.logger.verbose("Hotkey change event detected. Refreshing hotkey data");
+                this.getHotkeysList();
+            }
+        })
+    }
+
     private addParam() {
         let logger = this.logger;
         const linearParam = {
@@ -188,6 +208,10 @@ class ConnectorVtubestudio implements VtuberSoftware {
             .catch((e) => {
                 logger.error(`Failed to add parameter: ${e.errorID} ${e.message}`);
             });
+    }
+
+    private updateModel(data: ModelUpdateEvent) {
+        changeModelVts(data);
     }
 
     public getHotkeysList() {

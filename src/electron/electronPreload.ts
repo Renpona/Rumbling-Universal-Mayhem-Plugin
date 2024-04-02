@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // send data from main process to renderer
     onUpdateSettings: (callback) => ipcRenderer.on('settings', (_event, value) => callback(value)),
     onUpdateStatus: (callback) => ipcRenderer.on('status', (_event, category, state, message) => callback(category, state, message)),
+    onChangeModelVts: (callback) => ipcRenderer.on('modelChangeVts', (_event, modelEvent) => callback(modelEvent)),
     onUpdateHotkeyList: (callback) => ipcRenderer.on('hotkeyList', (_event, hotkeyList) => callback(hotkeyList)),
     
     // send data from renderer process to main
