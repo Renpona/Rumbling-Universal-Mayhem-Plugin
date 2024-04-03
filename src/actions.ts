@@ -22,6 +22,15 @@ function addActionEvents() {
     });
 }
 
+function showActionsArea(bool: boolean) {
+    let actionsArea = document.querySelector("#actionArea");
+    if (bool == true) {
+        actionsArea.classList.remove("hidden");
+    } else {
+        actionsArea.classList.add("hidden");
+    }
+}
+
 function updateModelInfo(modelEvent: ModelUpdateEvent) {
     console.log(modelEvent);
     closeModal();
@@ -269,4 +278,4 @@ async function createDb(store: DbStores, keyPath: string) {
     return db;
 }
 
-export { addActionEvents, createActionElement, createHotkeyList, updateModelInfo }
+export { addActionEvents, showActionsArea, createActionElement, createHotkeyList, updateModelInfo }

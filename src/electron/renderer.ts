@@ -1,4 +1,4 @@
-import { addActionEvents, createHotkeyList, updateModelInfo } from "../actions";
+import { addActionEvents, createHotkeyList, showActionsArea, updateModelInfo } from "../actions";
 import { ConnectionStatus, FormType } from "../enums";
 import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
@@ -96,6 +96,14 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
         case ConnectionStatus.Connected:
             targetElement.parentElement.classList.add("connected");
             targetForm.classList.add("connected");
+            if (category == FormType.Vtuber) {
+                document.querySelectorAll("#vtuberForm select").forEach((element: HTMLSelectElement) => element.disabled = true);
+                document.querySelectorAll("#vtuberForm input").forEach((element: HTMLInputElement) => element.disabled = true);
+                let protocol = document.querySelector("#vtuberProtocol") as HTMLSelectElement;
+                if (protocol.value.toLowerCase() == "vtubestudio") {
+                    showActionsArea(true);
+                }
+            }
             break;
         case ConnectionStatus.Error:
             targetElement.parentElement.classList.add("error");
@@ -109,12 +117,13 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
         case ConnectionStatus.NotConnected:
             targetElement.parentElement.classList.add("disconnected");
             targetForm.classList.add("disconnected");
+            if (category == FormType.Vtuber) {
+                document.querySelectorAll("#vtuberForm select").forEach((element: HTMLSelectElement) => element.disabled = false);
+                document.querySelectorAll("#vtuberForm input").forEach((element: HTMLInputElement) => element.disabled = false);
+                showActionsArea(false);
+            }
             break;
         default:
-            //targetElement.classList.remove("connected");
-            //targetElement.classList.remove("error");
-            //targetForm.classList.remove("connected");
-            //targetForm.classList.remove("error");
             console.error("displayStatus called with unexpected state: ", state);
             break;
     }
