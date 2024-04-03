@@ -142,8 +142,11 @@ function createHotkeyList(data: HotkeyData[]) {
     });
 
     let actionTemplate = document.querySelector("#actionTemplate") as HTMLTemplateElement;
-    actionTemplate.content.querySelector(".hotkeyContainer").firstChild.remove();
-    actionTemplate.content.querySelector(".hotkeyContainer").appendChild(selectTemplate.content.cloneNode(true));
+    let hotkeyContainer = actionTemplate.content.querySelector(".hotkeyContainer");
+    if (hotkeyContainer.firstElementChild) {
+        hotkeyContainer.firstElementChild.remove();
+    }
+    hotkeyContainer.appendChild(selectTemplate.content.cloneNode(true));
 
     // also update the hotkey lists in existing actions
     let selectElementList = document.querySelectorAll(".hotkeyList") as NodeListOf<HTMLSelectElement>;
