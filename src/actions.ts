@@ -48,25 +48,13 @@ function readActions() {
     actionElementsList.forEach(actionElement => {
         let minElement = actionElement.querySelector(".rangeMin") as HTMLInputElement;
         let maxElement = actionElement.querySelector(".rangeMax") as HTMLInputElement;
-        let minValue = parseInt(minElement.value)
-        let maxValue = parseInt(maxElement.value);
+        let minValue: number = parseInt(minElement.value);
+        let maxValue: number = parseInt(maxElement.value);
+        let enterValue: boolean = (actionElement.querySelector(".enter") as HTMLInputElement).checked;
+        let exitValue: boolean = (actionElement.querySelector(".exit") as HTMLInputElement).checked;
         let dataElement = actionElement.querySelector(".hotkeyList") as HTMLSelectElement;
-        let validationSuccess = true;
 
-        if (dataElement.value == "none") {
-            dataElement.setCustomValidity("You must select an action!");
-            maxElement.reportValidity();
-            validationSuccess = false;
-        } else {
-            dataElement.setCustomValidity("");
-        }
-        if (minValue > maxValue) {
-            maxElement.setCustomValidity("Max value must be higher than min value");
-            maxElement.reportValidity();
-            validationSuccess = false;
-        } else {
-            maxElement.setCustomValidity("");
-        }
+        let validationSuccess: boolean = checkActionValidity(minElement, maxElement, dataElement);
 
         if (validationSuccess) {
             let action: VtsAction = {
@@ -76,6 +64,11 @@ function readActions() {
                 vibrateRange: {
                     min: minValue,
                     max: maxValue
+                },
+                triggers: {
+                    enter: enterValue,
+                    exit: exitValue,
+                    while: false
                 }
             }
 
@@ -84,6 +77,33 @@ function readActions() {
     });
 
     return actionList;
+}
+
+function validateAction(event: Event) {
+    let actionElement = (event.target as HTMLElement).closest(".action");
+    let minElement = actionElement.querySelector(".rangeMin") as HTMLInputElement;
+    let maxElement = actionElement.querySelector(".rangeMax") as HTMLInputElement;
+    let dataElement = actionElement.querySelector(".hotkeyList") as HTMLSelectElement;
+    let enterElement = actionElement.querySelector(".enter") as HTMLInputElement;
+    let exitValue = actionElement.querySelector(".exit") as HTMLInputElement;
+
+    /*if (dataElement.value == "none") {
+        dataElement.setCustomValidity("No action selected!");
+    } else {
+        dataElement.setCustomValidity("");
+    }
+    dataElement.reportValidity();*/
+
+    if (minElement.value > maxElement.value) {
+        maxElement.setCustomValidity("Max value must be higher than min value");
+    } else {
+        maxElement.setCustomValidity("");
+    }
+    maxElement.reportValidity();
+}
+
+function checkActionValidity(minElement: HTMLInputElement, maxElement: HTMLInputElement, dataElement: HTMLSelectElement) {
+    return (minElement.validity.valid && maxElement.validity.valid && dataElement.validity.valid);
 }
 
 function sendActions(event?: SubmitEvent) {
@@ -114,6 +134,8 @@ function createActionElement(event?: PointerEvent) {
     let actionTemplate = document.querySelector("#actionTemplate") as HTMLTemplateElement;
     let actionNode = actionTemplate.content.cloneNode(true) as HTMLElement;
     actionNode.children[0].querySelector(".delete").addEventListener("click", deleteAction);
+    actionNode.children[0].querySelector(".rangeMin").addEventListener("change", validateAction);
+    actionNode.children[0].querySelector(".rangeMax").addEventListener("change", validateAction);
 
     actionForm.appendChild(actionNode);
 }
