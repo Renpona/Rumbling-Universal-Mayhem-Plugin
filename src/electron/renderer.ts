@@ -1,16 +1,23 @@
+import { addActionEvents, createHotkeyList, showActionsArea, updateModelInfo } from "../actions";
 import { ConnectionStatus, FormType } from "../enums";
-import { Settings, VtuberSettings } from "../types";
+import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
+import { closeModal } from "./utils-frontend";
 
 if (document.readyState === "loading") {
     // Loading hasn't finished yet
-    document.addEventListener("DOMContentLoaded", addEvents);
+    document.addEventListener("DOMContentLoaded", initFrontend);
 } else {
     // `DOMContentLoaded` has already fired
+    initFrontend();
+}
+
+function initFrontend() {
     addEvents();
 }
 
 function addEvents() {
+    document.querySelector(".modal-close").addEventListener("click", (event: PointerEvent) => closeModal(event));
     document.querySelector("#intifaceForm").addEventListener("submit", (event: SubmitEvent) => {
         event.preventDefault();
         if (event.submitter.classList.contains("disconnectButton")) {
@@ -21,7 +28,7 @@ function addEvents() {
             submitIntifaceConnection(host as string, parseInt(port as string));
         }
     });
-    
+
     document.querySelector("#vtuberForm").addEventListener("submit", (event: SubmitEvent) => {
         event.preventDefault();
         if (event.submitter.classList.contains("disconnectButton")) {
@@ -53,7 +60,9 @@ function addEvents() {
                 break;
         }
     });
-    
+
+    addActionEvents();
+
     window.electronAPI.onUpdateSettings((data: Settings) => {
         populateDefaults(data);
     });
@@ -61,6 +70,9 @@ function addEvents() {
     window.electronAPI.onUpdateStatus((category: FormType, state: ConnectionStatus, message: string) => {
         displayStatus(category, state, message);
     });
+
+    window.electronAPI.onUpdateHotkeyList(createHotkeyList);
+    window.electronAPI.onChangeModelVts(updateModelInfo);
 }
 
 function populateDefaults(settings: Settings) {
@@ -84,6 +96,14 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
         case ConnectionStatus.Connected:
             targetElement.parentElement.classList.add("connected");
             targetForm.classList.add("connected");
+            if (category == FormType.Vtuber) {
+                document.querySelectorAll("#vtuberForm select").forEach((element: HTMLSelectElement) => element.disabled = true);
+                document.querySelectorAll("#vtuberForm input").forEach((element: HTMLInputElement) => element.disabled = true);
+                let protocol = document.querySelector("#vtuberProtocol") as HTMLSelectElement;
+                if (protocol.value.toLowerCase() == "vtubestudio") {
+                    showActionsArea(true);
+                }
+            }
             break;
         case ConnectionStatus.Error:
             targetElement.parentElement.classList.add("error");
@@ -97,12 +117,13 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
         case ConnectionStatus.NotConnected:
             targetElement.parentElement.classList.add("disconnected");
             targetForm.classList.add("disconnected");
+            if (category == FormType.Vtuber) {
+                document.querySelectorAll("#vtuberForm select").forEach((element: HTMLSelectElement) => element.disabled = false);
+                document.querySelectorAll("#vtuberForm input").forEach((element: HTMLInputElement) => element.disabled = false);
+                showActionsArea(false);
+            }
             break;
         default:
-            //targetElement.classList.remove("connected");
-            //targetElement.classList.remove("error");
-            //targetForm.classList.remove("connected");
-            //targetForm.classList.remove("error");
             console.error("displayStatus called with unexpected state: ", state);
             break;
     }

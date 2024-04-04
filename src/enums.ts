@@ -26,4 +26,14 @@ enum ConnectionStatus {
     Error = "Error"
 }
 
-export { ExitCode, FormType, Protocol, ConnectionStatus };
+enum ActionCheck {
+    None = 0,
+    Exit = 1,
+    Entry = 2
+}
+
+enum DbStores {
+    SavedActions = "savedActions"
+}
+
+export { ExitCode, FormType, Protocol, ConnectionStatus, ActionCheck, DbStores };

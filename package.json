@@ -24,6 +24,7 @@
   "homepage": "https://github.com/Renpona/VTCurse#readme",
   "dependencies": {
     "bulma": "^0.9.4",
+    "idb": "^8.0.0",
     "vtubestudio": "^3.4.0",
     "winston": "^3.12.0",
     "winston-daily-rotate-file": "^5.0.0",

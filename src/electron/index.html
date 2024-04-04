@@ -8,7 +8,7 @@
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
     <script type="text/javascript" src="renderer.js"></script>
     <link href="style.css" rel="stylesheet" />
-    <title>Rumbling Universal Mayhem Plugin</title>
+    <title>Rumbling Universal Mayhem Plugin - Closed Beta v0.5</title>
 </head>
 
 <body>
@@ -21,8 +21,10 @@
                 <!--<div class="message-header">Intiface Status</div>-->
                 <div class="status message-body">Intiface not connected!</div>
             </div>
-            <button type="submit" value="Connect" class="button connectButton hidden" id="intifaceConnect">Connect</button>
-            <button type="submit" value="Disconnect" class="button disconnectButton hidden" id="intifaceConnect">Disconnect</button>
+            <button type="submit" value="Connect" class="button connectButton hidden"
+                id="intifaceConnect">Connect</button>
+            <button type="submit" value="Disconnect" class="button disconnectButton hidden"
+                id="intifaceConnect">Disconnect</button>
         </form>
     </div>
     <div class="vtuber">
@@ -52,21 +54,92 @@
                     <label class="field-label">Port: </label>
                     <div class="field-body">
                         <div class="control">
-                            <input type="text" name="port" id="vtuberPort" class="input" value="8001" max="65535" required />
+                            <input type="text" name="port" id="vtuberPort" class="input" value="8001" max="65535"
+                                required />
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="message">
                 <!--<div class="message-header">VTuber Connection Status</div>-->
                 <div class="status message-body">Vtuber not connected!</div>
             </div>
             <div class="field">
                 <button type="submit" value="Connect" class="button connectButton" id="vtuberConnect">Connect</button>
-                <button type="submit" value="Disconnect" class="button disconnectButton" id="vtuberConnect">Disconnect</button>
+                <button type="submit" value="Disconnect" class="button disconnectButton"
+                    id="vtuberConnect">Disconnect</button>
             </div>
         </form>
+        <div id="actionArea" class="vtsAction hidden">
+            <form id="actionForm">
+                <button class="button" id="addActionButton">
+                    <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                    <span>Add New Action</span>
+                </button>
+                <button type="submit" class="button" id="sendActionsButton">Apply Actions</button>
+                <button class="button" type="button" id="saveActionSetButton">
+                    <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+                    <span>Save Actions</span>
+                </button>
+                <button class="button" type="button" id="loadActionSetButton">
+                    <span class="icon"><i class="fa-solid fa-upload"></i></span>
+                    <span>Load Actions</span>
+                </button>
+            </form>
+        </div>
     </div>
+    <div class="modal" id="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+    <template id="actionTemplate">
+        <div class="action notification is-info is-light">
+            <button type="button" class="delete is-medium"></button>
+            <span>Rumble range:</span>
+            <div class="field is-horizontal actionItem">
+                <div class="field-label is-normal"><label class="label" for="">Min:</label></div>
+                <div class="field-body"><input type="number" required min=0 max=100 value="50" class="input rangeMin"></div>
+                <div class="field-label is-normal"><label class="label" for="">Max:</label></div>
+                <div class="field-body"><input type="number" required min=0 max=100 value="100" class="input rangeMax"></div>
+            </div>
+            <div class="field">
+                <span>Trigger when: </span><br/>
+                <label class="label">Entering range<input type="checkbox" name="enter" class="enter checkbox" checked></label>
+                <label class="label">Leaving range<input type="checkbox" name="exit" class="exit checkbox" checked></label>
+            </div>
+            <div class="control is-expanded hotkeyContainer">
+
+            </div>
+        </div>
+    </template>
+    <template id="hotkeyTemplate">
+        <div class="select">
+            <select class="hotkeyList">
+                <option value="none" selected>None</option>
+            </select>
+        </div>
+    </template>
+    <template id="saveActionTemplate">
+        <div class="box">
+            <form>
+                <div class="field">
+                    <label class="label" for="">Action Set Name:</label>
+                    <input type="text" class="input savedActionNameEntry">
+                    <button type="button" class="button saveActionSubmit">Save Action Set</button>
+                </div>
+            </form>
+        </div>
+    </template>
+    <template id="loadActionTemplate">
+        <div class="box">
+            <span>Load Action Set:</span>
+            <div class="actionSetList">
+                <span>Loading...</span><span class="bulma-loader-mixin"></span>
+            </div>
+        </div>
+    </template>
 </body>
 </html>

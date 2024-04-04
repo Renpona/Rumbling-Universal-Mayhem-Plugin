@@ -34,6 +34,11 @@ class ConnectorVnyan implements VtuberSoftware {
         this.ws.send(packet);
     }
 
+    public registerActions(action: any) {
+        this.logger.error("RegisterActions called on VNyan connector!");
+        return;
+    };
+
     protected setWebsocketListeners() {
         let connector = this;
         let logger = this.logger;

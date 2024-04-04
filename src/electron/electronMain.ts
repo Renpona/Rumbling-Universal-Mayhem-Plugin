@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
-import { Settings, VtuberSettings } from '../types';
+import { HotkeyData, ModelUpdateEvent, Settings, VtsAction, VtuberSettings } from '../types';
 import path from 'node:path';
-import { connectVtuber, disconnectVtuber, parseSettings } from '../startup';
+import { connectVtuber, disconnectVtuber, parseSettings, registerActions } from '../startup';
 import { ConnectionStatus, FormType } from '../enums';
 import { resolveProtocol } from '../utils';
 import { getLogger } from '../loggerConfig';
@@ -27,6 +27,7 @@ app.whenReady().then(() => {
     createWindow();
     ipcMain.on('vtuberConnect', handleVtuberConnect);
     ipcMain.on('vtuberDisconnect', handleVtuberDisconnect);
+    ipcMain.on('vtsActionSubmit', handleVtsActionSubmit);
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -51,9 +52,21 @@ function handleVtuberDisconnect(_event: IpcMainEvent) {
     disconnectVtuber();
 }
 
+function handleVtsActionSubmit(_event: IpcMainEvent, actionList: VtsAction[]) {
+    registerActions(actionList);
+}
+
 function updateStatus(category: FormType, state: ConnectionStatus, message: string) {
     getLogger().verbose("UpdateStatus target %s, state %s, message %s", category, state, message);
     mainWindow.webContents.send("status", category, state, message);
 }
 
-export { sendDefaultsToUi, updateStatus };
+function changeModelVts(modelEvent: ModelUpdateEvent) {
+    mainWindow.webContents.send("modelChangeVts", modelEvent);
+}
+
+function updateHotkeyList(hotkeyList: HotkeyData[]) {
+    mainWindow.webContents.send("hotkeyList", hotkeyList);
+}
+
+export { sendDefaultsToUi, updateStatus, changeModelVts, updateHotkeyList };
