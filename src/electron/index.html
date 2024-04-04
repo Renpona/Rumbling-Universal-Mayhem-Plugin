@@ -98,7 +98,13 @@
     <template id="actionTemplate">
         <div class="action notification is-info is-light">
             <button type="button" class="delete is-medium"></button>
+            <span>Rumble range:</span>
             <div class="field is-horizontal actionItem">
+                <div class="field-label is-normal"><label class="label" for="">Min:</label></div>
+                <div class="field-body"><input type="number" required min=0 max=100 value="50" class="input rangeMin"></div>
+                <div class="field-label is-normal"><label class="label" for="">Max:</label></div>
+                <div class="field-body"><input type="number" required min=0 max=100 value="100" class="input rangeMax"></div>
+            </div>
             <div class="field">
                 <span>Trigger when: </span><br/>
                 <label class="label">Entering range<input type="checkbox" name="enter" class="enter checkbox" checked></label>
