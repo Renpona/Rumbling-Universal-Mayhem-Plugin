@@ -99,10 +99,10 @@
         <div class="action notification is-info is-light">
             <button type="button" class="delete is-medium"></button>
             <div class="field is-horizontal actionItem">
-                <label class="field-label is-small" for="">Min Rumble:</label>
-                <div class="field-body"><input type="number" required min=0 max=100 value="50" class="rangeMin"></div>
-                <label class="field-label is-small" for="">Max Rumble:</label>
-                <div class="field-body"><input type="number" required min=0 max=100 value="100" class="rangeMax"></div>
+            <div class="field">
+                <span>Trigger when: </span><br/>
+                <label class="label">Entering range<input type="checkbox" name="enter" class="enter checkbox" checked></label>
+                <label class="label">Leaving range<input type="checkbox" name="exit" class="exit checkbox" checked></label>
             </div>
             <div class="control is-expanded hotkeyContainer">
 

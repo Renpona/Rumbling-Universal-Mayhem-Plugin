@@ -246,10 +246,14 @@ class ConnectorVtubestudio implements VtuberSoftware {
             //this.logger.debug("Checking VTS action %o", action);
             switch (this.compareVibrateValue(action, vibrateValue, pastValue)) {
                 case ActionCheck.Exit:
-                    exitActions.push(action);
+                    if (action.triggers.exit) {
+                        exitActions.push(action);
+                    }
                     break;
                 case ActionCheck.Entry:
-                    entryActions.push(action);
+                    if (action.triggers.enter) {
+                        entryActions.push(action);
+                    }
                     break;
                 default:
                     break;

@@ -50,6 +50,11 @@ type VtsAction = {
     vibrateRange: {
         min: number,
         max: number
+    },
+    triggers: {
+        enter: boolean,
+        exit: boolean,
+        while: boolean
     }
 }
 
