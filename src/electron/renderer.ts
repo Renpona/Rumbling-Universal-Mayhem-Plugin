@@ -2,7 +2,7 @@ import { addActionEvents, createHotkeyList, showActionsArea, updateModelInfo } f
 import { ConnectionStatus, FormType } from "../enums";
 import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
-import { closeModal } from "./utils-frontend";
+import { activateTab, closeModal, showPanel } from "./utils-frontend";
 
 if (document.readyState === "loading") {
     // Loading hasn't finished yet
@@ -17,6 +17,13 @@ function initFrontend() {
 }
 
 function addEvents() {
+    let tabList = document.querySelectorAll(".tabs li");
+    tabList.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            activateTab(tab as HTMLElement);
+        });
+    });
+
     document.querySelector(".modal-close").addEventListener("click", (event: PointerEvent) => closeModal(event));
     document.querySelector("#intifaceForm").addEventListener("submit", (event: SubmitEvent) => {
         event.preventDefault();

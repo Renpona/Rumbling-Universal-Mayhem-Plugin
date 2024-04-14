@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,70 +9,113 @@
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
     <script type="text/javascript" src="renderer.js"></script>
     <link href="style.css" rel="stylesheet" />
-    <title>Rumbling Universal Mayhem Plugin - Closed Beta v0.5</title>
+    <title>Rumbling Universal Mayhem Plugin - Dev v0.6</title>
 </head>
 
 <body>
-    <div class="intiface">
-        <h4 class="title is-4">Intiface Connection</h4>
-        <form id="intifaceForm" class="form disconnected container">
-            <input type="text" name="host" id="intifaceHost" class="hidden" required />
-            <input type="text" name="port" id="intifacePort" class="hidden" max="65535" required />
-            <div class="message">
-                <!--<div class="message-header">Intiface Status</div>-->
-                <div class="status message-body">Intiface not connected!</div>
-            </div>
-            <button type="submit" value="Connect" class="button connectButton hidden"
-                id="intifaceConnect">Connect</button>
-            <button type="submit" value="Disconnect" class="button disconnectButton hidden"
-                id="intifaceConnect">Disconnect</button>
-        </form>
-    </div>
-    <div class="vtuber">
-        <h4 class="title is-4">VTuber Software Connection</h4>
-        <form id="vtuberForm" class="form disconnected container">
-            <div class="field">
-                <div class="control">
-                    <div class="select">
-                        <select name="protocol" id="vtuberProtocol">
-                            <option>VTubeStudio</option>
-                            <option>VNyan</option>
-                            <option>Warudo</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="field is-horizontal">
+    <nav class="tabs is-centered is-toggle is-toggle-rounded">
+        <!-- This controls the tabs interface. The class attribute on each tab should match the class of the corresponding UI panel -->
+        <ul>
+            <li class="start"><a>Start</a></li>
+            <li class="intiface"><a>Intiface</a></li>
+            <li class="vtuber"><a>Vtuber</a></li>
+            <li class="actions"><a>Actions</a></li>
+            <li class="about"><a>About</a></li>
+        </ul>
+    </nav>
+    <!-- The UI panels start here. Each one should have the uiPanel class, as well as a class to identify it -->
+    <main>
+        <div class="uiPanel start currentPanel">
+            start panel content
+        </div>
+        <div class="uiPanel intiface">
+            <h4 class="title is-4">Intiface Connection</h4>
+            <form id="intifaceForm" class="form disconnected container">
                 <div class="field">
-                    <label class="field-label">Host: </label>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="text" name="host" id="vtuberHost" class="input" value="localhost" required />
+                    <div class="control">
+                        <div class="select">
+                            <select name="protocol" id="vtuberProtocol">
+                                <option>Built-in Intiface</option>
+                                <option>Intiface Central</option>
+                            </select>
                         </div>
                     </div>
                 </div>
-                <div class="field">
-                    <label class="field-label">Port: </label>
-                    <div class="field-body">
-                        <div class="control">
-                            <input type="text" name="port" id="vtuberPort" class="input" value="8001" max="65535"
-                                required />
+                <div class="field is-horizontal">
+                    <div class="field">
+                        <label class="field-label">Host: </label>
+                        <div class="field-body">
+                            <div class="control">
+                                <input type="text" name="host" id="intifaceHost" class="input" value="localhost"
+                                    required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Port: </label>
+                        <div class="field-body">
+                            <div class="control">
+                                <input type="text" name="port" id="intifacePort" class="input" value="12345" max="65535"
+                                    required />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="message">
-                <!--<div class="message-header">VTuber Connection Status</div>-->
-                <div class="status message-body">Vtuber not connected!</div>
-            </div>
-            <div class="field">
-                <button type="submit" value="Connect" class="button connectButton" id="vtuberConnect">Connect</button>
+                <div class="message">
+                    <div class="status message-body">Intiface Central not connected!</div>
+                </div>
+                <button type="submit" value="Connect" class="button connectButton"
+                    id="intifaceConnect">Connect</button>
                 <button type="submit" value="Disconnect" class="button disconnectButton"
-                    id="vtuberConnect">Disconnect</button>
-            </div>
-        </form>
-        <div id="actionArea" class="vtsAction hidden">
+                    id="intifaceDisconnect">Disconnect</button>
+            </form>
+        </div>
+        <div class="uiPanel vtuber">
+            <h4 class="title is-4">VTuber Software Connection</h4>
+            <form id="vtuberForm" class="form disconnected container">
+                <div class="field">
+                    <div class="control">
+                        <div class="select">
+                            <select name="protocol" id="vtuberProtocol">
+                                <option>VTubeStudio</option>
+                                <option>VNyan</option>
+                                <option>Warudo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field">
+                        <label class="field-label">Host: </label>
+                        <div class="field-body">
+                            <div class="control">
+                                <input type="text" name="host" id="vtuberHost" class="input" value="localhost"
+                                    required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Port: </label>
+                        <div class="field-body">
+                            <div class="control">
+                                <input type="text" name="port" id="vtuberPort" class="input" value="8001" max="65535"
+                                    required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="message">
+                    <div class="status message-body">Vtuber not connected!</div>
+                </div>
+                <div class="field">
+                    <button type="submit" value="Connect" class="button connectButton"
+                        id="vtuberConnect">Connect</button>
+                    <button type="submit" value="Disconnect" class="button disconnectButton"
+                        id="vtuberConnect">Disconnect</button>
+                </div>
+            </form>
+        </div>
+        <div id="actionPanel" class="uiPanel actions hidden">
             <form id="actionForm">
                 <button class="button" id="addActionButton">
                     <span class="icon"><i class="fa-solid fa-plus"></i></span>
@@ -88,27 +132,36 @@
                 </button>
             </form>
         </div>
-    </div>
-    <div class="modal" id="modal">
-        <div class="modal-background"></div>
-        <div class="modal-content">
+        <div id="about" class="uiPanel about">
+            About panel content
         </div>
-        <button class="modal-close is-large" aria-label="close"></button>
-    </div>
+        
+        <div class="modal" id="modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+            </div>
+            <button class="modal-close is-large" aria-label="close"></button>
+        </div>
+    </main>
+    
     <template id="actionTemplate">
         <div class="action notification is-info is-light">
             <button type="button" class="delete is-medium"></button>
             <span>Rumble range:</span>
             <div class="field is-horizontal actionItem">
                 <div class="field-label is-normal"><label class="label" for="">Min:</label></div>
-                <div class="field-body"><input type="number" required min=0 max=100 value="50" class="input rangeMin"></div>
+                <div class="field-body"><input type="number" required min=0 max=100 value="50" class="input rangeMin">
+                </div>
                 <div class="field-label is-normal"><label class="label" for="">Max:</label></div>
-                <div class="field-body"><input type="number" required min=0 max=100 value="100" class="input rangeMax"></div>
+                <div class="field-body"><input type="number" required min=0 max=100 value="100" class="input rangeMax">
+                </div>
             </div>
             <div class="field">
-                <span>Trigger when: </span><br/>
-                <label class="label">Entering range<input type="checkbox" name="enter" class="enter checkbox" checked></label>
-                <label class="label">Leaving range<input type="checkbox" name="exit" class="exit checkbox" checked></label>
+                <span>Trigger when: </span><br />
+                <label class="label">Entering range<input type="checkbox" name="enter" class="enter checkbox"
+                        checked></label>
+                <label class="label">Leaving range<input type="checkbox" name="exit" class="exit checkbox"
+                        checked></label>
             </div>
             <div class="control is-expanded hotkeyContainer">
 
@@ -142,4 +195,5 @@
         </div>
     </template>
 </body>
+
 </html>

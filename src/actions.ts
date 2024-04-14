@@ -23,7 +23,7 @@ function addActionEvents() {
 }
 
 function showActionsArea(bool: boolean) {
-    let actionsArea = document.querySelector("#actionArea");
+    let actionsArea = document.querySelector("#actionPanel");
     if (bool == true) {
         actionsArea.classList.remove("hidden");
     } else {

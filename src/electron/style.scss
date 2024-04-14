@@ -2,14 +2,17 @@
 @use './fontawesome/scss/fontawesome.scss';
 @use './fontawesome/scss/solid.scss';
 
-
 @mixin center {
     margin-left: auto;
     margin-right: auto;
 }
 
+$element-bg: #FFFFFF;
+$page-bg: #D0BBCC;
+
 html {
     overflow: auto;
+    background-color: $page-bg;
 }
 
 body {
@@ -21,6 +24,21 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+.tabs li a {
+    background-color: $element-bg;
+}
+
+.uiPanel {
+    display: none;
+    background-color: $element-bg;
+    padding:20px;
+    border-radius:20px;
+}
+
+.uiPanel.currentPanel {
+    display: block;
 }
 
 button.connectButton {
