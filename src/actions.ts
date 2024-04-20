@@ -23,11 +23,14 @@ function addActionEvents() {
 }
 
 function showActionsArea(bool: boolean) {
-    let actionsArea = document.querySelector("#actionPanel");
+    let actionsArea = document.querySelector("#actionForm");
+    let warningText = document.querySelector("#actionPanel .vts-only")
     if (bool == true) {
         actionsArea.classList.remove("hidden");
+        warningText.classList.add("hidden");
     } else {
         actionsArea.classList.add("hidden");
+        warningText.classList.remove("hidden");
     }
 }
 
