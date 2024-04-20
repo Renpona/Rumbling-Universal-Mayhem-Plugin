@@ -1,5 +1,5 @@
 import { closeModal, createModal, setModalContent } from "./electron/utils-frontend";
-import { DbStores } from "./enums";
+import { DbStores, IntifaceChannelType } from "./enums";
 import { Database, HotkeyData, ModelUpdateEvent, VtsAction, VtsActionRecord } from "./types";
 import { openDB } from "idb";
 
@@ -53,6 +53,8 @@ function readActions() {
         let enterValue: boolean = (actionElement.querySelector(".enter") as HTMLInputElement).checked;
         let exitValue: boolean = (actionElement.querySelector(".exit") as HTMLInputElement).checked;
         let dataElement = actionElement.querySelector(".hotkeyList") as HTMLSelectElement;
+        // TODO: implement multi-channel support later
+        let channels: number[] = [1];
 
         let validationSuccess: boolean = checkActionValidity(minElement, maxElement, dataElement);
 
@@ -61,7 +63,7 @@ function readActions() {
                 actionName: dataElement.selectedOptions[0].textContent,
                 actionType: "hotkeyTrigger",
                 actionData: { hotkeyID: dataElement.value },
-                vibrateRange: {
+                actionRange: {
                     min: minValue,
                     max: maxValue
                 },
@@ -69,7 +71,9 @@ function readActions() {
                     enter: enterValue,
                     exit: exitValue,
                     while: false
-                }
+                },
+                channels: channels,
+                channelType: IntifaceChannelType.Vibrate
             }
 
             actionList.push(action);
@@ -94,7 +98,7 @@ function validateAction(event: Event) {
     }
     dataElement.reportValidity();*/
 
-    if (minElement.value > maxElement.value) {
+    if (parseInt(minElement.value) > parseInt(maxElement.value)) {
         maxElement.setCustomValidity("Max value must be higher than min value");
     } else {
         maxElement.setCustomValidity("");
@@ -146,8 +150,8 @@ function createActionElementFromData(data: VtsAction) {
     let actionNode = actionTemplate.content.cloneNode(true) as HTMLElement;
     actionNode.children[0].querySelector(".delete").addEventListener("click", deleteAction);
 
-    (actionNode.querySelector(".rangeMin") as HTMLInputElement).value = data.vibrateRange.min.toString();
-    (actionNode.querySelector(".rangeMax") as HTMLInputElement).value = data.vibrateRange.max.toString();
+    (actionNode.querySelector(".rangeMin") as HTMLInputElement).value = data.actionRange.min.toString();
+    (actionNode.querySelector(".rangeMax") as HTMLInputElement).value = data.actionRange.max.toString();
     (actionNode.querySelector(".hotkeyList") as HTMLSelectElement).value = data.actionData.hotkeyID;
 
     actionForm.appendChild(actionNode);

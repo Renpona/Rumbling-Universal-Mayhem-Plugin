@@ -1,5 +1,5 @@
 import { HotkeyType } from "vtubestudio";
-import { Protocol } from "./enums";
+import { IntifaceChannelType, Protocol } from "./enums";
 import { openDB, DBSchema } from 'idb';
 
 type Settings = {
@@ -50,7 +50,7 @@ type VtsAction = {
     actionName?: string,
     actionType: "hotkeyTrigger",
     actionData: ActionHotkey,
-    vibrateRange: {
+    actionRange: {
         min: number,
         max: number
     },
@@ -58,7 +58,9 @@ type VtsAction = {
         enter: boolean,
         exit: boolean,
         while: boolean
-    }
+    },
+    channels: number[],
+    channelType: IntifaceChannelType
 }
 
 type VtsActionRecord = {

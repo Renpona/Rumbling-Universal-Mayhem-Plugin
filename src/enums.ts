@@ -17,6 +17,10 @@ enum Intiface {
     Engine = "engine"
 }
 
+enum IntifaceChannelType {
+    Vibrate = "vibrate"
+}
+
 enum Protocol {
     VtubeStudio = "VTubeStudio",
     Vnyan = "VNyan",
@@ -41,4 +45,4 @@ enum DbStores {
     SavedActions = "savedActions"
 }
 
-export { ExitCode, FormType, Intiface, Protocol, ConnectionStatus, ActionCheck, DbStores };
+export { ExitCode, FormType, Intiface, IntifaceChannelType, Protocol, ConnectionStatus, ActionCheck, DbStores };
