@@ -105,14 +105,17 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
     //console.log("update %s connection status, state %s, message %s", category, state, message);
     let targetForm: HTMLFormElement = document.querySelector("#" + category + "Form");
     let targetElement: HTMLElement = document.querySelector("#" + category + "Form .status");
+    let targetIcon: HTMLElement = document.querySelector(`li.${category} .icon`);
     targetElement.innerText = message;
 
     targetForm.classList.remove("error", "disconnected", "connected", "connecting");
+    targetIcon.classList.remove("has-text-success", "has-text-warning", "has-text-danger");
     targetElement.parentElement.classList.remove("error", "disconnected", "connected", "connecting");
 
     switch (state) {
         case ConnectionStatus.Connected:
             targetElement.parentElement.classList.add("connected");
+            targetIcon.classList.add("has-text-success");
             targetForm.classList.add("connected");
             if (category == FormType.Vtuber) {
                 document.querySelectorAll("#vtuberForm select").forEach((element: HTMLSelectElement) => element.disabled = true);
@@ -129,15 +132,18 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
             break;
         case ConnectionStatus.Error:
             targetElement.parentElement.classList.add("error");
+            targetIcon.classList.add("has-text-danger");
             targetForm.classList.add("error");
             break;
         case ConnectionStatus.Connecting:
             targetElement.parentElement.classList.add("connecting");
+            targetIcon.classList.add("has-text-warning");
             targetForm.classList.add("connecting");
             break;
         case ConnectionStatus.Disconnected:
         case ConnectionStatus.NotConnected:
             targetElement.parentElement.classList.add("disconnected");
+            targetIcon.classList.add("has-text-danger");
             targetForm.classList.add("disconnected");
             if (category == FormType.Vtuber) {
                 document.querySelectorAll("#vtuberForm select").forEach((element: HTMLSelectElement) => element.disabled = false);

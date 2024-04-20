@@ -30,6 +30,11 @@ body {
     background-color: $element-bg;
 }
 
+nav.tabs li span.icon:last-child {
+    margin-left: 0.4em;
+    margin-right: 0em;
+}
+
 .uiPanel {
     display: none;
     background-color: $element-bg;
