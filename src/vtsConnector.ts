@@ -34,7 +34,9 @@ class ConnectorVtubestudio implements VtuberSoftware {
         let logger = this.logger;
         this.options.url = `ws://${host}:${port}`;
         try {
-            updateStatus(category, ConnectionStatus.Connecting, `Attempting to connect to ${this.software}...`);
+            updateStatus(category, ConnectionStatus.Connecting, `Attempting to connect to ${this.software}...
+                If this is your first time connecting RUMP to VTubeStudio, VTS may have popped up an authentication dialog.
+                If so, you need to hit "Allow" in order to allow the connection!`);
             this.apiClient = new ApiClient(this.options);
         } catch(e) {
             logger.error(e);
@@ -47,7 +49,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
         let timer = setTimeout(() => {
             if (!this.apiClient.isConnecting && !this.apiClient.isConnected) {
                 logger.warn(`Failed to connect to ${name} after 5 seconds.`);
-                updateStatus(category, ConnectionStatus.NotConnected, `Failed to connect to ${name} after 5 seconds.`);
+                //updateStatus(category, ConnectionStatus.NotConnected, `Failed to connect to ${name} after 5 seconds.`);
             }
         }, 5000);
         this.apiClient.on("connect", () => {
@@ -271,20 +273,20 @@ class ConnectorVtubestudio implements VtuberSoftware {
     }
 
     private compareVibrateValue(action: VtsAction, vibrateValue: number, pastValue: number) {
-        const vibrateRange = action.vibrateRange;
+        const actionRange = action.actionRange;
         let currentValue: number = vibrateValue * 100;
         let currentTrigger: boolean;
         let previousTrigger: boolean;
 
-        this.logger.debug(`Comparing current vibrate value ${currentValue} and past value ${pastValue} against action range ${vibrateRange.min} - ${vibrateRange.max}`);
+        this.logger.debug(`Comparing current vibrate value ${currentValue} and past value ${pastValue} against action range ${actionRange.min} - ${actionRange.max}`);
 
-        if (currentValue >= vibrateRange.min && currentValue <= vibrateRange.max) {
+        if (currentValue >= actionRange.min && currentValue <= actionRange.max) {
             currentTrigger = true;
         } else {
             currentTrigger = false;
         }
         
-        if (pastValue >= vibrateRange.min && pastValue <= vibrateRange.max) {
+        if (pastValue >= actionRange.min && pastValue <= actionRange.max) {
             previousTrigger = true;
         } else {
             previousTrigger = false;

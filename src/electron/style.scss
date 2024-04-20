@@ -2,14 +2,17 @@
 @use './fontawesome/scss/fontawesome.scss';
 @use './fontawesome/scss/solid.scss';
 
-
 @mixin center {
     margin-left: auto;
     margin-right: auto;
 }
 
+$element-bg: #FFFFFF;
+$page-bg: #D0BBCC;
+
 html {
     overflow: auto;
+    background-color: $page-bg;
 }
 
 body {
@@ -21,6 +24,26 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+.tabs li a {
+    background-color: $element-bg;
+}
+
+nav.tabs li span.icon:last-child {
+    margin-left: 0.4em;
+    margin-right: 0em;
+}
+
+.uiPanel {
+    display: none;
+    background-color: $element-bg;
+    padding:20px;
+    border-radius:20px;
+}
+
+.uiPanel.currentPanel {
+    display: block;
 }
 
 button.connectButton {
@@ -44,6 +67,10 @@ button.disconnectButton {
     .connectButton {
         display: block;
         @extend %loader;
+        color: transparent;
+    }
+    .connectButton:hover {
+        color: transparent;
     }
     .disconnectButton {
         display: none;

@@ -6,6 +6,9 @@ export interface IElectronAPI {
     onChangeModelVts: (data: Function) => void,
     onUpdateHotkeyList: (data: Function) => void,
     
+    connectIntifaceEngine: () => void,
+    connectIntifaceCentral: (host: string, port: number) => void,
+    disconnectIntiface: () => void,
     vtuberConnect: (settings: VtuberSettings) => void,
     vtuberDisconnect: () => void,
     vtsActionSubmit: (actionList: VtsAction[]) => void

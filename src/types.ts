@@ -1,5 +1,5 @@
 import { HotkeyType } from "vtubestudio";
-import { Protocol } from "./enums";
+import { IntifaceChannelType, Protocol } from "./enums";
 import { openDB, DBSchema } from 'idb';
 
 type Settings = {
@@ -16,10 +16,13 @@ type VtuberSettings = {
     port: number;
 }
 type IntifaceSettings = {
-    useLocal?: boolean;
+    useLocal: boolean;
+    connectionInfo?: ConnectionInfo;
+    vibration_multiplier?: number;
+}
+type ConnectionInfo = {
     host: string;
     port: number;
-    vibration_multiplier?: number;
 }
 
 interface VtuberSoftware {
@@ -47,7 +50,7 @@ type VtsAction = {
     actionName?: string,
     actionType: "hotkeyTrigger",
     actionData: ActionHotkey,
-    vibrateRange: {
+    actionRange: {
         min: number,
         max: number
     },
@@ -55,7 +58,9 @@ type VtsAction = {
         enter: boolean,
         exit: boolean,
         while: boolean
-    }
+    },
+    channels: number[],
+    channelType: IntifaceChannelType
 }
 
 type VtsActionRecord = {
@@ -76,4 +81,4 @@ interface Database extends DBSchema {
     }
 }
 
-export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware, ModelUpdateEvent, HotkeyData, VtsAction, VtsActionRecord, ActionHotkey, Database }
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, ConnectionInfo, VtuberSoftware, ModelUpdateEvent, HotkeyData, VtsAction, VtsActionRecord, ActionHotkey, Database }

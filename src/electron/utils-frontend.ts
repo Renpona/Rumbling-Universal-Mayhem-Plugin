@@ -1,3 +1,29 @@
+function showPanel(className: string) {
+    console.log(`showPanel ${className}`);
+    let targetPanel = document.querySelector(`.uiPanel.${className}`) as HTMLElement;
+    if (targetPanel.classList.contains("currentPanel")) {
+        return;
+    } else {
+        let panelList = document.querySelectorAll(".uiPanel");
+        panelList.forEach((panel) => {
+            if (panel.classList.contains(className)) {
+                panel.classList.add("currentPanel");
+            } else {
+                panel.classList.remove("currentPanel");
+            }
+        });
+    }
+}
+
+function activateTab(element: HTMLElement) {
+    if (element.classList.contains("disabled-tab")) {
+        console.log("clicked on disabled tab");
+        return;
+    } else {
+        showPanel(element.className);
+    }
+}
+
 function createModal(content: HTMLElement) {
     let modalContent: DocumentFragment;
     let type: string;
@@ -35,4 +61,4 @@ function setModalContent(content: HTMLElement | DocumentFragment) {
     getModalContent().replaceChildren(content);
 }
 
-export { createModal, closeModal, getModalContainer, getModalContent, setModalContent }
+export { showPanel, activateTab, createModal, closeModal, getModalContainer, getModalContent, setModalContent }

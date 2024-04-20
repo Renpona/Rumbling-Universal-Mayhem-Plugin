@@ -1,11 +1,11 @@
 const fs = require("node:fs");
-import { connectIntiface } from "./intifaceConnector";
+import { IntifaceInstance } from "./intifaceConnector";
 import { errorHalt, pluginName, resolveResource } from "./utils";
 import { WebSocket } from "ws";
 import { ApiClient } from "vtubestudio";
 import { intifaceEvent, startIntifaceEngine } from "./engineManager";
 import { ChildProcess } from "child_process";
-import { ConnectionStatus, ExitCode, FormType, Protocol } from "./enums";
+import { ConnectionStatus, ExitCode, FormType, Intiface, Protocol } from "./enums";
 import { IntifaceSettings, Settings, VtuberSoftware } from "./types";
 import { sendDefaultsToUi, updateStatus } from "./electron/electronMain";
 import { ConnectorWarudo } from "./warudoConnector";
@@ -15,7 +15,7 @@ import { debugLogger, getLogger, initLogger } from "./loggerConfig";
 import { Logger } from "winston";
 
 var intifaceEngine: ChildProcess;
-var intifaceConnection: WebSocket;
+var intifaceConnection: IntifaceInstance;
 var vtsConnection: ApiClient;
 var vtuberConnector: VtuberSoftware;
 
@@ -46,27 +46,27 @@ function parseSettings() {
     if (settings.application && settings.application.debug) {
         debugLogger();
     }
-    initIntiface();
+    initIntiface(settings.intiface);
     sendDefaultsToUi(settings);
 }
 
 const settings: Settings = loadConfig();
 
-function initIntiface() {
-    let intiface = settings.intiface;
-    if (intiface["useLocal"]) {
+function initIntiface(intifaceSettings: IntifaceSettings) {
+    let intifaceType: Intiface;
+    if (intifaceSettings["useLocal"]) {
         logger.info("Configured to use local Intiface Engine.");
-        initIntifaceEngine(intiface);
+        intifaceType = Intiface.Engine;
     } else {
         logger.info("Configured to use Intiface Central.");
-        intifaceConnection = connectIntiface(intiface.host, intiface.port);
+        intifaceType = Intiface.Central;
     }
+    intifaceConnection = new IntifaceInstance(intifaceType);
+    intifaceConnection.start(intifaceSettings.connectionInfo);
 }
 
-function initIntifaceEngine(intiface: IntifaceSettings) {
-    intifaceEvent.once("ready", () => connectIntiface(intiface.host, intiface.port));
-    logger.info("Initializing Intiface Engine...");
-    intifaceEngine = startIntifaceEngine();
+function disconnectIntiface() {
+    intifaceConnection.disconnectIntiface();    
 }
 
 function connectVtuber(protocol: Protocol, host: string, port: number) {
@@ -112,11 +112,4 @@ function registerActions(actions) {
     }
 }
 
-function shutdown() {
-    //TODO: close intiface engine if started
-    intifaceConnection.close(1000, `${pluginName} is shutting down.`);
-    vtsConnection.disconnect();
-    process.exit(0);
-}
-
-export { parseSettings, connectVtuber, disconnectVtuber, sendVtuberParamData, registerActions }
+export { parseSettings, initIntiface, disconnectIntiface, connectVtuber, disconnectVtuber, sendVtuberParamData, registerActions }
