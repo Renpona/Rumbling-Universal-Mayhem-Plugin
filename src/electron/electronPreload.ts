@@ -10,6 +10,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onUpdateHotkeyList: (callback) => ipcRenderer.on('hotkeyList', (_event, hotkeyList) => callback(hotkeyList)),
     
     // send data from renderer process to main
+    connectIntifaceEngine: () => ipcRenderer.send('intifaceEngineConnect'),
+    connectIntifaceCentral: (host: string, port: number) => ipcRenderer.send('intifaceCentralConnect', host, port),
+    disconnectIntiface: () => ipcRenderer.send('intifaceDisconnect'),
     vtuberConnect: (vtuberSettings: VtuberSettings) => ipcRenderer.send('vtuberConnect', vtuberSettings),
     vtuberDisconnect: () => ipcRenderer.send('vtuberDisconnect'),
     vtsActionSubmit: (actionList: VtsAction[]) => ipcRenderer.send('vtsActionSubmit', actionList)

@@ -31,17 +31,18 @@
         <div class="uiPanel intiface">
             <h4 class="title is-4">Intiface Connection</h4>
             <form id="intifaceForm" class="form disconnected container">
-                <div class="field">
+                <div class="field hidden">
+                    <!-- TODO: unhide this once Central is updated and I'm able to get it reasonably working -->
                     <div class="control">
                         <div class="select">
-                            <select name="protocol" id="vtuberProtocol">
-                                <option>Built-in Intiface</option>
-                                <option>Intiface Central</option>
+                            <select name="type" id="intifaceType">
+                                <option value="engine">Built-in Intiface</option>
+                                <option value="central">Intiface Central</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <div class="field is-horizontal">
+                <div class="field is-horizontal hidden" id="intifaceCentralConnectionData">
                     <div class="field">
                         <label class="field-label">Host: </label>
                         <div class="field-body">

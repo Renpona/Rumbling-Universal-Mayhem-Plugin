@@ -1,5 +1,5 @@
 import { addActionEvents, createHotkeyList, showActionsArea, updateModelInfo } from "../actions";
-import { ConnectionStatus, FormType } from "../enums";
+import { ConnectionStatus, FormType, Intiface } from "../enums";
 import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
 import { activateTab, closeModal, showPanel } from "./utils-frontend";
@@ -26,13 +26,23 @@ function addEvents() {
 
     document.querySelector(".modal-close").addEventListener("click", (event: PointerEvent) => closeModal(event));
     document.querySelector("#intifaceForm").addEventListener("submit", (event: SubmitEvent) => {
+        let type: string = (document.querySelector("#intifaceType") as HTMLSelectElement).value;
         event.preventDefault();
         if (event.submitter.classList.contains("disconnectButton")) {
-
+            submitIntifaceDisconnect();
         } else {
-            let host = document.querySelector<HTMLInputElement>("#intifaceHost").value;
-            let port = document.querySelector<HTMLInputElement>("#intifacePort").value;
-            submitIntifaceConnection(host as string, parseInt(port as string));
+            submitIntifaceConnection(type);
+        }
+    });
+    document.querySelector("#intifaceType").addEventListener("input", (event: InputEvent) => {
+        let element = event.target as HTMLSelectElement;
+        let intifaceType = element.value;
+        let dataSection = document.querySelector("#intifaceCentralConnectionData") as HTMLDivElement;
+
+        if (intifaceType == Intiface.Central) {
+            dataSection.classList.remove("hidden");
+        } else {
+            dataSection.classList.add("hidden");
         }
     });
 
@@ -83,11 +93,12 @@ function addEvents() {
 }
 
 function populateDefaults(settings: Settings) {
-    document.querySelector<HTMLInputElement>("#intifaceHost").value = settings.intiface.host;
-    document.querySelector<HTMLInputElement>("#intifacePort").value = settings.intiface.port.toString();
-    document.querySelector<HTMLInputElement>("#vtuberHost").value = settings.vtuber.host;
-    document.querySelector<HTMLInputElement>("#vtuberPort").value = settings.vtuber.port.toString();
-    // TODO: add behavior for feeding in protocol selection here
+    const defaultHost = "localhost";
+    const intifaceDefaultPort = 12345;
+    document.querySelector<HTMLInputElement>("#intifaceHost").value = defaultHost;
+    document.querySelector<HTMLInputElement>("#intifacePort").value = intifaceDefaultPort.toString();
+    document.querySelector<HTMLInputElement>("#vtuberHost").value = defaultHost;
+    document.querySelector<HTMLInputElement>("#vtuberPort").value = "8001";
 }
 
 function displayStatus(category: FormType, state: ConnectionStatus, message: string) {
@@ -111,6 +122,10 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
                     showActionsArea(true);
                 }
             }
+            if (category == FormType.Intiface) {
+                document.querySelectorAll("#intifaceForm select").forEach((element: HTMLSelectElement) => element.disabled = true);
+                document.querySelectorAll("#intifaceForm input").forEach((element: HTMLInputElement) => element.disabled = true);
+            }
             break;
         case ConnectionStatus.Error:
             targetElement.parentElement.classList.add("error");
@@ -129,6 +144,10 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
                 document.querySelectorAll("#vtuberForm input").forEach((element: HTMLInputElement) => element.disabled = false);
                 showActionsArea(false);
             }
+            if (category == FormType.Intiface) {
+                document.querySelectorAll("#intifaceForm select").forEach((element: HTMLSelectElement) => element.disabled = false);
+                document.querySelectorAll("#intifaceForm input").forEach((element: HTMLInputElement) => element.disabled = false);
+            }
             break;
         default:
             console.error("displayStatus called with unexpected state: ", state);
@@ -136,9 +155,21 @@ function displayStatus(category: FormType, state: ConnectionStatus, message: str
     }
 }
 
-function submitIntifaceConnection(host: string, port: number) {
-    // TODO: revisit this when adding Intiface controls to the UI
-    return null;
+function submitIntifaceConnection(type: string) {
+    if (type == Intiface.Engine) {
+        window.electronAPI.connectIntifaceEngine();
+    } else if (type == Intiface.Central) {
+        let host = document.querySelector<HTMLInputElement>("#intifaceHost").value as string;
+        let port = document.querySelector<HTMLInputElement>("#intifacePort").value as string;
+        window.electronAPI.connectIntifaceCentral(host, parseInt(port));
+    } else {
+        console.error("Invalid Intiface connection type: %s", type);
+        return null;
+    }
+}
+
+function submitIntifaceDisconnect() {
+    window.electronAPI.disconnectIntiface();
 }
 
 function submitVtuberConnection(protocol: string, host: string, port: number) {

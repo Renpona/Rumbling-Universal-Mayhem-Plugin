@@ -16,10 +16,13 @@ type VtuberSettings = {
     port: number;
 }
 type IntifaceSettings = {
-    useLocal?: boolean;
+    useLocal: boolean;
+    connectionInfo?: ConnectionInfo;
+    vibration_multiplier?: number;
+}
+type ConnectionInfo = {
     host: string;
     port: number;
-    vibration_multiplier?: number;
 }
 
 interface VtuberSoftware {
@@ -76,4 +79,4 @@ interface Database extends DBSchema {
     }
 }
 
-export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, VtuberSoftware, ModelUpdateEvent, HotkeyData, VtsAction, VtsActionRecord, ActionHotkey, Database }
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, ConnectionInfo, VtuberSoftware, ModelUpdateEvent, HotkeyData, VtsAction, VtsActionRecord, ActionHotkey, Database }

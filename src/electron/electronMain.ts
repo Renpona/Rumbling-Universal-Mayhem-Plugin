@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
 import { HotkeyData, ModelUpdateEvent, Settings, VtsAction, VtuberSettings } from '../types';
 import path from 'node:path';
-import { connectVtuber, disconnectVtuber, parseSettings, registerActions } from '../startup';
+import { connectVtuber, disconnectIntiface, disconnectVtuber, initIntiface, parseSettings, registerActions } from '../startup';
 import { ConnectionStatus, FormType } from '../enums';
 import { resolveProtocol } from '../utils';
 import { getLogger } from '../loggerConfig';
@@ -25,6 +25,9 @@ function createWindow() {
 
 app.whenReady().then(() => {
     createWindow();
+    ipcMain.on('intifaceEngineConnect', handleIntifaceEngineConnect);
+    ipcMain.on('intifaceCentralConnect', handleIntifaceCentralConnect);
+    ipcMain.on('intifaceDisconnect', handleIntifaceDisconnect);
     ipcMain.on('vtuberConnect', handleVtuberConnect);
     ipcMain.on('vtuberDisconnect', handleVtuberDisconnect);
     ipcMain.on('vtsActionSubmit', handleVtsActionSubmit);
@@ -42,6 +45,24 @@ app.on('window-all-closed', () => {
 
 function sendDefaultsToUi(settings: Settings) {
     mainWindow.webContents.send('settings', settings);
+}
+
+function handleIntifaceEngineConnect(event: IpcMainEvent): void {
+    initIntiface({ useLocal: true });
+}
+
+function handleIntifaceCentralConnect(event: IpcMainEvent, host: string, port: number): void {
+    initIntiface({ 
+        useLocal: false, 
+        connectionInfo: {
+            host: host, 
+            port: port 
+        }
+    });
+}
+
+function handleIntifaceDisconnect(event: IpcMainEvent): void {
+    disconnectIntiface();
 }
 
 function handleVtuberConnect(_event: IpcMainEvent, vtuberSettings: VtuberSettings) {
