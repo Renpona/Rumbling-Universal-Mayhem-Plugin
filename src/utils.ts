@@ -1,4 +1,4 @@
-import { app } from "electron";
+import { app, shell } from "electron";
 import path from "path";
 import { Protocol } from "./enums";
 import { getLogger } from "./loggerConfig";
@@ -38,6 +38,10 @@ function resolveProtocol(protocol: string): Protocol {
             break;
     }
     return result;
+}
+
+function openExternalLink(url: string) {
+
 }
 
 export { pluginName, errorHalt, resolveResource, resolveProtocol };
