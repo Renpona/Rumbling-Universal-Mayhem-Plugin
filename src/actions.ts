@@ -174,7 +174,11 @@ function createHotkeyList(data: HotkeyData[]) {
 
     data.forEach(hotkey => {
         let hotkeyOption: HTMLOptionElement = document.createElement("option");
-        hotkeyOption.appendChild(document.createTextNode(`${hotkey.type}: ${hotkey.name}`));
+        let displayName = hotkey.name;
+        if (!hotkey.name && hotkey.file) {
+            displayName = hotkey.file;
+        }
+        hotkeyOption.appendChild(document.createTextNode(`${hotkey.type}: ${displayName}`));
         hotkeyOption.value = hotkey.hotkeyID;
         selectElement.appendChild(hotkeyOption);
     });

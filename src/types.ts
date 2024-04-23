@@ -43,6 +43,7 @@ type ModelUpdateEvent = {
 type HotkeyData = {
     name: string,
     type: string,
+    file: string,
     hotkeyID: string
 }
 
