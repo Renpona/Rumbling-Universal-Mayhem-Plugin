@@ -112,4 +112,4 @@ function registerActions(actions) {
     }
 }
 
-export { parseSettings, initIntiface, disconnectIntiface, connectVtuber, disconnectVtuber, sendVtuberParamData, registerActions }
+export { parseSettings, initIntiface, disconnectIntiface, vtuberConnector, connectVtuber, disconnectVtuber, sendVtuberParamData, registerActions }
