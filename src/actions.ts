@@ -63,7 +63,20 @@ function readActions() {
         let validationSuccess: boolean = checkActionValidity(minElement, maxElement, dataElement);
 
         if (validationSuccess) {
-            let action: VtsAction = {
+            var data: any;
+            if (vtuberConnector.software == Protocol.VtubeStudio) {
+                data = { hotkeyID: dataElement.value };
+                var actionType = "hotkeyTrigger";
+            } /*else if (vtuberConnector.software == Protocol.Mtion) {
+                let paramIndex = actionElement.querySelector(".paramIndex") as HTMLSelectElement;
+                if (paramIndex && paramIndex.value.toLowerCase() != "none") {
+                    data = {
+                        parameter_index: 0,
+                        value: 
+                    } as MtionParamData;
+                }
+            }*/
+            let action: Action = {
                 actionName: dataElement.selectedOptions[0].textContent,
                 actionType: "hotkeyTrigger",
                 actionData: data,
