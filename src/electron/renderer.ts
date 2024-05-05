@@ -72,6 +72,9 @@ function addEvents() {
             case "warudo":
                 portField.value = "19190";
                 break;
+            case "mtion":
+                portField.value = "35393";
+                break;
             default:
                 console.error("Unexpected vtuber protocol: %s", protocol);
                 break;
