@@ -1,6 +1,5 @@
 import { closeModal, createModal, setModalContent } from "./electron/utils-frontend";
 import { DbStores, IntifaceChannelType, Protocol } from "./enums";
-import { vtuberConnector } from "./startup";
 import { Action, Database, HotkeyData, ModelUpdateEvent, MtionParamData, VtsAction, VtsActionRecord } from "./types";
 import { openDB } from "idb";
 
@@ -64,10 +63,10 @@ function readActions() {
 
         if (validationSuccess) {
             var data: any;
-            if (vtuberConnector.software == Protocol.VtubeStudio) {
+            //if (vtuberConnector.software == Protocol.VtubeStudio) {
                 data = { hotkeyID: dataElement.value };
                 var actionType = "hotkeyTrigger";
-            } /*else if (vtuberConnector.software == Protocol.Mtion) {
+            /*} else if (vtuberConnector.software == Protocol.Mtion) {
                 let paramIndex = actionElement.querySelector(".paramIndex") as HTMLSelectElement;
                 if (paramIndex && paramIndex.value.toLowerCase() != "none") {
                     data = {
