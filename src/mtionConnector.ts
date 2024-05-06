@@ -2,7 +2,7 @@ import { ConnectionStatus, FormType, Protocol } from "./enums";
 import { MtionAction, VtuberSoftware } from "./types";
 import { updateStatus } from "./electron/electronMain";
 import { getLogger } from "./loggerConfig";
-import http from 'node:http';
+import fetch from "node-fetch";
 
 const category = FormType.Vtuber;
 
