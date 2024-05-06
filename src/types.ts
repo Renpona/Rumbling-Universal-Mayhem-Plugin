@@ -70,6 +70,17 @@ interface VtsAction extends Action {
     actionData: ActionHotkey,
 }
 
+type MtionTrigger = {
+    id: string,
+    name: string,
+    output_parameters: 
+        {
+            parameter_index: number,
+            name: string,
+            data_type: "string" | "number" | "bool" | "enum"
+        }[]
+}
+
 interface MtionAction extends Action {
     actionName?: string,
     actionData: {
@@ -101,4 +112,4 @@ interface Database extends DBSchema {
     }
 }
 
-export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, ConnectionInfo, VtuberSoftware, ModelUpdateEvent, HotkeyData, Action, VtsAction, MtionAction, MtionParamData, VtsActionRecord, ActionHotkey, Database }
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, ConnectionInfo, VtuberSoftware, ModelUpdateEvent, HotkeyData, Action, VtsAction, MtionTrigger, MtionAction, MtionParamData, VtsActionRecord, ActionHotkey, Database }

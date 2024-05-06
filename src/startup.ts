@@ -13,6 +13,7 @@ import { ConnectorVnyan } from "./vnyanConnector";
 import { ConnectorVtubestudio } from "./vtsConnector";
 import { debugLogger, getLogger, initLogger } from "./loggerConfig";
 import { Logger } from "winston";
+import { ConnectorMtion } from "./mtionConnector";
 
 var intifaceEngine: ChildProcess;
 var intifaceConnection: IntifaceInstance;
@@ -79,6 +80,9 @@ function connectVtuber(protocol: Protocol, host: string, port: number) {
             break;
         case Protocol.Warudo:
             vtuberConnector = new ConnectorWarudo();
+            break;
+        case Protocol.Mtion:
+            vtuberConnector = new ConnectorMtion();
             break;
         default:
             logger.error("Unexpected vtuber protocol: %s", protocol);
