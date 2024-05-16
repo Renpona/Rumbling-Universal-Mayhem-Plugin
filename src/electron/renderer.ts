@@ -97,7 +97,7 @@ function addEvents() {
 
 function populateDefaults(settings: Settings) {
     const defaultHost = "localhost";
-    const intifaceDefaultPort = 12345;
+    const intifaceDefaultPort = 54817;
     document.querySelector<HTMLInputElement>("#intifaceHost").value = defaultHost;
     document.querySelector<HTMLInputElement>("#intifacePort").value = intifaceDefaultPort.toString();
     document.querySelector<HTMLInputElement>("#vtuberHost").value = defaultHost;

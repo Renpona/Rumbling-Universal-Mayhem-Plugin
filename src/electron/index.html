@@ -48,7 +48,7 @@
         <div class="uiPanel intiface">
             <h4 class="title is-4">Intiface Connection</h4>
             <form id="intifaceForm" class="form disconnected container">
-                <div class="field hidden">
+                <div class="field ">
                     <!-- TODO: unhide this once Central is updated and I'm able to get it reasonably working -->
                     <div class="control">
                         <div class="select">
@@ -73,7 +73,7 @@
                         <label class="field-label">Port: </label>
                         <div class="field-body">
                             <div class="control">
-                                <input type="text" name="port" id="intifacePort" class="input" value="12345" max="65535"
+                                <input type="text" name="port" id="intifacePort" class="input" value="54817" max="65535"
                                     required />
                             </div>
                         </div>
@@ -199,13 +199,13 @@
             </select>
         </div>
     </template>
-    <!--<template id="mtionTemplate" class="triggerTemplate Mtion">
+    <template id="mtionTemplate" class="triggerTemplate Mtion">
         <div class="select">
-            <select class="triggerList">
+            <select class="paramsList">
                 <option value="none" selected>None</option>
             </select>
         </div>
-    </template>-->
+    </template>
     <template id="saveActionTemplate">
         <div class="box">
             <form>
