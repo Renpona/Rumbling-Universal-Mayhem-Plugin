@@ -1,6 +1,6 @@
 import { closeModal, createModal, setModalContent } from "./electron/utils-frontend";
-import { DbStores, IntifaceChannelType } from "./enums";
-import { Database, HotkeyData, ModelUpdateEvent, VtsAction, VtsActionRecord } from "./types";
+import { DbStores, IntifaceChannelType, Protocol } from "./enums";
+import { Action, Database, HotkeyData, ModelUpdateEvent, MtionParamData, VtsAction, VtsActionRecord } from "./types";
 import { openDB } from "idb";
 
 var modelId: string | null;
@@ -62,10 +62,27 @@ function readActions() {
         let validationSuccess: boolean = checkActionValidity(minElement, maxElement, dataElement);
 
         if (validationSuccess) {
-            let action: VtsAction = {
+            var data: any;
+            let protocol = document.querySelector("#vtuberProtocol") as HTMLSelectElement;
+            if (protocol.value.toLowerCase() == "vtubestudio") {
+                data = { hotkeyID: dataElement.value };
+                var actionType = "hotkeyTrigger";
+            } else if (protocol.value.toLowerCase() == "mtion") {
+                let paramIndex = actionElement.querySelector(".paramIndex") as HTMLSelectElement;
+                let paramValue = actionElement.querySelector(".paramValue") as HTMLSelectElement;
+                if (paramIndex && paramIndex.value.toLowerCase() != "none") {
+                    data = {
+                        parameter_index: 0,
+                        value: null
+                    } as MtionParamData;
+                }
+            } else {
+                console.error("Readactions run with unexpected protocol");
+            }
+            let action: Action = {
                 actionName: dataElement.selectedOptions[0].textContent,
                 actionType: "hotkeyTrigger",
-                actionData: { hotkeyID: dataElement.value },
+                actionData: data,
                 actionRange: {
                     min: minValue,
                     max: maxValue
@@ -184,11 +201,11 @@ function createHotkeyList(data: HotkeyData[]) {
     });
 
     let actionTemplate = document.querySelector("#actionTemplate") as HTMLTemplateElement;
-    let hotkeyContainer = actionTemplate.content.querySelector(".hotkeyContainer");
-    if (hotkeyContainer.firstElementChild) {
-        hotkeyContainer.firstElementChild.remove();
+    let triggerContainer = actionTemplate.content.querySelector(".triggerContainer");
+    if (triggerContainer.firstElementChild) {
+        triggerContainer.firstElementChild.remove();
     }
-    hotkeyContainer.appendChild(selectTemplate.content.cloneNode(true));
+    triggerContainer.appendChild(selectTemplate.content.cloneNode(true));
 
     // also update the hotkey lists in existing actions
     let selectElementList = document.querySelectorAll(".hotkeyList") as NodeListOf<HTMLSelectElement>;

@@ -24,7 +24,8 @@ enum IntifaceChannelType {
 enum Protocol {
     VtubeStudio = "VTubeStudio",
     Vnyan = "VNyan",
-    Warudo = "Warudo"
+    Warudo = "Warudo",
+    Mtion = "Mtion"
 }
 
 enum ConnectionStatus {

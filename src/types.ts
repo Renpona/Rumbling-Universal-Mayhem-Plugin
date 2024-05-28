@@ -31,7 +31,7 @@ interface VtuberSoftware {
     connect: (host: string, port: number) => void,
     disconnect: () => void,
     sendData: (param: string, value: number) => void,
-    registerActions: (action: VtsAction | any) => void
+    registerActions: (action: Action[]) => void
 }
 
 type ModelUpdateEvent = {
@@ -47,10 +47,10 @@ type HotkeyData = {
     hotkeyID: string
 }
 
-type VtsAction = {
+interface Action {
     actionName?: string,
-    actionType: "hotkeyTrigger",
-    actionData: ActionHotkey,
+    actionType?: string,
+    actionData: any;
     actionRange: {
         min: number,
         max: number
@@ -62,6 +62,37 @@ type VtsAction = {
     },
     channels: number[],
     channelType: IntifaceChannelType
+}
+
+interface VtsAction extends Action {
+    actionName?: string,
+    actionType: "hotkeyTrigger",
+    actionData: ActionHotkey,
+}
+
+type MtionTrigger = {
+    id: string,
+    name: string,
+    output_parameters: MtionParam[];
+}
+
+type MtionParam = {
+    parameter_index: number,
+    name: string,
+    data_type: "string" | "number" | "bool" | "enum"
+}
+
+interface MtionAction extends Action {
+    actionName?: string,
+    actionData: {
+        triggerId: string,
+        param: MtionParamData,
+    }
+}
+
+interface MtionParamData<Type = string | number | boolean> {
+    "parameter_index": number,
+    "value": Type
 }
 
 type VtsActionRecord = {
@@ -82,4 +113,4 @@ interface Database extends DBSchema {
     }
 }
 
-export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, ConnectionInfo, VtuberSoftware, ModelUpdateEvent, HotkeyData, VtsAction, VtsActionRecord, ActionHotkey, Database }
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, ConnectionInfo, VtuberSoftware, ModelUpdateEvent, HotkeyData, Action, VtsAction, MtionTrigger, MtionParam, MtionAction, MtionParamData, VtsActionRecord, ActionHotkey, Database }

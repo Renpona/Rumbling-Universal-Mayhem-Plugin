@@ -33,6 +33,9 @@ function resolveProtocol(protocol: string): Protocol {
         case "warudo":
             result = Protocol.Warudo;
             break;
+        case "mtion":
+            result = Protocol.Mtion;
+            break;
         default:
             logger.error("Called resolveProtocol on unknown protocol: %s", protocol);
             break;

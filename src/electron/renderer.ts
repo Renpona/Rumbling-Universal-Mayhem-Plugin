@@ -13,7 +13,16 @@ if (document.readyState === "loading") {
 }
 
 function initFrontend() {
+    setVersionInfo();
     addEvents();
+}
+
+function setVersionInfo() {
+    let version = process.env.npm_package_version;
+    let versionString = `v.${version}`;
+    
+    document.querySelector("title").textContent += ` ${versionString}`;
+    document.querySelector(".version").textContent += ` ${versionString}`;
 }
 
 function addEvents() {
@@ -72,6 +81,9 @@ function addEvents() {
             case "warudo":
                 portField.value = "19190";
                 break;
+            case "mtion":
+                portField.value = "35393";
+                break;
             default:
                 console.error("Unexpected vtuber protocol: %s", protocol);
                 break;
@@ -94,7 +106,7 @@ function addEvents() {
 
 function populateDefaults(settings: Settings) {
     const defaultHost = "localhost";
-    const intifaceDefaultPort = 12345;
+    const intifaceDefaultPort = 54817;
     document.querySelector<HTMLInputElement>("#intifaceHost").value = defaultHost;
     document.querySelector<HTMLInputElement>("#intifacePort").value = intifaceDefaultPort.toString();
     document.querySelector<HTMLInputElement>("#vtuberHost").value = defaultHost;

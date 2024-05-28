@@ -9,7 +9,7 @@
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
     <script type="text/javascript" src="renderer.js"></script>
     <link href="style.css" rel="stylesheet" />
-    <title>Rumbling Universal Mayhem Plugin - Dev v0.6</title>
+    <title>Rumbling Universal Mayhem Plugin</title>
 </head>
 
 <body>
@@ -39,6 +39,8 @@
             <h4 class="title is-4">Startup info</h4>
             <ol>
                 <li>The local Intiface Engine should start up on its own, so if it doesn't report any errors then you shouldn't need to worry about it.</li>
+                <ul><li>If you want to use Intiface Central instead, then go to the Intiface tab, hit Disconnect to shut down the local Intiface Engine, and then 
+                    select "Intiface Central" from the dropdown.</li></ul>
                 <li>You should be able to start up your Intiface-connected mod or software and connect it to the Intiface server RUMP runs internally, using port 12345.</li>
                 <li>On the "Vtuber" tab, choose which Vtuber program you want to connect to, enter your connection info, and hit Connect.</li>
                 <li>If you're using VTubeStudio, you can use the Actions tab to set up a set of custom actions to run!</li>
@@ -48,7 +50,7 @@
         <div class="uiPanel intiface">
             <h4 class="title is-4">Intiface Connection</h4>
             <form id="intifaceForm" class="form disconnected container">
-                <div class="field hidden">
+                <div class="field ">
                     <!-- TODO: unhide this once Central is updated and I'm able to get it reasonably working -->
                     <div class="control">
                         <div class="select">
@@ -73,7 +75,7 @@
                         <label class="field-label">Port: </label>
                         <div class="field-body">
                             <div class="control">
-                                <input type="text" name="port" id="intifacePort" class="input" value="12345" max="65535"
+                                <input type="text" name="port" id="intifacePort" class="input" value="54817" max="65535"
                                     required />
                             </div>
                         </div>
@@ -98,6 +100,7 @@
                                 <option>VTubeStudio</option>
                                 <option>VNyan</option>
                                 <option>Warudo</option>
+                                <option>Mtion</option>
                             </select>
                         </div>
                     </div>
@@ -156,7 +159,7 @@
         </div>
         <div id="about" class="uiPanel about">
             <h4 class="title is-4">About</h4>
-            <span>RUMP v0.6 closed beta</span>
+            <span class="version">Rumbling Universal Mayhem Plugin</span>
         </div>
         
         <div class="modal" id="modal">
@@ -186,14 +189,21 @@
                 <label class="label">Leaving range<input type="checkbox" name="exit" class="exit checkbox"
                         checked></label>
             </div>
-            <div class="control is-expanded hotkeyContainer">
+            <div class="control is-expanded triggerContainer">
 
             </div>
         </div>
     </template>
-    <template id="hotkeyTemplate">
+    <template id="hotkeyTemplate" class="triggerTemplate VTubeStudio">
         <div class="select">
             <select class="hotkeyList">
+                <option value="none" selected>None</option>
+            </select>
+        </div>
+    </template>
+    <template id="mtionTemplate" class="triggerTemplate Mtion">
+        <div class="select">
+            <select class="paramsList">
                 <option value="none" selected>None</option>
             </select>
         </div>
