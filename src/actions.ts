@@ -76,7 +76,9 @@ function readActions() {
                         value: null
                     } as MtionParamData;
                 }
-            }*/
+            } else {
+                console.error("Readactions run with unexpected protocol");
+            }
             let action: Action = {
                 actionName: dataElement.selectedOptions[0].textContent,
                 actionType: "hotkeyTrigger",

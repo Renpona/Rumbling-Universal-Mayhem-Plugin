@@ -51,10 +51,17 @@ class IntifaceInstance {
         }
 
         intifaceEvent.once("ready", () => this.connectIntiface(connectionInfo));
-        intifaceEvent.once("errorShutdown", (message) => {
+        intifaceEvent.once("errorShutdown", (message: string) => {
             this.disconnectIntiface();
             this.stopEngine();
-            updateStatus(FormType.Intiface, ConnectionStatus.Error, `Intiface Engine shutdown with error: \n${message}`);
+            this.logger.warn(message);
+            let uiMessage: string;
+            if (message.includes("Only one usage of each socket address")) {
+                uiMessage = "Intiface Engine failed to start due to port collision. If Intiface Central is already running, this is normal - use the dropdown above to connect to it!";
+            } else {
+                uiMessage = message;
+            }
+            updateStatus(FormType.Intiface, ConnectionStatus.Error, `Intiface Engine shutdown with error: \n${uiMessage}`);
         });
 
         this.logger.info("Initializing Intiface Engine...");
