@@ -1,6 +1,6 @@
 {
   "name": "rumbling-universal-mayhem-plugin",
-  "version": "0.7.0",
+  "version": "0.7.0-dev",
   "description": "",
   "main": "dist\\electronMain.js",
   "scripts": {

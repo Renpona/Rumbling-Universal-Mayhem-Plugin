@@ -13,7 +13,16 @@ if (document.readyState === "loading") {
 }
 
 function initFrontend() {
+    setVersionInfo();
     addEvents();
+}
+
+function setVersionInfo() {
+    let version = process.env.npm_package_version;
+    let versionString = `v.${version}`;
+    
+    document.querySelector("title").textContent += ` ${versionString}`;
+    document.querySelector(".version").textContent += ` ${versionString}`;
 }
 
 function addEvents() {
