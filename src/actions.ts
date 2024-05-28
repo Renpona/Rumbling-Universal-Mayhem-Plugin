@@ -63,15 +63,17 @@ function readActions() {
 
         if (validationSuccess) {
             var data: any;
-            //if (vtuberConnector.software == Protocol.VtubeStudio) {
+            let protocol = document.querySelector("#vtuberProtocol") as HTMLSelectElement;
+            if (protocol.value.toLowerCase() == "vtubestudio") {
                 data = { hotkeyID: dataElement.value };
                 var actionType = "hotkeyTrigger";
-            /*} else if (vtuberConnector.software == Protocol.Mtion) {
+            } else if (protocol.value.toLowerCase() == "mtion") {
                 let paramIndex = actionElement.querySelector(".paramIndex") as HTMLSelectElement;
+                let paramValue = actionElement.querySelector(".paramValue") as HTMLSelectElement;
                 if (paramIndex && paramIndex.value.toLowerCase() != "none") {
                     data = {
                         parameter_index: 0,
-                        value: 
+                        value: null
                     } as MtionParamData;
                 }
             }*/

@@ -12,7 +12,8 @@ class ConnectorMtion implements VtuberSoftware {
     logger = getLogger();
     connectionInfo: ConnectionInfo;
     private rumpNode: MtionTrigger;
-    private vibrateParam: MtionParam;
+    private numberParam: MtionParam;
+    private booleanParam: MtionParam;
 
     async connect(host: string, port: number) {
         this.logger.info("Connecting to Mtion");
@@ -20,17 +21,22 @@ class ConnectorMtion implements VtuberSoftware {
             host: host,
             port: port
         };
-        const response = await this.getTriggersList();
-        if (response) {
-            const data = await response.json() as MtionTrigger[];
-            this.rumpNode = this.findRumpNode(data);
-            if (this.rumpNode) {
-                this.vibrateParam = this.findVibrateParam(this.rumpNode.output_parameters);
-                updateStatus(FormType.Vtuber, ConnectionStatus.Connected, "Mtion connected and RUMP node detected!");
-            } else {
-                this.fakeDisconnect("RUMP node not found in current clubhouse interactions");
-                return;
+        try {
+            const response = await this.getTriggersList();
+            if (response) {
+                const data = await response.json() as MtionTrigger[];
+                this.rumpNode = this.findRumpNode(data);
+                if (this.rumpNode) {
+                    this.numberParam = this.findVibrateParam(this.rumpNode.output_parameters, "VibrateNum");
+                    this.booleanParam = this.findVibrateParam(this.rumpNode.output_parameters, "VibrateBool");
+                    updateStatus(FormType.Vtuber, ConnectionStatus.Connected, "Mtion connected and RUMP node detected!");
+                } else {
+                    this.fakeDisconnect("RUMP node not found in current clubhouse interactions");
+                    return;
+                }
             }
+        } catch (error) {
+            this.connectionError(error);
         }
     }
 
@@ -41,12 +47,28 @@ class ConnectorMtion implements VtuberSoftware {
     };
 
     sendData(param: string, value: number) {
+        let booleanValue: boolean;
         if (param == "Vibrate") {
-            let payload: MtionParamData = {
-                parameter_index: this.vibrateParam.parameter_index,
-                value: value
+            if (value <= 0) {
+                booleanValue = false;
+            } else {
+                booleanValue = true;
             }
-            this.fireExternalTrigger([payload]);
+            let payload: MtionParamData[] = [];
+
+            if (this.numberParam) {
+                payload.push({
+                    parameter_index: this.numberParam.parameter_index,
+                    value: value * 100
+                });
+            }
+            if (this.booleanParam) {
+                payload.push({
+                    parameter_index: this.booleanParam.parameter_index,
+                    value: booleanValue
+                });
+            }
+            this.fireExternalTrigger(payload);
         }
     };
 
@@ -58,6 +80,12 @@ class ConnectorMtion implements VtuberSoftware {
         this.logger.info(message);
         updateStatus(FormType.Vtuber, ConnectionStatus.Disconnected, message);
         this.rumpNode = undefined;
+    }
+
+    private connectionError(error: Error) {
+        this.logger.error("Mtion request failed");
+        this.logger.error(error);
+        updateStatus(FormType.Vtuber, ConnectionStatus.Error, `Connection failed: ${error}`);
     }
 
     private async getTriggersList() {
@@ -77,10 +105,14 @@ class ConnectorMtion implements VtuberSoftware {
         const url = `${this.getBaseUrl()}/external-trigger/fire-trigger/${this.rumpNode.id}`;
         this.logger.info("Sending data to Mtion");
         this.logger.debug(url);
-        const response = await fetch(url, {
-            method: "PATCH",
-            body: JSON.stringify(payload)
-        });
+        try {
+            const response = await fetch(url, {
+                method: "PATCH",
+                body: JSON.stringify(payload)
+            });
+        } catch (error) {
+            this.connectionError(error);
+        }
     }
 
     private getBaseUrl() {
@@ -97,10 +129,10 @@ class ConnectorMtion implements VtuberSoftware {
         return rumpNode;
     }
 
-    private findVibrateParam(data: MtionParam[]) {
+    private findVibrateParam(data: MtionParam[], targetParam) {
         let vibrateParam = null;
         data.forEach((element) => {
-            if (element.name == "Vibrate") {
+            if (element.name == targetParam) {
                 vibrateParam = element;
             }
         });
