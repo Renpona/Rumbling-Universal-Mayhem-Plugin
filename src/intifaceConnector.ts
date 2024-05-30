@@ -85,7 +85,10 @@ class IntifaceInstance {
         logger.info("Trying to connect to Intiface...");
         const ws = new WebSocket(`ws://${host}:${port}`);
     
-        ws.on('error', logger.error);
+        ws.on('error', function error(err) {
+            logger.error(err);
+            setTimeout(() => updateStatus(FormType.Intiface, ConnectionStatus.Error, "Intiface connection failed! Make sure that Intiface Central is running and configured properly."), 200);
+        });
     
         ws.on('close', function close(code, reason) {
             logger.info("Disconnected from Intiface for reason: %s", reason.toString());
