@@ -67,10 +67,7 @@ button.disconnectButton {
     .connectButton {
         display: block;
         @extend %loader;
-        color: transparent;
-    }
-    .connectButton:hover {
-        color: transparent;
+        color: transparent !important;
     }
     .disconnectButton {
         display: none;
