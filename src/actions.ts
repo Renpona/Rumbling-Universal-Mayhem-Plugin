@@ -253,7 +253,9 @@ async function loadActionSetList(modelId: string) {
     let query = IDBKeyRange.only(modelId);
     let cursor = await db.transaction(DbStores.SavedActions, "readonly").store.index("modelId").openCursor(query);
     let actionSetList: String[] = [];
-    let actionSetHtml = document.createDocumentFragment();
+    let actionSetContainer = document.createElement("div");
+    actionSetContainer.classList.add("box");
+    let actionSetHtml = document.createDocumentFragment().appendChild(actionSetContainer);
     while (cursor) {
         actionSetList.push(cursor.value.actionSetName);
         actionSetHtml.appendChild(createActionSetElement(cursor.value.actionSetName));
@@ -287,9 +289,10 @@ function loadActionState(record: VtsActionRecord) {
 
 function createActionSetElement(name: string) {
     let container = document.createElement("div");
-    container.classList.add("box", "actionSetElement");
+    container.classList.add("notification", "actionSetElement", "is-link", "is-light");
 
-    let title = document.createElement("h3");
+    let title = document.createElement("h5");
+    title.classList.add("is-size-5");
     title.textContent = name;
 
     container.appendChild(title);
