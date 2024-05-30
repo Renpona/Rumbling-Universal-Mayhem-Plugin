@@ -240,6 +240,12 @@ async function saveActions(actionSetName: string) {
     return createActionsDb().then((db) => db.put(DbStores.SavedActions, savedActionData));
 }
 
+async function deleteActionSet(name: string, element: HTMLElement) {
+    let db = await createActionsDb();
+    let result = await db.delete(DbStores.SavedActions, name);
+    element.remove();
+}
+
 async function loadActionSetList(modelId: string) {
     if (!modelId) {
         let container = document.createElement("div");
@@ -295,11 +301,22 @@ function createActionSetElement(name: string) {
     title.classList.add("is-size-5");
     title.textContent = name;
 
+    let deleteButton = document.createElement("button");
+    deleteButton.classList.add("delete");
+
     container.appendChild(title);
     container.addEventListener("click", () => {
         loadSingleActionSet(name).then(loadActionState);
         closeModal();
     });
+    container.appendChild(deleteButton);
+    deleteButton.addEventListener("click", (event: PointerEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        let deleteTarget = event.target as HTMLElement;
+        deleteActionSet(name, deleteTarget.parentElement);
+    });
+
     return container;
 }
 
