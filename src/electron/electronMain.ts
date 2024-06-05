@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainEvent, shell } from 'electron';
 import { HotkeyData, ModelUpdateEvent, Settings, VtsAction, VtuberSettings } from '../types';
 import path from 'node:path';
 import { connectVtuber, disconnectIntiface, disconnectVtuber, initIntiface, parseSettings, registerActions } from '../startup';
@@ -17,6 +17,10 @@ function createWindow() {
         }
     });
     if (app.isPackaged) win.removeMenu();
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        shell.openExternal(url);
+        return { action: 'deny' };
+    });
 
     win.loadFile(path.join(__dirname, "/index.html"))
         .then(parseSettings);
