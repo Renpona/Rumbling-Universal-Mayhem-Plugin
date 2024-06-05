@@ -5,8 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://renpona.neocities.org https://itch.io; script-src 'self'; style-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self' https://renpona.neocities.org https://itch.io; script-src 'self'; style-src 'self'" />
     <script type="text/javascript" src="renderer.js"></script>
     <link href="style.css" rel="stylesheet" />
     <title>Rumbling Universal Mayhem Plugin</title>
@@ -161,7 +161,8 @@
         </div>
         <div id="about" class="uiPanel about">
             <h4 class="title is-4">About</h4>
-            <span class="version">Rumbling Universal Mayhem Plugin</span>
+            <div class="version">Rumbling Universal Mayhem Plugin</div>
+            <div class="update"></div>
         </div>
         
         <div class="modal" id="modal">
