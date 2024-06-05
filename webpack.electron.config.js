@@ -104,7 +104,7 @@ module.exports = [
       new MiniCssExtractPlugin({
         filename: 'style.css'
       }),
-      new webpack.EnvironmentPlugin(['npm_package_version']),
+      new webpack.EnvironmentPlugin(['npm_package_version', 'NODE_ENV']),
     ]
   },
   {

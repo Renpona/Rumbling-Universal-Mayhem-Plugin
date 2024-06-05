@@ -5,12 +5,15 @@
   "main": "dist\\electronMain.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.electron.config.js",
-    "prepackage": "npm run build",
+    "webpack": "webpack --config webpack.electron.config.js",
     "run": "out\\rump-win32-x64\\rump.exe",
+    "prepackage": "npm run webpack",
     "package": "electron-forge package",
     "start": "electron-forge start",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "deploy": "butler push .\\out\\make\\zip\\win32\\x64\\rump-win32-x64-%npm_package_version% renpona/rumbling-universal-mayhem-plugin:win-release --userversion %npm_package_version%",
+    "build:dev": "set NODE_ENV=dev && npm run package",
+    "build:prod": "set NODE_ENV=prod && npm run make"
   },
   "repository": {
     "type": "git",
