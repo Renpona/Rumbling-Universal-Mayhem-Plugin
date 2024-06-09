@@ -63,7 +63,7 @@ function setModalContent(content: HTMLElement | DocumentFragment) {
 
 function isDevModeFrontend() {
     const mode = process.env.NODE_ENV;
-    if (mode == "prod") {
+    if (mode == "production") {
         return false;
     } else {
         return true;
