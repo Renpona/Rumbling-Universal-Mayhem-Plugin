@@ -160,6 +160,7 @@ function createActionElement(event?: PointerEvent) {
     actionNode.children[0].querySelector(".delete").addEventListener("click", deleteAction);
     actionNode.children[0].querySelector(".rangeMin").addEventListener("change", validateAction);
     actionNode.children[0].querySelector(".rangeMax").addEventListener("change", validateAction);
+    actionNode.children[0].querySelector(".hotkeyList").addEventListener("input", setDefaultAdvancedTriggers);
 
     actionForm.appendChild(actionNode);
 }
@@ -215,6 +216,25 @@ function createHotkeyList(data: HotkeyData[]) {
         listElement.replaceWith(selectTemplate.content.cloneNode(true));
         (parent.querySelector(".hotkeyList") as HTMLSelectElement).value = savedValue;
     });
+}
+
+function setDefaultAdvancedTriggers(event: InputEvent) {
+    const selectedItem = event.target as HTMLSelectElement;
+    const toggleTriggerHotkeys = new Set(["ToggleExpression", "ReloadMicrophone", "ReloadTextures", "CalibrateCam", "ToggleItemScene", "ToggleTracker", "ToggleTwitchFeature", "LoadEffectPreset"]);
+    const singleTriggerHotkeys = new Set(["MoveModel", "TriggerAnimation", "ChangeIdleAnimation", "RemoveAllExpressions", "ChangeBackground", "ChangeVTSModel", "TakeScreenshot", "ScreenColorOverlay", "RemoveAllItems", "DownloadRandomWorkshopItem", "ExecuteItemAction", "ArtMeshColorPreset"]);
+    const enterCheckbox = selectedItem.closest(".action").querySelector("input.enter") as HTMLInputElement;
+    const exitCheckbox = selectedItem.closest(".action").querySelector("input.exit") as HTMLInputElement;
+    const itemValue = selectedItem.item(selectedItem.selectedIndex);
+    const hotkeyType = itemValue.text.substring(0, itemValue.text.indexOf(":"));
+    console.log(`setting advanced triggers for hotkey type ${hotkeyType}`);
+    
+    if (toggleTriggerHotkeys.has(hotkeyType)) {
+        enterCheckbox.checked = true;
+        exitCheckbox.checked = true;
+    } else if (singleTriggerHotkeys.has(hotkeyType)) {
+        enterCheckbox.checked = true;
+        exitCheckbox.checked = false;
+    }
 }
 
 function deleteAction(event: PointerEvent) {

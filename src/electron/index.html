@@ -184,16 +184,17 @@
                 <div class="field-body"><input type="number" required min=0 max=100 value="100" class="input rangeMax">
                 </div>
             </div>
-            <div class="field">
-                <span>Trigger when: </span><br />
-                <label class="label">Entering range<input type="checkbox" name="enter" class="enter checkbox"
-                        checked></label>
-                <label class="label">Leaving range<input type="checkbox" name="exit" class="exit checkbox"
-                        checked></label>
-            </div>
             <div class="control is-expanded triggerContainer">
 
             </div>
+            <details>
+                <summary>Advanced</summary>
+                <div class="field">
+                    <span>Trigger when: </span><br />
+                    <label class="label">Entering range<input type="checkbox" name="enter" class="enter checkbox"></label>
+                    <label class="label">Leaving range<input type="checkbox" name="exit" class="exit checkbox"></label>
+                </div>
+            </details>
         </div>
     </template>
     <template id="hotkeyTemplate" class="triggerTemplate VTubeStudio">
