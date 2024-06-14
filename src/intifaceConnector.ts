@@ -65,10 +65,12 @@ class IntifaceInstance {
             let uiMessage: string;
             if (message.includes("Only one usage of each socket address")) {
                 uiMessage = "Intiface Engine failed to start due to port collision. If Intiface Central is already running, this is normal - use the dropdown above to connect to it!";
+            } else if (message.includes(`ConnectorError("TransportSpecificError(TungsteniteError(Protocol(HttparseError(Token))))")`)){
+                uiMessage = `Default port 12345 is already taken. If you're using Leap Motion or VSeeFace, check the Troubleshooting section in the RUMP documentation for info on how to fix this.`
             } else {
                 uiMessage = message;
             }
-            updateStatus(FormType.Intiface, ConnectionStatus.Error, `Intiface Engine shutdown with error: \n${uiMessage}`);
+            setTimeout(() => updateStatus(FormType.Intiface, ConnectionStatus.Error, `Intiface Engine shutdown with error: \n${uiMessage}`), 200);
         });
 
         this.logger.info("Initializing Intiface Engine...");
