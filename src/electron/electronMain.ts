@@ -47,7 +47,7 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
 
-function sendDefaultsToUi(settings: Settings) {
+function sendSettingsToUi(settings: Settings) {
     mainWindow.webContents.send('settings', settings);
 }
 
@@ -94,4 +94,4 @@ function updateHotkeyList(hotkeyList: HotkeyData[]) {
     mainWindow.webContents.send("hotkeyList", hotkeyList);
 }
 
-export { sendDefaultsToUi, updateStatus, changeModelVts, updateHotkeyList };
+export { sendSettingsToUi, updateStatus, changeModelVts, updateHotkeyList };
