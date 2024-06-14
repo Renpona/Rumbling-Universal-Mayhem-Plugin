@@ -61,7 +61,7 @@ function initIntiface(intifaceSettings: IntifaceSettings) {
         intifaceType = Intiface.Central;
     }
     intifaceConnection = new IntifaceInstance(intifaceType);
-    intifaceConnection.start(intifaceSettings.connectionInfo);
+    intifaceConnection.start(intifaceSettings.websocketConnection, intifaceSettings.clientConnection);
 }
 
 function disconnectIntiface() {

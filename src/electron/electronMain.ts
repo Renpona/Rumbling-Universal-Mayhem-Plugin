@@ -58,7 +58,7 @@ function handleIntifaceEngineConnect(event: IpcMainEvent): void {
 function handleIntifaceCentralConnect(event: IpcMainEvent, host: string, port: number): void {
     initIntiface({ 
         useLocal: false, 
-        connectionInfo: {
+        websocketConnection: {
             host: host, 
             port: port 
         }

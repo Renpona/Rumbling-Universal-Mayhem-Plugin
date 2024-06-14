@@ -17,7 +17,8 @@ type VtuberSettings = {
 }
 type IntifaceSettings = {
     useLocal: boolean;
-    connectionInfo?: ConnectionInfo;
+    clientConnection?: ConnectionInfo;
+    websocketConnection?: ConnectionInfo;
     vibration_multiplier?: number;
 }
 type ConnectionInfo = {

@@ -29,28 +29,35 @@ class IntifaceInstance {
         this.intifaceType = intifaceType;
     }
 
-    start(connectionInfo?: ConnectionInfo) {
+    start(websocketConnection?: ConnectionInfo, clientConnection?: ConnectionInfo) {
         if (this.intifaceType == Intiface.Engine) {
-            this.startEngine(connectionInfo);
-        } else if (this.intifaceType == Intiface.Central && connectionInfo) {
-            this.connectIntiface(connectionInfo);
+            this.startEngine(websocketConnection, clientConnection);
+        } else if (this.intifaceType == Intiface.Central && websocketConnection) {
+            this.connectIntiface(websocketConnection);
         } else {
-            this.logger.warn("Intiface instance start called with invalid parameters: %s, %o", this.intifaceType, connectionInfo);
+            this.logger.warn("Intiface instance start called with invalid parameters: %s, %o", this.intifaceType, clientConnection);
         }
     }
 
-    startEngine(customConnection?: ConnectionInfo) {
-        let connectionInfo: ConnectionInfo;
-        if (customConnection) {
-            connectionInfo = customConnection;
-        } else {
-            connectionInfo = {
-                host: "localhost",
-                port: 54817
+    startEngine(websocketConnection?: ConnectionInfo, clientConnection?: ConnectionInfo) {
+        const defaultHost = "localhost";
+        const defaultClientPort = 12345;
+        const defaultWebsocketPort = 54817;
+
+        if (!clientConnection) {
+            clientConnection = {
+                "host": defaultHost,
+                "port": defaultClientPort
+            }
+        }
+        if (!websocketConnection) {
+            clientConnection = {
+                "host": defaultHost,
+                "port": defaultWebsocketPort
             }
         }
 
-        intifaceEvent.once("ready", () => this.connectIntiface(connectionInfo));
+        intifaceEvent.once("ready", () => this.connectIntiface(websocketConnection));
         intifaceEvent.once("errorShutdown", (message: string) => {
             this.disconnectIntiface();
             this.stopEngine();
@@ -66,7 +73,7 @@ class IntifaceInstance {
 
         this.logger.info("Initializing Intiface Engine...");
         updateStatus(FormType.Intiface, ConnectionStatus.Connecting, "Starting Intiface Engine...");
-        this.engine = startIntifaceEngine();
+        this.engine = startIntifaceEngine(clientConnection.port);
     }
 
     stopEngine() {
