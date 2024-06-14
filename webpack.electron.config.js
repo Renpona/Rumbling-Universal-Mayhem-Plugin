@@ -3,6 +3,10 @@ const webpack = require('webpack');
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const mode = process.env.NODE_ENV.trim();
+var devtool = 'inline-source-map';
+if (mode == "production") {
+  devtool = 'source-map';
+}
 
 module.exports = [
   {
@@ -15,7 +19,7 @@ module.exports = [
     entry: './src/startup.ts',
     target: 'node',
     mode: mode,
-    devtool: 'inline-source-map',
+    devtool: devtool,
     module: {
       rules: [
         {
@@ -48,7 +52,7 @@ module.exports = [
     target: 'electron-main',
     dependencies: ['backend'],
     mode: mode,
-    devtool: 'inline-source-map',
+    devtool: devtool,
     module: {
       rules: [
         {
@@ -72,7 +76,7 @@ module.exports = [
     dependencies: ['backend'],
     target: 'electron-renderer',
     mode: mode,
-    devtool: 'inline-source-map',
+    devtool: devtool,
     module: {
       rules: [
         {
@@ -118,7 +122,7 @@ module.exports = [
     dependencies: ['backend'],
     target: 'electron-preload',
     mode: mode,
-    devtool: 'inline-source-map',
+    devtool: devtool,
     module: {
       rules: [
         {
