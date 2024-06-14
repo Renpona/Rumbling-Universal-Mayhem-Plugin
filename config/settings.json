@@ -2,11 +2,6 @@
     "application": {
         "debug": false
     },
-    "vtuber": {
-        "protocol": "vtubestudio",
-        "host": "localhost",
-        "port": 8001
-    },
     "intiface": {
         "useLocal": true,
         "host": "127.0.0.1",

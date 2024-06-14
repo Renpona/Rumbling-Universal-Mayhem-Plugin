@@ -132,7 +132,8 @@ function addEvents() {
     addActionEvents();
 
     window.electronAPI.onUpdateSettings((data: Settings) => {
-        populateDefaults(data);
+        // if we do anything on the frontend with config file values, this is the function that would receive them from the backend
+        return;
     });
 
     window.electronAPI.onUpdateStatus((category: FormType, state: ConnectionStatus, message: string) => {
@@ -141,15 +142,6 @@ function addEvents() {
 
     window.electronAPI.onUpdateHotkeyList(createHotkeyList);
     window.electronAPI.onChangeModelVts(updateModelInfo);
-}
-
-function populateDefaults(settings: Settings) {
-    const defaultHost = "localhost";
-    const intifaceDefaultPort = 54817;
-    document.querySelector<HTMLInputElement>("#intifaceHost").value = defaultHost;
-    document.querySelector<HTMLInputElement>("#intifacePort").value = intifaceDefaultPort.toString();
-    document.querySelector<HTMLInputElement>("#vtuberHost").value = defaultHost;
-    document.querySelector<HTMLInputElement>("#vtuberPort").value = "8001";
 }
 
 function displayStatus(category: FormType, state: ConnectionStatus, message: string) {
