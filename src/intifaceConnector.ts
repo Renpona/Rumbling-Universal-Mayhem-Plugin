@@ -29,28 +29,35 @@ class IntifaceInstance {
         this.intifaceType = intifaceType;
     }
 
-    start(connectionInfo?: ConnectionInfo) {
+    start(websocketConnection?: ConnectionInfo, clientConnection?: ConnectionInfo) {
         if (this.intifaceType == Intiface.Engine) {
-            this.startEngine(connectionInfo);
-        } else if (this.intifaceType == Intiface.Central && connectionInfo) {
-            this.connectIntiface(connectionInfo);
+            this.startEngine(websocketConnection, clientConnection);
+        } else if (this.intifaceType == Intiface.Central && websocketConnection) {
+            this.connectIntiface(websocketConnection);
         } else {
-            this.logger.warn("Intiface instance start called with invalid parameters: %s, %o", this.intifaceType, connectionInfo);
+            this.logger.warn("Intiface instance start called with invalid parameters: %s, %o", this.intifaceType, clientConnection);
         }
     }
 
-    startEngine(customConnection?: ConnectionInfo) {
-        let connectionInfo: ConnectionInfo;
-        if (customConnection) {
-            connectionInfo = customConnection;
-        } else {
-            connectionInfo = {
-                host: "localhost",
-                port: 54817
+    startEngine(websocketConnection?: ConnectionInfo, clientConnection?: ConnectionInfo) {
+        const defaultHost = "localhost";
+        const defaultClientPort = 12345;
+        const defaultWebsocketPort = 54817;
+
+        if (!clientConnection) {
+            clientConnection = {
+                "host": defaultHost,
+                "port": defaultClientPort
+            }
+        }
+        if (!websocketConnection) {
+            clientConnection = {
+                "host": defaultHost,
+                "port": defaultWebsocketPort
             }
         }
 
-        intifaceEvent.once("ready", () => this.connectIntiface(connectionInfo));
+        intifaceEvent.once("ready", () => this.connectIntiface(websocketConnection));
         intifaceEvent.once("errorShutdown", (message: string) => {
             this.disconnectIntiface();
             this.stopEngine();
@@ -58,15 +65,17 @@ class IntifaceInstance {
             let uiMessage: string;
             if (message.includes("Only one usage of each socket address")) {
                 uiMessage = "Intiface Engine failed to start due to port collision. If Intiface Central is already running, this is normal - use the dropdown above to connect to it!";
+            } else if (message.includes(`ConnectorError("TransportSpecificError(TungsteniteError(Protocol(HttparseError(Token))))")`)){
+                uiMessage = `Default port 12345 is already taken. If you're using Leap Motion or VSeeFace, check the Troubleshooting section in the RUMP documentation for info on how to fix this.`
             } else {
                 uiMessage = message;
             }
-            updateStatus(FormType.Intiface, ConnectionStatus.Error, `Intiface Engine shutdown with error: \n${uiMessage}`);
+            setTimeout(() => updateStatus(FormType.Intiface, ConnectionStatus.Error, `Intiface Engine shutdown with error: \n${uiMessage}`), 200);
         });
 
         this.logger.info("Initializing Intiface Engine...");
         updateStatus(FormType.Intiface, ConnectionStatus.Connecting, "Starting Intiface Engine...");
-        this.engine = startIntifaceEngine();
+        this.engine = startIntifaceEngine(clientConnection.port);
     }
 
     stopEngine() {
@@ -85,7 +94,10 @@ class IntifaceInstance {
         logger.info("Trying to connect to Intiface...");
         const ws = new WebSocket(`ws://${host}:${port}`);
     
-        ws.on('error', logger.error);
+        ws.on('error', function error(err) {
+            logger.error(err);
+            setTimeout(() => updateStatus(FormType.Intiface, ConnectionStatus.Error, "Intiface connection failed! Make sure that Intiface Central is running and configured properly."), 200);
+        });
     
         ws.on('close', function close(code, reason) {
             logger.info("Disconnected from Intiface for reason: %s", reason.toString());

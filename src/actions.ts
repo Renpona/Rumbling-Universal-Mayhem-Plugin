@@ -160,6 +160,7 @@ function createActionElement(event?: PointerEvent) {
     actionNode.children[0].querySelector(".delete").addEventListener("click", deleteAction);
     actionNode.children[0].querySelector(".rangeMin").addEventListener("change", validateAction);
     actionNode.children[0].querySelector(".rangeMax").addEventListener("change", validateAction);
+    actionNode.children[0].querySelector(".hotkeyList").addEventListener("input", setDefaultAdvancedTriggers);
 
     actionForm.appendChild(actionNode);
 }
@@ -217,6 +218,25 @@ function createHotkeyList(data: HotkeyData[]) {
     });
 }
 
+function setDefaultAdvancedTriggers(event: InputEvent) {
+    const selectedItem = event.target as HTMLSelectElement;
+    const toggleTriggerHotkeys = new Set(["ToggleExpression", "ReloadMicrophone", "ReloadTextures", "CalibrateCam", "ToggleItemScene", "ToggleTracker", "ToggleTwitchFeature", "LoadEffectPreset"]);
+    const singleTriggerHotkeys = new Set(["MoveModel", "TriggerAnimation", "ChangeIdleAnimation", "RemoveAllExpressions", "ChangeBackground", "ChangeVTSModel", "TakeScreenshot", "ScreenColorOverlay", "RemoveAllItems", "DownloadRandomWorkshopItem", "ExecuteItemAction", "ArtMeshColorPreset"]);
+    const enterCheckbox = selectedItem.closest(".action").querySelector("input.enter") as HTMLInputElement;
+    const exitCheckbox = selectedItem.closest(".action").querySelector("input.exit") as HTMLInputElement;
+    const itemValue = selectedItem.item(selectedItem.selectedIndex);
+    const hotkeyType = itemValue.text.substring(0, itemValue.text.indexOf(":"));
+    console.log(`setting advanced triggers for hotkey type ${hotkeyType}`);
+    
+    if (toggleTriggerHotkeys.has(hotkeyType)) {
+        enterCheckbox.checked = true;
+        exitCheckbox.checked = true;
+    } else if (singleTriggerHotkeys.has(hotkeyType)) {
+        enterCheckbox.checked = true;
+        exitCheckbox.checked = false;
+    }
+}
+
 function deleteAction(event: PointerEvent) {
     event.preventDefault();
     let deleteButton = event.target as HTMLButtonElement;
@@ -240,6 +260,12 @@ async function saveActions(actionSetName: string) {
     return createActionsDb().then((db) => db.put(DbStores.SavedActions, savedActionData));
 }
 
+async function deleteActionSet(name: string, element: HTMLElement) {
+    let db = await createActionsDb();
+    let result = await db.delete(DbStores.SavedActions, name);
+    element.remove();
+}
+
 async function loadActionSetList(modelId: string) {
     if (!modelId) {
         let container = document.createElement("div");
@@ -253,7 +279,9 @@ async function loadActionSetList(modelId: string) {
     let query = IDBKeyRange.only(modelId);
     let cursor = await db.transaction(DbStores.SavedActions, "readonly").store.index("modelId").openCursor(query);
     let actionSetList: String[] = [];
-    let actionSetHtml = document.createDocumentFragment();
+    let actionSetContainer = document.createElement("div");
+    actionSetContainer.classList.add("box");
+    let actionSetHtml = document.createDocumentFragment().appendChild(actionSetContainer);
     while (cursor) {
         actionSetList.push(cursor.value.actionSetName);
         actionSetHtml.appendChild(createActionSetElement(cursor.value.actionSetName));
@@ -287,16 +315,28 @@ function loadActionState(record: VtsActionRecord) {
 
 function createActionSetElement(name: string) {
     let container = document.createElement("div");
-    container.classList.add("box", "actionSetElement");
+    container.classList.add("notification", "actionSetElement", "is-link", "is-light");
 
-    let title = document.createElement("h3");
+    let title = document.createElement("h5");
+    title.classList.add("is-size-5");
     title.textContent = name;
+
+    let deleteButton = document.createElement("button");
+    deleteButton.classList.add("delete");
 
     container.appendChild(title);
     container.addEventListener("click", () => {
         loadSingleActionSet(name).then(loadActionState);
         closeModal();
     });
+    container.appendChild(deleteButton);
+    deleteButton.addEventListener("click", (event: PointerEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        let deleteTarget = event.target as HTMLElement;
+        deleteActionSet(name, deleteTarget.parentElement);
+    });
+
     return container;
 }
 

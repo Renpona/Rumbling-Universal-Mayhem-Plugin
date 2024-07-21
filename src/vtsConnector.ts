@@ -44,14 +44,6 @@ class ConnectorVtubestudio implements VtuberSoftware {
             return;
         }
 
-        // in certain cases, such as wrong URL, VTS won't connect but also won't throw an error or fire an error event
-        // so wait a few seconds and check isConnecting and isConnected if no event has fired yet
-        let timer = setTimeout(() => {
-            if (!this.apiClient.isConnecting && !this.apiClient.isConnected) {
-                logger.warn(`Failed to connect to ${name} after 5 seconds.`);
-                //updateStatus(category, ConnectionStatus.NotConnected, `Failed to connect to ${name} after 5 seconds.`);
-            }
-        }, 5000);
         this.apiClient.on("connect", () => {
             logger.info(`${name} connected!`);
             updateStatus(category, ConnectionStatus.Connected, `${name} connected!`);
@@ -64,22 +56,19 @@ class ConnectorVtubestudio implements VtuberSoftware {
             });
             this.getHotkeysList();
             this.subscribeToEvents();
-            clearTimeout(timer);
         });
         this.apiClient.on("error", (e: string) => {
             logger.error(`${name} disconnected with error: \n${e}`);
             updateStatus(category, ConnectionStatus.Error, `${name} disconnected with error: \n${e}`);
-            if (this.apiClient.isConnected) this.disconnect();
+            this.disconnect();
             this.isConnected = false;
             this.endParamRefresher();
-            clearTimeout(timer);
         });
         this.apiClient.on("disconnect", () => {
             logger.info(`Disconnected from ${name}`);
             updateStatus(category, ConnectionStatus.Disconnected, `Disconnected from ${name}`);
             this.isConnected = false;
             this.endParamRefresher();
-            clearTimeout(timer);
         });
     }
 

@@ -1,13 +1,11 @@
 const fs = require("node:fs");
 import { IntifaceInstance } from "./intifaceConnector";
-import { errorHalt, pluginName, resolveResource } from "./utils";
-import { WebSocket } from "ws";
+import { errorHalt, resolveResource } from "./utils";
 import { ApiClient } from "vtubestudio";
-import { intifaceEvent, startIntifaceEngine } from "./engineManager";
 import { ChildProcess } from "child_process";
 import { ConnectionStatus, ExitCode, FormType, Intiface, Protocol } from "./enums";
 import { IntifaceSettings, Settings, VtuberSoftware } from "./types";
-import { sendDefaultsToUi, updateStatus } from "./electron/electronMain";
+import { sendSettingsToUi, updateStatus } from "./electron/electronMain";
 import { ConnectorWarudo } from "./warudoConnector";
 import { ConnectorVnyan } from "./vnyanConnector";
 import { ConnectorVtubestudio } from "./vtsConnector";
@@ -48,7 +46,7 @@ function parseSettings() {
         debugLogger();
     }
     initIntiface(settings.intiface);
-    sendDefaultsToUi(settings);
+    sendSettingsToUi(settings);
 }
 
 const settings: Settings = loadConfig();
@@ -63,7 +61,7 @@ function initIntiface(intifaceSettings: IntifaceSettings) {
         intifaceType = Intiface.Central;
     }
     intifaceConnection = new IntifaceInstance(intifaceType);
-    intifaceConnection.start(intifaceSettings.connectionInfo);
+    intifaceConnection.start(intifaceSettings.websocketConnection, intifaceSettings.clientConnection);
 }
 
 function disconnectIntiface() {

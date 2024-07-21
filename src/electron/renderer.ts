@@ -2,7 +2,8 @@ import { addActionEvents, createHotkeyList, showActionsArea, updateModelInfo } f
 import { ConnectionStatus, FormType, Intiface } from "../enums";
 import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
-import { activateTab, closeModal, showPanel } from "./utils-frontend";
+import { activateTab, closeModal, isDevModeFrontend, showPanel } from "./utils-frontend";
+import semver from "semver";
 
 if (document.readyState === "loading") {
     // Loading hasn't finished yet
@@ -15,6 +16,7 @@ if (document.readyState === "loading") {
 function initFrontend() {
     setVersionInfo();
     addEvents();
+    versionCheck();
 }
 
 function setVersionInfo() {
@@ -23,6 +25,43 @@ function setVersionInfo() {
     
     document.querySelector("title").textContent += ` ${versionString}`;
     document.querySelector(".version").textContent += ` ${versionString}`;
+}
+
+async function isUpdateAvailable() {
+    const itchUrl = isDevModeFrontend() ? "https://renpona.neocities.org/test.json" : "https://itch.io/api/1/x/wharf/latest?channel_name=win&game_id=2607448&channel_name=win-release";
+    const currentVersion = process.env.npm_package_version;
+    let response = await fetch(itchUrl);
+    let versionJson: any = await response.json();
+    let version = versionJson.latest;
+
+    if (semver.gt(version, currentVersion)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function createUpdateText(isUpdateAvailable: boolean) {
+    let span = document.createElement("span");
+    if (isUpdateAvailable) {
+        let link = document.createElement("a");
+        link.href = "https://renpona.itch.io/rumbling-universal-mayhem-plugin";
+        link.target = "_blank";
+        link.textContent = "Get it here!";
+
+        span.appendChild(document.createTextNode("Update Available! "));
+        span.appendChild(link);
+        return span;
+    } else {
+        span.appendChild(document.createTextNode("Your version of RUMP is up to date!"))
+        return span;
+    }
+}
+
+async function versionCheck() {
+    let updateElement = document.querySelector(".update");
+    let updateResult = await isUpdateAvailable();
+    updateElement.appendChild(createUpdateText(updateResult));
 }
 
 function addEvents() {
@@ -93,7 +132,8 @@ function addEvents() {
     addActionEvents();
 
     window.electronAPI.onUpdateSettings((data: Settings) => {
-        populateDefaults(data);
+        // if we do anything on the frontend with config file values, this is the function that would receive them from the backend
+        return;
     });
 
     window.electronAPI.onUpdateStatus((category: FormType, state: ConnectionStatus, message: string) => {
@@ -102,15 +142,6 @@ function addEvents() {
 
     window.electronAPI.onUpdateHotkeyList(createHotkeyList);
     window.electronAPI.onChangeModelVts(updateModelInfo);
-}
-
-function populateDefaults(settings: Settings) {
-    const defaultHost = "localhost";
-    const intifaceDefaultPort = 54817;
-    document.querySelector<HTMLInputElement>("#intifaceHost").value = defaultHost;
-    document.querySelector<HTMLInputElement>("#intifacePort").value = intifaceDefaultPort.toString();
-    document.querySelector<HTMLInputElement>("#vtuberHost").value = defaultHost;
-    document.querySelector<HTMLInputElement>("#vtuberPort").value = "8001";
 }
 
 function displayStatus(category: FormType, state: ConnectionStatus, message: string) {

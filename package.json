@@ -5,12 +5,15 @@
   "main": "dist\\electronMain.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.electron.config.js",
-    "prepackage": "npm run build",
+    "webpack": "webpack --config webpack.electron.config.js --stats-error-details",
     "run": "out\\rump-win32-x64\\rump.exe",
+    "prepackage": "npm run webpack",
     "package": "electron-forge package",
     "start": "electron-forge start",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "deploy": "butler push .\\out\\make\\zip\\win32\\x64\\rump-win32-x64-%npm_package_version% renpona/rumbling-universal-mayhem-plugin:win-release --userversion %npm_package_version%",
+    "build:dev": "set NODE_ENV=development&& npm run package",
+    "build:prod": "set NODE_ENV=production&& npm run make"
   },
   "repository": {
     "type": "git",
@@ -26,6 +29,7 @@
     "bulma": "^0.9.4",
     "idb": "^8.0.0",
     "node-fetch": "^3.3.2",
+    "semver": "^7.6.2",
     "vtubestudio": "^3.4.0",
     "winston": "^3.12.0",
     "winston-daily-rotate-file": "^5.0.0",
@@ -38,6 +42,7 @@
     "@electron-forge/plugin-fuses": "^7.3.0",
     "@electron/fuses": "^1.7.0",
     "@types/node": "^20.11.19",
+    "@types/semver": "^7.5.8",
     "@types/ws": "^8.5.10",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^6.10.0",

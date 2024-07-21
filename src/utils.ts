@@ -12,8 +12,12 @@ function errorHalt(message: string, exitCode = 1, error?: Error) {
     process.exit(exitCode);
 }
 
+function isDevMode() {
+    return app.isPackaged;
+}
+
 function resolveResource(target: string) {
-    if (app.isPackaged) {
+    if (isDevMode()) {
         return path.resolve(process.resourcesPath, target);
     } else {
         return path.resolve(__dirname, target);
@@ -47,4 +51,4 @@ function openExternalLink(url: string) {
 
 }
 
-export { pluginName, errorHalt, resolveResource, resolveProtocol };
+export { pluginName, errorHalt, resolveResource, resolveProtocol, isDevMode };

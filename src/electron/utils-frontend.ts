@@ -61,4 +61,13 @@ function setModalContent(content: HTMLElement | DocumentFragment) {
     getModalContent().replaceChildren(content);
 }
 
-export { showPanel, activateTab, createModal, closeModal, getModalContainer, getModalContent, setModalContent }
+function isDevModeFrontend() {
+    const mode = process.env.NODE_ENV;
+    if (mode == "production") {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+export { showPanel, activateTab, createModal, closeModal, getModalContainer, getModalContent, setModalContent, isDevModeFrontend }

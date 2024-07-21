@@ -2,15 +2,15 @@
     "application": {
         "debug": false
     },
-    "vtuber": {
-        "protocol": "vtubestudio",
-        "host": "localhost",
-        "port": 8001
-    },
     "intiface": {
         "useLocal": true,
-        "host": "127.0.0.1",
-        "port": 54817,
-        "vibration_multiplier": 1
+        "clientConnection": {
+            "host": "localhost",
+            "port": 12345
+        },
+        "websocketConnection": {
+            "host": "localhost",
+            "port": 54817
+        }
     }
 }

@@ -1,7 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyPlugin = require("copy-webpack-plugin");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const mode = process.env.NODE_ENV.trim();
+var devtool = 'inline-source-map';
+if (mode == "production") {
+  devtool = 'source-map';
+}
 
 module.exports = [
   {
@@ -13,8 +18,8 @@ module.exports = [
     name: 'backend',
     entry: './src/startup.ts',
     target: 'node',
-    mode: 'development',
-    devtool: 'inline-source-map',
+    mode: mode,
+    devtool: devtool,
     module: {
       rules: [
         {
@@ -46,8 +51,8 @@ module.exports = [
     entry: './src/electron/electronMain.ts',
     target: 'electron-main',
     dependencies: ['backend'],
-    mode: 'development',
-    devtool: 'inline-source-map',
+    mode: mode,
+    devtool: devtool,
     module: {
       rules: [
         {
@@ -70,8 +75,8 @@ module.exports = [
     entry: './src/electron/renderer.ts',
     dependencies: ['backend'],
     target: 'electron-renderer',
-    mode: 'development',
-    devtool: 'inline-source-map',
+    mode: mode,
+    devtool: devtool,
     module: {
       rules: [
         {
@@ -104,7 +109,7 @@ module.exports = [
       new MiniCssExtractPlugin({
         filename: 'style.css'
       }),
-      new webpack.EnvironmentPlugin(['npm_package_version']),
+      new webpack.EnvironmentPlugin(['npm_package_version', 'NODE_ENV']),
     ]
   },
   {
@@ -116,8 +121,8 @@ module.exports = [
     entry: './src/electron/electronPreload.ts',
     dependencies: ['backend'],
     target: 'electron-preload',
-    mode: 'development',
-    devtool: 'inline-source-map',
+    mode: mode,
+    devtool: devtool,
     module: {
       rules: [
         {

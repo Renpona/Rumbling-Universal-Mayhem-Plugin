@@ -8,14 +8,21 @@ const abortController = new AbortController();
 const options = {
     signal: abortController.signal
 }
-const args = [
-    '--server-name', 'RUMP', '--websocket-port', '12345', 
-    '--use-device-websocket-server', '--use-bluetooth-le', 
-    '--user-device-config-file', resolveResource('config/vts-device-config.json'), 
-    '--log', 'debug'];
 
-function startIntifaceEngine() {
+function createArgs(clientPort: string) {
+    const args = [
+        '--server-name', 'RUMP', '--websocket-port', clientPort, 
+        '--use-device-websocket-server', '--use-bluetooth-le', 
+        '--user-device-config-file', resolveResource('config/vts-device-config.json'), 
+        '--log', 'debug'
+    ];
+    return args;
+}
+
+function startIntifaceEngine(clientPort?: number) {
     let logger = getLogger();
+    const port: string = clientPort ? clientPort.toString() : '12345';
+    const args = createArgs(port);
     logger.debug("Executing %s with command-line args %s", resolveResource('intiface/intiface-engine.exe'), args);
     let engine = execFile(resolveResource('intiface/intiface-engine.exe'), args, options, (error, stdout, stderr) => {
         getIntifaceLogger().info(stdout);

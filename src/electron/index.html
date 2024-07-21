@@ -5,8 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://renpona.neocities.org https://itch.io; script-src 'self'; style-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self' https://renpona.neocities.org https://itch.io; script-src 'self'; style-src 'self'" />
     <script type="text/javascript" src="renderer.js"></script>
     <link href="style.css" rel="stylesheet" />
     <title>Rumbling Universal Mayhem Plugin</title>
@@ -36,22 +36,23 @@
     <!-- The UI panels start here. Each one should have the uiPanel class, as well as a class to identify it -->
     <main>
         <div class="uiPanel start currentPanel">
-            <h4 class="title is-4">Startup info</h4>
-            <ol>
-                <li>The local Intiface Engine should start up on its own, so if it doesn't report any errors then you shouldn't need to worry about it.</li>
-                <ul><li>If you want to use Intiface Central instead, then go to the Intiface tab, hit Disconnect to shut down the local Intiface Engine, and then 
-                    select "Intiface Central" from the dropdown.</li></ul>
-                <li>You should be able to start up your Intiface-connected mod or software and connect it to the Intiface server RUMP runs internally, using port 12345.</li>
-                <li>On the "Vtuber" tab, choose which Vtuber program you want to connect to, enter your connection info, and hit Connect.</li>
-                <li>If you're using VTubeStudio, you can use the Actions tab to set up a set of custom actions to run!</li>
-                <li>You should be all set now! If something goes horribly wrong, the error log is in the resources\logs folder.</li>
-            </ol>
+            <div class="content">
+                <h4 class="title is-4">Startup info</h4>
+                <ol>
+                    <li>The local Intiface Engine should start up on its own, so if it doesn't report any errors then you shouldn't need to worry about it.</li>
+                    <ul><li>If you want to use Intiface Central instead, then go to the Intiface tab, hit Disconnect to shut down the local Intiface Engine, and then 
+                        select "Intiface Central" from the dropdown.</li></ul>
+                    <li>You should be able to start up your Intiface-connected mod or software and connect it to the Intiface server RUMP runs internally, using port 12345.</li>
+                    <li>On the "Vtuber" tab, choose which Vtuber program you want to connect to, enter your connection info, and hit Connect.</li>
+                    <li>If you're using VTubeStudio, you can use the Actions tab to set up a set of custom actions to run!</li>
+                    <li>You should be all set now! If something goes horribly wrong, the error log is in the resources\logs folder.</li>
+                </ol>
+            </div>
         </div>
         <div class="uiPanel intiface">
             <h4 class="title is-4">Intiface Connection</h4>
             <form id="intifaceForm" class="form disconnected container">
                 <div class="field ">
-                    <!-- TODO: unhide this once Central is updated and I'm able to get it reasonably working -->
                     <div class="control">
                         <div class="select">
                             <select name="type" id="intifaceType">
@@ -71,7 +72,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="field">
+                    <div class="field hidden">
                         <label class="field-label">Port: </label>
                         <div class="field-body">
                             <div class="control">
@@ -138,7 +139,7 @@
         </div>
         <div id="actionPanel" class="uiPanel actions">
             <span class="vts-only">
-                <p>The Actions system only works with VTubeStudio, so come back when you're connected to it!</p>
+                <p>The Actions system only works with VTubeStudio, so come back when you're connected to it!</p><br/>
                 <p>If you're using Warudo or VNyan, use their node graph systems to set up your actions instead.</p>
             </span>
             <form id="actionForm" class="hidden">
@@ -159,7 +160,8 @@
         </div>
         <div id="about" class="uiPanel about">
             <h4 class="title is-4">About</h4>
-            <span class="version">Rumbling Universal Mayhem Plugin</span>
+            <div class="version">Rumbling Universal Mayhem Plugin</div>
+            <div class="update"></div>
         </div>
         
         <div class="modal" id="modal">
@@ -173,8 +175,8 @@
     <template id="actionTemplate">
         <div class="action notification is-info is-light">
             <button type="button" class="delete is-medium"></button>
-            <span>Rumble range:</span>
             <div class="field is-horizontal actionItem">
+                <div class="field-label is-normal">Rumble&nbsp;range:</div>
                 <div class="field-label is-normal"><label class="label" for="">Min:</label></div>
                 <div class="field-body"><input type="number" required min=0 max=100 value="50" class="input rangeMin">
                 </div>
@@ -182,16 +184,17 @@
                 <div class="field-body"><input type="number" required min=0 max=100 value="100" class="input rangeMax">
                 </div>
             </div>
-            <div class="field">
-                <span>Trigger when: </span><br />
-                <label class="label">Entering range<input type="checkbox" name="enter" class="enter checkbox"
-                        checked></label>
-                <label class="label">Leaving range<input type="checkbox" name="exit" class="exit checkbox"
-                        checked></label>
-            </div>
             <div class="control is-expanded triggerContainer">
 
             </div>
+            <details>
+                <summary>Advanced</summary>
+                <div class="field">
+                    <span>Trigger when: </span><br />
+                    <label class="label">Entering range <input type="checkbox" name="enter" class="enter checkbox"></label>
+                    <label class="label">Leaving range  <input type="checkbox" name="exit" class="exit checkbox"></label>
+                </div>
+            </details>
         </div>
     </template>
     <template id="hotkeyTemplate" class="triggerTemplate VTubeStudio">

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainEvent, shell } from 'electron';
 import { HotkeyData, ModelUpdateEvent, Settings, VtsAction, VtuberSettings } from '../types';
 import path from 'node:path';
 import { connectVtuber, disconnectIntiface, disconnectVtuber, initIntiface, parseSettings, registerActions } from '../startup';
@@ -17,6 +17,10 @@ function createWindow() {
         }
     });
     if (app.isPackaged) win.removeMenu();
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        shell.openExternal(url);
+        return { action: 'deny' };
+    });
 
     win.loadFile(path.join(__dirname, "/index.html"))
         .then(parseSettings);
@@ -43,7 +47,7 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
 
-function sendDefaultsToUi(settings: Settings) {
+function sendSettingsToUi(settings: Settings) {
     mainWindow.webContents.send('settings', settings);
 }
 
@@ -54,7 +58,7 @@ function handleIntifaceEngineConnect(event: IpcMainEvent): void {
 function handleIntifaceCentralConnect(event: IpcMainEvent, host: string, port: number): void {
     initIntiface({ 
         useLocal: false, 
-        connectionInfo: {
+        websocketConnection: {
             host: host, 
             port: port 
         }
@@ -90,4 +94,4 @@ function updateHotkeyList(hotkeyList: HotkeyData[]) {
     mainWindow.webContents.send("hotkeyList", hotkeyList);
 }
 
-export { sendDefaultsToUi, updateStatus, changeModelVts, updateHotkeyList };
+export { sendSettingsToUi, updateStatus, changeModelVts, updateHotkeyList };
