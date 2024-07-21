@@ -30,7 +30,7 @@ class ConnectorWarudo implements VtuberSoftware {
     }
 
     public sendData(param: string, value: number) {
-        let packet = JSON.stringify(this.buildPacket(param, value));
+        let packet = JSON.stringify(this.buildPacket(param, value * 100));
         this.logger.verbose("%s packet: %o\n", this.software, packet);
         this.ws.send(packet);
     }
@@ -65,7 +65,7 @@ class ConnectorWarudo implements VtuberSoftware {
     protected buildPacket(param: string, value: number) {
         let packet = {
             "action": param,
-            "data": (Math.round(value) * 100)
+            "data": Math.round(value)
         };
         return packet;
     }
