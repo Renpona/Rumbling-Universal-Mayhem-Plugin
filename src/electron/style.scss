@@ -65,12 +65,12 @@ button.disconnectButton {
 
 .form.connecting {
     .connectButton {
+        display: none;
+    }
+    .disconnectButton {
         display: block;
         @extend %loader;
         color: transparent !important;
-    }
-    .disconnectButton {
-        display: none;
     }
 }
 
