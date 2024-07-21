@@ -61,7 +61,7 @@ function initIntiface(intifaceSettings: IntifaceSettings) {
         intifaceType = Intiface.Central;
     }
     intifaceConnection = new IntifaceInstance(intifaceType);
-    intifaceConnection.start(intifaceSettings.websocketConnection, intifaceSettings.clientConnection);
+    intifaceConnection.start(intifaceSettings?.websocketConnection, intifaceSettings?.clientConnection);
 }
 
 function disconnectIntiface() {
@@ -114,4 +114,4 @@ function registerActions(actions) {
     }
 }
 
-export { parseSettings, initIntiface, disconnectIntiface, vtuberConnector, connectVtuber, disconnectVtuber, sendVtuberParamData, registerActions }
+export { parseSettings, settings, initIntiface, disconnectIntiface, vtuberConnector, connectVtuber, disconnectVtuber, sendVtuberParamData, registerActions }

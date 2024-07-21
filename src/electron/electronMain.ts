@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent, shell } from 'electron';
 import { HotkeyData, ModelUpdateEvent, Settings, VtsAction, VtuberSettings } from '../types';
 import path from 'node:path';
-import { connectVtuber, disconnectIntiface, disconnectVtuber, initIntiface, parseSettings, registerActions } from '../startup';
+import { connectVtuber, disconnectIntiface, disconnectVtuber, initIntiface, parseSettings, registerActions, settings } from '../startup';
 import { ConnectionStatus, FormType } from '../enums';
 import { resolveProtocol } from '../utils';
 import { getLogger } from '../loggerConfig';
@@ -52,7 +52,9 @@ function sendSettingsToUi(settings: Settings) {
 }
 
 function handleIntifaceEngineConnect(event: IpcMainEvent): void {
-    initIntiface({ useLocal: true });
+    let params = settings?.intiface;
+    params.useLocal = true;
+    initIntiface(params);
 }
 
 function handleIntifaceCentralConnect(event: IpcMainEvent, host: string, port: number): void {
