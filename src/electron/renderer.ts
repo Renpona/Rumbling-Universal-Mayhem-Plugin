@@ -68,6 +68,10 @@ async function versionCheck() {
     updateElement.appendChild(createUpdateText(updateResult));
     addUpdateIcon();
 }
+
+function loadDocumentation() {
+    const documentationUrl = "https://renpona.neocities.org/rump/docs/intro/"
+    window.open(documentationUrl);
 }
 
 function addEvents() {
@@ -77,6 +81,8 @@ function addEvents() {
             activateTab(tab as HTMLElement);
         });
     });
+
+    document.querySelector(".helpLink").addEventListener("click", loadDocumentation);
 
     document.querySelector(".modal-close").addEventListener("click", (event: PointerEvent) => closeModal(event));
     document.querySelector("#intifaceForm").addEventListener("submit", (event: SubmitEvent) => {
