@@ -58,10 +58,16 @@ function createUpdateText(isUpdateAvailable: boolean) {
     }
 }
 
+function addUpdateIcon() {
+    document.querySelector(".about .icon").classList.remove("hidden");
+}
+
 async function versionCheck() {
     let updateElement = document.querySelector(".update");
     let updateResult = await isUpdateAvailable();
     updateElement.appendChild(createUpdateText(updateResult));
+    addUpdateIcon();
+}
 }
 
 function addEvents() {
