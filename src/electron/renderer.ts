@@ -51,6 +51,7 @@ function createUpdateText(isUpdateAvailable: boolean) {
 
         span.appendChild(document.createTextNode("Update Available! "));
         span.appendChild(link);
+        span.classList.add("subtitle","is-5");
         return span;
     } else {
         span.appendChild(document.createTextNode("Your version of RUMP is up to date!"))
