@@ -1,0 +1,56 @@
+{
+    "version": {
+        "major": 3,
+        "minor": 0
+    },
+    "user-configs": {
+        "protocols": {
+            "tcode-v03": {
+                "communication": [
+                    {
+                        "websocket": {
+                            "name": "Rumbling Universal Mayhem Plugin"
+                        }
+                    }
+                ],
+                "configurations": []
+            }
+        },
+        "devices": [
+            {
+                "identifier": {
+                    "protocol": "tcode-v03",
+                    "identifier": "Rumbling Universal Mayhem Plugin",
+                    "address": "V9T8S7"
+                },
+                "config": {
+                    "name": "Rumbling Universal Mayhem Plugin",
+                    "features": [
+                        {
+                            "description": "",
+                            "feature-type": "Vibrate",
+                            "actuator": {
+                                "step-range": [
+                                    0,
+                                    100
+                                ],
+                                "step-limit": [
+                                    0,
+                                    100
+                                ],
+                                "messages": [
+                                    "ScalarCmd"
+                                ]
+                            }
+                        }
+                    ],
+                    "user-config": {
+                        "allow": false,
+                        "deny": false,
+                        "index": 0
+                    }
+                }
+            }
+        ]
+    }
+}
