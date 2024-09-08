@@ -67,7 +67,9 @@ async function versionCheck() {
     let updateElement = document.querySelector(".update");
     let updateResult = await isUpdateAvailable();
     updateElement.appendChild(createUpdateText(updateResult));
-    addUpdateIcon();
+    if (updateResult) {
+        addUpdateIcon();
+    }
 }
 
 function loadDocumentation() {
