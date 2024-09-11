@@ -13,7 +13,7 @@
     "make": "electron-forge make",
     "deploy": "butler push .\\out\\make\\zip\\win32\\x64\\rump-win32-x64-%npm_package_version%.zip renpona/rumbling-universal-mayhem-plugin:win-release --userversion %npm_package_version%",
     "build:dev": "set NODE_ENV=development&& npm run package",
-    "build:prod": "set NODE_ENV=production&& npm run make"
+    "build:prod": "set NODE_ENV=production&& npm run package&&npm run make"
   },
   "repository": {
     "type": "git",
