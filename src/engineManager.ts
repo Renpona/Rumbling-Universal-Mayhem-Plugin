@@ -13,7 +13,7 @@ function createArgs(clientPort: string) {
     const args = [
         '--server-name', 'RUMP', '--websocket-port', clientPort, 
         '--use-device-websocket-server', '--use-bluetooth-le', 
-        '--user-device-config-file', resolveResource('config/vts-device-config.json'), 
+        '--user-device-config-file', resolveResource('config/engine-device-config.json'), 
         '--log', 'debug'
     ];
     return args;

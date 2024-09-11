@@ -62,8 +62,8 @@ function setModalContent(content: HTMLElement | DocumentFragment) {
 }
 
 function isDevModeFrontend() {
-    const mode = process.env.NODE_ENV;
-    if (mode == "production") {
+    const mode = process.env.NODE_ENV.trim();
+    if (mode.toLowerCase() == "production") {
         return false;
     } else {
         return true;

@@ -30,7 +30,12 @@
                 </span>
             </a></li>
             <li class="actions"><a>Actions</a></li>
-            <li class="about"><a>About</a></li>
+            <li class="about"><a>
+                About
+                <span class="icon is-small has-text-warning hidden">
+                    <i class="fa-solid fa-circle"></i>
+                </span>
+            </a></li>
         </ul>
     </nav>
     <!-- The UI panels start here. Each one should have the uiPanel class, as well as a class to identify it -->
@@ -40,13 +45,13 @@
                 <h4 class="title is-4">Startup info</h4>
                 <ol>
                     <li>The local Intiface Engine should start up on its own, so if it doesn't report any errors then you shouldn't need to worry about it.</li>
-                    <ul><li>If you want to use Intiface Central instead, then go to the Intiface tab, hit Disconnect to shut down the local Intiface Engine, and then 
-                        select "Intiface Central" from the dropdown.</li></ul>
                     <li>You should be able to start up your Intiface-connected mod or software and connect it to the Intiface server RUMP runs internally, using port 12345.</li>
                     <li>On the "Vtuber" tab, choose which Vtuber program you want to connect to, enter your connection info, and hit Connect.</li>
                     <li>If you're using VTubeStudio, you can use the Actions tab to set up a set of custom actions to run!</li>
                     <li>You should be all set now! If something goes horribly wrong, the error log is in the resources\logs folder.</li>
                 </ol>
+
+                For more info, check <a class="helpLink">RUMP's help files!</a>
             </div>
         </div>
         <div class="uiPanel intiface">
@@ -158,10 +163,16 @@
                 </button>
             </form>
         </div>
-        <div id="about" class="uiPanel about">
+        <div id="about" class="uiPanel about is-size-4">
             <h4 class="title is-4">About</h4>
             <div class="version">Rumbling Universal Mayhem Plugin</div>
             <div class="update"></div>
+            <a href="https://discord.gg/9J89gm5SpX" target="_blank" alt="Discord"><span class="icon is-medium"><i class="fa-lg fa-brands fa-discord"></i></span></a>
+            <a href="https://twitch.tv/renpona" target="_blank" alt="Twitch"><span class="icon is-medium"><i class="fa-lg fa-brands fa-twitch"></i></span></a>
+            <a href="https://twitter.com/renpona" target="_blank" alt="Twitter"><span class="icon is-medium"><i class="fa-lg fa-brands fa-twitter"></i></span></a>
+            <a href="https://vt.social/@renpona" target="_blank" alt="Mastodon"><span class="icon is-medium"><i class="fa-lg fa-brands fa-mastodon"></i></span></a>
+            <a href="https://renpona.itch.io/rumbling-universal-mayhem-plugin" target="_blank" alt="Itch.io"><span class="icon is-medium"><i class="fa-lg fa-brands fa-itch-io"></i></span></a>
+            <a href="https://renpona.neocities.org" target="_blank" alt="Website"><span class="icon is-medium"><i class="fa-lg fa-solid fa-globe"></i></span></a>
         </div>
         
         <div class="modal" id="modal">

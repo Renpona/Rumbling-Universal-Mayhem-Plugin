@@ -28,20 +28,14 @@ function setVersionInfo() {
 }
 
 async function isUpdateAvailable() {
-    const itchUrl = isDevModeFrontend() ? "https://renpona.neocities.org/test.json" : "https://itch.io/api/1/x/wharf/latest?channel_name=win&game_id=2607448&channel_name=win-release";
-    const currentVersion = process.env.npm_package_version;
+    const itchUrl = isDevModeFrontend() ? "https://renpona.neocities.org/test.json" : "https://itch.io/api/1/x/wharf/latest?channel_name=win-release&game_id=2607448";
     let response = await fetch(itchUrl);
     let versionJson: any = await response.json();
     let version = versionJson.latest;
-
-    if (semver.gt(version, currentVersion)) {
-        return true;
-    } else {
-        return false;
-    }
+    return version;
 }
 
-function createUpdateText(isUpdateAvailable: boolean) {
+function createUpdateText(isUpdateAvailable: boolean, updateVersion: string) {
     let span = document.createElement("span");
     if (isUpdateAvailable) {
         let link = document.createElement("a");
@@ -49,8 +43,9 @@ function createUpdateText(isUpdateAvailable: boolean) {
         link.target = "_blank";
         link.textContent = "Get it here!";
 
-        span.appendChild(document.createTextNode("Update Available! "));
+        span.appendChild(document.createTextNode(`Update ${updateVersion} Available! `));
         span.appendChild(link);
+        span.classList.add("subtitle","is-5");
         return span;
     } else {
         span.appendChild(document.createTextNode("Your version of RUMP is up to date!"))
@@ -58,10 +53,34 @@ function createUpdateText(isUpdateAvailable: boolean) {
     }
 }
 
+function addUpdateIcon() {
+    document.querySelector(".about .icon").classList.remove("hidden");
+}
+
 async function versionCheck() {
     let updateElement = document.querySelector(".update");
-    let updateResult = await isUpdateAvailable();
-    updateElement.appendChild(createUpdateText(updateResult));
+    let updateVersion = await isUpdateAvailable();
+    if (!semver.parse(updateVersion)) {
+        console.error(`Update version not valid: ${updateVersion}`);
+        return;
+    }
+
+    const currentVersion = process.env.npm_package_version;
+    let updateResult = false;
+    if (semver.gt(updateVersion, currentVersion)) {
+        updateResult = true;
+    } else {
+        updateResult = false;
+    }
+    updateElement.appendChild(createUpdateText(updateResult, updateVersion));
+    if (updateResult) {
+        addUpdateIcon();
+    }
+}
+
+function loadDocumentation() {
+    const documentationUrl = "https://renpona.neocities.org/rump-docs/docs/intro/"
+    window.open(documentationUrl);
 }
 
 function addEvents() {
@@ -71,6 +90,8 @@ function addEvents() {
             activateTab(tab as HTMLElement);
         });
     });
+
+    document.querySelector(".helpLink").addEventListener("click", loadDocumentation);
 
     document.querySelector(".modal-close").addEventListener("click", (event: PointerEvent) => closeModal(event));
     document.querySelector("#intifaceForm").addEventListener("submit", (event: SubmitEvent) => {

@@ -44,17 +44,13 @@ class IntifaceInstance {
         const defaultClientPort = 12345;
         const defaultWebsocketPort = 54817;
 
-        if (!clientConnection) {
-            clientConnection = {
-                "host": defaultHost,
-                "port": defaultClientPort
-            }
+        clientConnection ??= {
+            "host": defaultHost,
+            "port": defaultClientPort
         }
-        if (!websocketConnection) {
-            clientConnection = {
-                "host": defaultHost,
-                "port": defaultWebsocketPort
-            }
+        websocketConnection ??= {
+            "host": defaultHost,
+            "port": defaultWebsocketPort
         }
 
         intifaceEvent.once("ready", () => this.connectIntiface(websocketConnection));

@@ -107,6 +107,7 @@ class ConnectorVtubestudio implements VtuberSoftware {
             .catch((e: VTubeStudioError) => {
                 this.logger.error("Failed to send param data %s: %s", param, e.data.message);
                 updateStatus(category, ConnectionStatus.Error, "VTubeStudio connection error: Code " + e.data.errorID.toString() + "\n" + e.data.message);
+                if (e.data.errorID == -100) this.disconnect();
             })
             .then(this.startParamRefresher());
     }
