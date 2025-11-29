@@ -1,4 +1,4 @@
-import { addActionEvents, createHotkeyList, showActionsArea, updateModelInfo } from "../actions";
+import { addActionEvents, createHotkeyList, createCommandList, showActionsArea, updateModelInfo } from "../actions";
 import { ConnectionStatus, FormType, Intiface } from "../enums";
 import { HotkeyData, Settings, VtsAction, VtuberSettings } from "../types";
 import "./style.scss";
@@ -161,7 +161,8 @@ function addEvents() {
         displayStatus(category, state, message);
     });
 
-    window.electronAPI.onUpdateHotkeyList(createHotkeyList);
+    //window.electronAPI.onUpdateHotkeyList(createHotkeyList);
+    window.electronAPI.onUpdateCommandList(createCommandList);
     window.electronAPI.onChangeModelVts(updateModelInfo);
 }
 

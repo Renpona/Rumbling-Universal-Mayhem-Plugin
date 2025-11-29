@@ -1,9 +1,9 @@
 import { ApiClient, HotkeyType, VTubeStudioError } from "vtubestudio";
 import { ActionCheck, ConnectionStatus, FormType, Protocol } from "./enums";
 import { pluginName } from "./utils";
-import { changeModelVts, updateHotkeyList, updateStatus } from "./electron/electronMain";
+import { changeModelVts, updateActionCommands, updateHotkeyList, updateStatus } from "./electron/electronMain";
 import ws from "ws";
-import { ActionHotkey, ModelUpdateEvent, VtsAction, VtuberSoftware } from "./types";
+import { ActionHotkey, ModelUpdateEvent, VtsAction, VtuberSoftware, HotkeyData, ActionCommand } from "./types";
 import { getLogger } from "./loggerConfig";
 
 const fs = require("node:fs");
@@ -210,8 +210,42 @@ class ConnectorVtubestudio implements VtuberSoftware {
         this.logger.verbose("Attempting to fetch VTS hotkey list.");
         this.apiClient.hotkeysInCurrentModel().then((response) => {
             this.logger.debug("%o", response);
-            updateHotkeyList(response.availableHotkeys);
+            this.createCommandList(response.availableHotkeys);
         });
+    }
+
+    private createCommandList(data: HotkeyData[]) {
+        const commandList: ActionCommand[] = [];
+        data.forEach(hotkey => {
+            let displayName = hotkey.name;
+            if (!hotkey.name && hotkey.file) {
+                displayName = hotkey.file;
+            }
+            const defaults = this.setDefaultAdvancedTriggers(hotkey);
+            const command = new ActionCommand(`${hotkey.type}: ${displayName}`, hotkey.type, hotkey.hotkeyID, defaults.entry, defaults.exit);
+            this.logger.debug(`Command created: ${command.toString()}`);
+            commandList.push(command);
+        });
+        updateActionCommands(commandList);
+    }
+
+    private setDefaultAdvancedTriggers(hotkey: HotkeyData) {
+        const toggleTriggerHotkeys = new Set(["ToggleExpression", "ReloadMicrophone", "ReloadTextures", "CalibrateCam", "ToggleItemScene", "ToggleTracker", "ToggleTwitchFeature", "LoadEffectPreset"]);
+        const singleTriggerHotkeys = new Set(["MoveModel", "TriggerAnimation", "ChangeIdleAnimation", "RemoveAllExpressions", "ChangeBackground", "ChangeVTSModel", "TakeScreenshot", "ScreenColorOverlay", "RemoveAllItems", "DownloadRandomWorkshopItem", "ExecuteItemAction", "ArtMeshColorPreset"]);
+        
+        let defaults: ActionCommand["defaults"];
+        if (toggleTriggerHotkeys.has(hotkey.type)) {
+            defaults.entry = true;
+            defaults.exit = true;
+        } else if (singleTriggerHotkeys.has(hotkey.type)) {
+            defaults.entry = true;
+            defaults.exit = false;
+        } else {
+            this.logger.warn("VTS Command was created with neither toggle-trigger nor single-trigger type, falling back to single");
+            defaults.entry = true;
+            defaults.exit = false;
+        }
+        return defaults;
     }
     
     public registerActions(actionList: VtsAction[]) {

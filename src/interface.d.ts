@@ -5,6 +5,7 @@ export interface IElectronAPI {
     onUpdateStatus: (data: Function) => void,
     onChangeModelVts: (data: Function) => void,
     onUpdateHotkeyList: (data: Function) => void,
+    onUpdateCommandList: (data: Function) => void,
     
     connectIntifaceEngine: () => void,
     connectIntifaceCentral: (host: string, port: number) => void,

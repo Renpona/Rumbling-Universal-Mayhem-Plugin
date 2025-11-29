@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent, shell } from 'electron';
-import { HotkeyData, ModelUpdateEvent, Settings, VtsAction, VtuberSettings } from '../types';
+import { HotkeyData, ModelUpdateEvent, Settings, VtsAction, VtuberSettings, ActionCommand } from '../types';
 import path from 'node:path';
 import { connectVtuber, disconnectIntiface, disconnectVtuber, initIntiface, parseSettings, registerActions, settings } from '../startup';
 import { ConnectionStatus, FormType } from '../enums';
@@ -96,4 +96,8 @@ function updateHotkeyList(hotkeyList: HotkeyData[]) {
     mainWindow.webContents.send("hotkeyList", hotkeyList);
 }
 
-export { sendSettingsToUi, updateStatus, changeModelVts, updateHotkeyList };
+function updateActionCommands(commandList: ActionCommand[]) {
+    mainWindow.webContents.send("commandList", commandList);
+}
+
+export { sendSettingsToUi, updateStatus, changeModelVts, updateHotkeyList, updateActionCommands };

@@ -1,7 +1,11 @@
 import { closeModal, createModal, setModalContent } from "./electron/utils-frontend";
 import { DbStores, IntifaceChannelType, Protocol } from "./enums";
-import { Action, Database, HotkeyData, ModelUpdateEvent, MtionParamData, VtsAction, VtsActionRecord } from "./types";
+import { Action, ActionCommand, Database, HotkeyData, ModelUpdateEvent, MtionParamData, VtsAction, VtsActionRecord } from "./types";
 import { openDB } from "idb";
+
+/**
+ * FRONTEND
+ */
 
 var modelId: string | null;
 
@@ -55,7 +59,7 @@ function readActions() {
         let maxValue: number = parseInt(maxElement.value);
         let enterValue: boolean = (actionElement.querySelector(".enter") as HTMLInputElement).checked;
         let exitValue: boolean = (actionElement.querySelector(".exit") as HTMLInputElement).checked;
-        let dataElement = actionElement.querySelector(".hotkeyList") as HTMLSelectElement;
+        let dataElement = actionElement.querySelector(".commandList") as HTMLSelectElement;
         // TODO: implement multi-channel support later
         let channels: number[] = [1];
 
@@ -76,8 +80,11 @@ function readActions() {
                         value: null
                     } as MtionParamData;
                 }
-            } else {
-                console.error("Readactions run with unexpected protocol");
+            } else if (protocol.value.toLowerCase() == "veadotube") {
+                //TODO: seems important
+            }    
+            else {
+                console.error("ReadActions run with unexpected protocol");
             }
             let action: Action = {
                 actionName: dataElement.selectedOptions[0].textContent,
@@ -107,7 +114,7 @@ function validateAction(event: Event) {
     let actionElement = (event.target as HTMLElement).closest(".action");
     let minElement = actionElement.querySelector(".rangeMin") as HTMLInputElement;
     let maxElement = actionElement.querySelector(".rangeMax") as HTMLInputElement;
-    let dataElement = actionElement.querySelector(".hotkeyList") as HTMLSelectElement;
+    let dataElement = actionElement.querySelector(".commandList") as HTMLSelectElement;
     let enterElement = actionElement.querySelector(".enter") as HTMLInputElement;
     let exitValue = actionElement.querySelector(".exit") as HTMLInputElement;
 
@@ -160,7 +167,7 @@ function createActionElement(event?: PointerEvent) {
     actionNode.children[0].querySelector(".delete").addEventListener("click", deleteAction);
     actionNode.children[0].querySelector(".rangeMin").addEventListener("change", validateAction);
     actionNode.children[0].querySelector(".rangeMax").addEventListener("change", validateAction);
-    actionNode.children[0].querySelector(".hotkeyList").addEventListener("input", setDefaultAdvancedTriggers);
+    actionNode.children[0].querySelector(".commandList").addEventListener("input", setDefaultAdvancedTriggers);
 
     actionForm.appendChild(actionNode);
 }
@@ -173,7 +180,7 @@ function createActionElementFromData(data: VtsAction) {
 
     (actionNode.querySelector(".rangeMin") as HTMLInputElement).value = data.actionRange.min.toString();
     (actionNode.querySelector(".rangeMax") as HTMLInputElement).value = data.actionRange.max.toString();
-    (actionNode.querySelector(".hotkeyList") as HTMLSelectElement).value = data.actionData.hotkeyID;
+    (actionNode.querySelector(".commandList") as HTMLSelectElement).value = data.actionData.hotkeyID;
 
     actionForm.appendChild(actionNode);
 }
@@ -236,6 +243,43 @@ function setDefaultAdvancedTriggers(event: InputEvent) {
         exitCheckbox.checked = false;
     }
 }
+
+function createCommandList(data: ActionCommand[]) {
+    let selectTemplate = document.querySelector("#commandTemplate") as HTMLTemplateElement;
+    let selectElement = selectTemplate.content.querySelector(".commandList") as HTMLSelectElement;
+
+    if (selectElement.options.length > 1) {
+        // we want to leave the original "none" element, so start from index 1 rather than 0
+        let length = selectElement.options.length;
+        for (let index = 1; index < length; index++) {
+            selectElement.options.remove(1);
+        }
+    }
+
+    data.forEach(command => {
+        let commandOption: HTMLOptionElement = document.createElement("option");
+        commandOption.appendChild(document.createTextNode(command.name));
+        commandOption.value = command.id;
+        selectElement.appendChild(commandOption);
+    });
+
+    let actionTemplate = document.querySelector("#actionTemplate") as HTMLTemplateElement;
+    let triggerContainer = actionTemplate.content.querySelector(".triggerContainer");
+    if (triggerContainer.firstElementChild) {
+        triggerContainer.firstElementChild.remove();
+    }
+    triggerContainer.appendChild(selectTemplate.content.cloneNode(true));
+
+    // also update the command lists in existing actions
+    let selectElementList = document.querySelectorAll(".commandList") as NodeListOf<HTMLSelectElement>;
+    selectElementList.forEach((listElement) => {
+        let savedValue = listElement.value;
+        let parent = listElement.parentElement;
+        listElement.replaceWith(selectTemplate.content.cloneNode(true));
+        (parent.querySelector(".commandList") as HTMLSelectElement).value = savedValue;
+    });
+}
+
 
 function deleteAction(event: PointerEvent) {
     event.preventDefault();
@@ -368,4 +412,4 @@ async function createDb(store: DbStores, keyPath: string) {
     return db;
 }
 
-export { addActionEvents, showActionsArea, createActionElement, createHotkeyList, updateModelInfo }
+export { addActionEvents, showActionsArea, createActionElement, createHotkeyList, createCommandList, updateModelInfo }

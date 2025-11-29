@@ -106,6 +106,30 @@ type ActionHotkey = {
     hotkeyID: string
 }
 
+class ActionCommand {
+    name: string = "DefaultName";
+    type: string = "DefaultType";
+    id: string = "DefaultId";
+    defaults: {
+        entry: boolean,
+        exit: boolean
+    }
+
+    constructor(name: string, type: string, id: string, entry: boolean, exit: boolean) {
+        this.name = name;
+        this.type = type;
+        this.id = id;
+        this.defaults = {
+            "entry": entry,
+            "exit": exit
+        }
+    }
+
+    toString(): string {
+        return `Command Name: ${this.name}, Type ${this.type}, ID ${this.id}`;
+    }
+}
+
 interface Database extends DBSchema {
     "savedActions": {
         key: string,
@@ -114,4 +138,4 @@ interface Database extends DBSchema {
     }
 }
 
-export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, ConnectionInfo, VtuberSoftware, ModelUpdateEvent, HotkeyData, Action, VtsAction, MtionTrigger, MtionParam, MtionAction, MtionParamData, VtsActionRecord, ActionHotkey, Database }
+export { Settings, VtuberSettings, ApplicationSettings, IntifaceSettings, ConnectionInfo, VtuberSoftware, ModelUpdateEvent, HotkeyData, Action, VtsAction, MtionTrigger, MtionParam, MtionAction, MtionParamData, VtsActionRecord, ActionHotkey, ActionCommand, Database }
