@@ -25,7 +25,8 @@ enum Protocol {
     VtubeStudio = "VTubeStudio",
     Vnyan = "VNyan",
     Warudo = "Warudo",
-    Mtion = "Mtion"
+    Mtion = "Mtion",
+    Veadotube = "Veadotube"
 }
 
 enum ConnectionStatus {
